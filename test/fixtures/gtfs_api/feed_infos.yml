@@ -1,0 +1,17 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+#one:
+#  feed_publisher_name: MyString
+#  feed_publisher_url: MyString
+#  feed_lang: MyString
+#  feed_start_date: 2014-07-13
+#  feed_end_date: 2014-07-13
+#  feed_version: MyString
+
+#two:
+#  feed_publisher_name: MyString
+#  feed_publisher_url: MyString
+#  feed_lang: MyString
+#  feed_start_date: 2014-07-13
+#  feed_end_date: 2014-07-13
+#  feed_version: MyString

@@ -1,0 +1,15 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+#one:
+#  shape_id: MyString
+#  shape_pt_lat: 9.99
+#  shape_pt_lon: 9.99
+# shape_pt_sequence: 1
+#  shape_dist_traveled: 9.99
+
+#two:
+#  shape_id: MyString
+#  shape_pt_lat: 9.99
+#  shape_pt_lon: 9.99
+#  shape_pt_sequence: 1
+#  shape_dist_traveled: 9.99

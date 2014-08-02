@@ -1,0 +1,50 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+trip_one:
+  io_id: '_trip_one'
+  route: route_one
+  io_route_id: '_route_one'
+  #service_id: calendar_one
+  calendar: calendar_one
+  io_service_id: '_calendar_one'
+  headsign: 'headsign trip one'
+  short_name: 'shortname trip one'
+  direction_id: 1
+  block_id: 'block_1'
+  io_shape_id: '_shape_one'
+#  shape_id: 
+  wheelchair_accesible: 0
+  bikes_allowed: 0
+
+trip_two:
+  io_id: '_trip_two'
+  route: route_two
+  io_route_id: '_route_two'
+  #service: calendar_one
+  calendar: calendar_one
+  io_service_id: '_calendar_one'
+  headsign: 'headsign trip two'
+  short_name: 'shortname trip two'
+  direction_id: 1
+  block_id: 'block_1'
+  io_shape_id: '_shape_two'
+#  shape_id: 
+  wheelchair_accesible: 1
+  bikes_allowed: 1
+
+
+trip_three:
+  io_id: '_trip_three'
+  route: route_three
+  io_route_id: '_route_three'
+  #service: calendar_two 
+  calendar: calendar_two
+  io_service_id: '_calendar_two'
+  headsign: 'headsign trip one'
+  short_name: 'shortname trip one'
+  direction_id: 1
+  block_id: 'block_2'
+  io_shape_id: '_shape_three'
+#  shape_id: 
+  wheelchair_accesible: 0
+  bikes_allowed: 0

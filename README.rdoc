@@ -1,0 +1,74 @@
+= GtfsApi
+
+This gem is a rails engine for GTFS data.
+
+
+== Install
+
+Add to your Gemfile
+
+gem gtfs_api
+
+Then run 
+bundle install
+
+Then migrate the db.
+
+
+
+This step will create a set of tables defined in https://developers.google.com/transit/gtfs/reference
+
+For example, for the agency file, the table gtfs_api_agencies will be created
+
+== Importing data
+
+This gem includes a set of scripts that make usage of gtfs-reader LINK by AUTHOR.
+
+You can get the data from (** page to import data **)
+
+== Sample Client
+
+To test the API, you have available a simple javascript client that consumes from
+this API.
+
+== JSON API Methods
+
+Now the hussle.
+
+Once the engine is installed, and the data is populated
+
+
+
+
+== Developers Zone
+
+
+=== Models Notes
+
+Because rails ids are integers, instead of using an string as primary key in the
+database, I've opted to keep rails default id. Integers are faster and the standard in the
+rails way.
+
+For those models that have an id (ie: agenciy_id,), there are two rows
+the  :id (integer) that will be used as foreign key when referring to the model
+in others, and :model_pid (p of public) which is the feed original id.
+
+
+TODO: list the pids
+
+For easing the imports references (pid)
+
+== Author & contributors
+
+Juan Manuel Merlos http://merlos.org
+
+Want to contribute? Your name here :)
+
+== License
+This project rocks and uses MIT-LICENSE.
+
+
+http://www.gtfs-data-exchange.com/
+
+Importing using gem:
+https://github.com/sangster/gtfs-reader/
