@@ -3,36 +3,41 @@ require 'test_helper'
 module GtfsApi
   class TransferTest < ActiveSupport::TestCase
     
-    def fill_valid_transfer 
+    def fill_valid_transfer
+      
+      from = Stop.find_by_io_id('_stop_one')
+      to = Stop.find_by_io_id('_stop_two')
+       
       return Transfer.new( 
-        io_from_stop_id: 'from_stop_id',
-        io_to_stop_id: 'to_stop_id',
+        from_stop:from,
+        to_stop:to,
         transfer_type: Transfer::MIN_TRANSFER_TIME_REQUIRED,
         min_transfer_time: 3600)
     end
     
      test "valid transfer" do
-       assert self.fill_valid_transfer.valid?
+       t= self.fill_valid_transfer
+       assert t.valid?, t.errors.to_a
      end
      
-     test "presence of io_from_stop_id and io_to_stop_id" do
+     test "presence of from_stop and to_stop" do
        t = self.fill_valid_transfer
-       t.io_from_stop_id = nil
-       assert t.valid?
+       t.from_stop = nil
+       assert t.invalid?
        
        t = self.fill_valid_transfer
-       t.io_to_stop_id = nil
-       assert t.valid?
+       t.to_stop = nil
+       assert t.invalid?
      end
      
      test "valid transfer_type range" do
        # valid range is integer 0->3
        t = self.fill_valid_transfer
        t.transfer_type = 0
-       assert t.valid?
+       assert t.valid?, t.errors.to_a
        
        t.transfer_type = 3
-       assert t.valid?
+       assert t.valid?, t.errors.to_a
      end
      
      test 'invalid transfer_type range' do

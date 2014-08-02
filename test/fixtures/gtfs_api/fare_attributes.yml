@@ -5,7 +5,7 @@ fare_one:
   price: 1.11
   currency_type: EUR
   payment_method: 0 #paid on board
-  #transfers:  # unlimiyrf transfers
+#  transfers:  #undefined
   transfer_duration: 1111 #ride time in seconds
 
 fare_two:

@@ -18,8 +18,6 @@ module GtfsApi
       fa.save      
       return FareRule.new( 
         fare: fa,
-        io_fare_id: 'fare_one',
-        io_route_id: 'route_one',
         origin_id: 'zone_init',
         destination_id: 'zone_end',
         contains_id: 'contains_zone')
@@ -36,16 +34,29 @@ module GtfsApi
        assert f.invalid?, f.errors.to_a       
      end
      
-     test 'io_fare_id presence required' do
+     test 'fare presence required' do
        f = self.fill_valid_fare_rule
-       f.io_fare_id = nil
+       f.fare = nil
        assert f.invalid?
 
      end
      
-     # DATABASE STUFF
-     # uses fixtures
+    
+     #
+     # Associations
+     #
      
-     
+     #
+     # requires fixtures with:
+     #  - fare_rule with id = 1 should belong_to a fare_attribute with io_id '_fare_one'
+     test 'fare_rule belongs_to fare_attribute' do
+       #we find a fare rule with the io_fare_id == _fare_one
+       
+       fare_attribute = FareAttribute.find_by_io_id('_fare_one')
+       f = FareRule.where(fare: fare_attribute).first
+       #check if we can access to the record
+       assert (f.fare.io_id=='_fare_one')
+       
+     end
   end
 end

@@ -10,6 +10,6 @@ class CreateGtfsApiShapes < ActiveRecord::Migration
   
       t.timestamps
     end
-    
+    add_index :gtfs_api_shapes, :io_id
   end
 end

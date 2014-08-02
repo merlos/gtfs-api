@@ -2,6 +2,8 @@ module GtfsApi
   class Transfer < ActiveRecord::Base
     
     # Validations
+    validates :from_stop, presence: true
+    validates :to_stop, presence: true
     validates :transfer_type, presence: true, numericality:  {only_integer: true, greater_than_or_equal_to: 0, less_than_or_equal_to:3}
     validates :min_transfer_time, numericality: {only_integer: true, greater_than_or_equal_to: 0}
     

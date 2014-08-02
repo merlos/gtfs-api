@@ -9,7 +9,7 @@ class CreateGtfsApiStopTimes < ActiveRecord::Migration
       t.string :stop_headsign
       t.integer :pickup_type
       t.integer :drop_off_type
-      t.decimal :shape_dist_traveled
+      t.decimal :dist_traveled
 
       t.timestamps
     end

@@ -2,7 +2,7 @@ module GtfsApi
   class Trip < ActiveRecord::Base
     
     #validation 
-    validates :io_trip_id, uniqueness: true
+    validates :io_id, uniqueness: true
     validates :route, presence: true
     validates :service_id, presence: true
     

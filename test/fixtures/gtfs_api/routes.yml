@@ -2,7 +2,6 @@
 
 route_one:
   io_id: _route_one
-  io_agency_id: _agency_one
   agency: agency_one
   
   short_name: route_short_name_one
@@ -15,7 +14,6 @@ route_one:
 
 route_two:
   io_id: _route_two
-  io_agency_id: _test_agency
   agency: agency_one
   
   short_name: route_short_name_two

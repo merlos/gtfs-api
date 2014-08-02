@@ -2,8 +2,6 @@ class CreateGtfsApiRoutes < ActiveRecord::Migration
   def change
     create_table :gtfs_api_routes do |t|
       t.string :io_id
-      
-      t.string :io_agency_id
       t.belongs_to :agency
       
       t.string :short_name

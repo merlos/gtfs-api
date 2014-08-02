@@ -2,19 +2,16 @@
 
 # fare one linked to route_one
 fare_rule_one:
-  io_fare_id: _fare_one
   fare: fare_one
-  io_route_id: _route_one
   route_id: route_one 
 
 # fare two linked to origin_zone and destination zone
 fare_rule_two:
-  io_fare_id: _fare_two
   fare: fare_two
   origin_id: zone_one
   destination_id: zone_two
 
 #fare three linked to a contains_id
 fare_rule_three:
-  io_fare_id: _fare_three
+  fare: fare_three
   contains_id: zone_two

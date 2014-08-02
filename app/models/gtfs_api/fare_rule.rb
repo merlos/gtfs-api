@@ -1,8 +1,7 @@
 module GtfsApi
   class FareRule < ActiveRecord::Base
     
-    validates :fare, presence: true
-    validates :io_fare_id, presence: true
+    validates :fare_id, presence: true
     # associations
     belongs_to :fare, foreign_key: 'fare_id', class_name: 'FareAttribute'
     belongs_to :route

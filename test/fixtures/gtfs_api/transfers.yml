@@ -1,41 +1,29 @@
 # Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
 
 transfer_s1_s2:
-  io_from_stop_id: '_stop_one'
-  io_to_stop_id: '_stop_two'
-  
-  from_stop_id: stop_one
-  to_stop_id: stop_two
+  from_stop: stop_one
+  to_stop: stop_two
   transfer_type: 0
 #  min_transfer_time: #not needed
 
 
-transfer_s2_s1:
-  io_from_stop_id: '_stop_two'
-  io_to_stop_id: '_stop_one'
-  
-  from_stop_id: stop_two
-  to_stop_id: stop_one
+transfer_s2_s1:  
+  from_stop: stop_two
+  to_stop: stop_one
   transfer_type: 1
 #  min_transfer_time: #not needed
 
 
-transfer_s3_s4:
-  io_from_stop_id: '_stop_three'
-  io_to_stop_id: '_stop_four'
-  
-  from_stop_id: stop_three
-  to_stop_id: stop_four
+transfer_s3_s4:  
+  from_stop: stop_three
+  to_stop: stop_four
   transfer_type: 2
   min_transfer_time: 3600
   
   
-transfer_s4_s3:
-  io_from_stop_id: '_stop_four'
-  io_to_stop_id: '_stop_three'
-  
-  from_stop_id: stop_four
-  to_stop_id: stop_three
+transfer_s4_s3:  
+  from_stop: stop_four
+  to_stop: stop_three
   transfer_type: 3
 #  min_transfer_time: 
   

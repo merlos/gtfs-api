@@ -10,6 +10,7 @@ class CreateGtfsApiFareAttributes < ActiveRecord::Migration
 
       t.timestamps
     end
+    add_index :gtfs_api_fare_attributes, :io_id
   end
   
 end

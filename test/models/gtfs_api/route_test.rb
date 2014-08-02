@@ -83,7 +83,7 @@ module GtfsApi
     # uses fixtures
     test 'belongs to agency' do
       
-      r = Route.find_by io_agency_id:'_agency_one'
+      r = Route.find_by io_id:'_route_one'
       assert_equal('_agency_one', r.agency.io_id )
       
       # _agency_one should have been linked to 2 routes

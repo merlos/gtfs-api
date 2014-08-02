@@ -13,6 +13,10 @@ module GtfsApi
         transfer_duration: 10)
     end
     
+    #
+    # VALIDATIONS
+    #
+    
     test "valid fare_attribute" do
       f = self.fill_valid_fare_attribute
       assert f.valid?, f.errors.full_messages
@@ -70,7 +74,7 @@ module GtfsApi
       assert f.invalid?
     end
     
-    test  "transfers range" do
+    test "transfers range" do
      f = self.fill_valid_fare_attribute
      f.transfers = nil
      assert f.valid?
@@ -82,9 +86,6 @@ module GtfsApi
      assert f.invalid?
    end
    
-    
-   # DATABASE TESTS 
-   
    test "uniqueness of _fare_id" do
      f = self.fill_valid_fare_attribute
      f.save!
@@ -94,8 +95,18 @@ module GtfsApi
      f3.io_id="newValidId"
      assert_nothing_raised(ActiveRecord::RecordInvalid) {f3.save!}
    end
-    
-    
-    
+   
+   #
+   # ASSOCIATIONS
+   #
+   
+   # requires fixtures:
+   # - fare_attribute with io_id = '_fare_one'
+   # - on fare_rules table, ONLY ONE fare_rule linking to _fare_one
+   test "fare_attribute has_many fare_rules" do
+     f = FareAttribute.find_by_io_id('_fare_one')
+     assert (f.fare_rules.count == 1)
+   end
+  
   end #class 
 end #module

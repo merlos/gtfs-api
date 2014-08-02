@@ -8,7 +8,7 @@ module GtfsApi
     validates :lon, presence: true, numericality: {greater_than: -180.000000, less_than: 180.000000}
     validates :location_type, numericality: {only_integer: true, greater_than_or_equal_to: 0, less_than_or_equal_to: 1}
     
-    #associations
+    # ASSOCIATIONS
     belongs_to :parent_station, foreign_key: 'parent_station_id', class_name: 'Stop'
     
     has_many :stops, foreign_key: 'parent_station_id', class_name: 'Stop'
@@ -19,6 +19,9 @@ module GtfsApi
     has_many :fares_as_destination, foreign_key: 'destination_id', primary_key: 'zone_id', class_name: 'FareRules'
     # to get the fares this stop is contained
     has_many :fares_contained, foreign_key: 'contains_id', primary_key: 'zone_id', class_name: 'FareRules'
+    
+    # CONSTANTS 
+    # Values for location_type
     # 0 or blank - Stop. A location where passengers board or disembark from a transit vehicle.
     #  1 - Station. A physical structure or area that contains one or more stop.
     STOP_TYPE = 0

@@ -1,9 +1,6 @@
 class CreateGtfsApiTransfers < ActiveRecord::Migration
   def change
-    create_table :gtfs_api_transfers do |t|
-      t.string :io_from_stop_id
-      t.string :io_to_stop_id
-      
+    create_table :gtfs_api_transfers do |t|      
       t.belongs_to :from_stop
       t.belongs_to :to_stop
       
