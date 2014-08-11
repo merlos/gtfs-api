@@ -1,5 +1,13 @@
 module GtfsApi
   class Shape < ActiveRecord::Base
+    include GtfsApi::Concerns::Models::Concerns::Csvable
+    #gtfs feed columns definitions
+    set_gtfs_col :io_id, :shape_id
+    set_gtfs_col :pt_lat, :shape_pt_lat
+    set_gtfs_col :pt_lon, :shape_pt_lon
+    set_gtfs_col :pt_sequence, :shape_pt_sequence
+    set_gtfs_col :dist_traveled, :shape_dist_traveled 
+    
     validates :io_id, presence: true
     validates :pt_lat, presence: true, numericality: { greater_than: -90.000000, less_than: 90.000000}
     validates :pt_lon, presence: true, numericality: {greater_than: -180.000000, less_than: 180.000000}

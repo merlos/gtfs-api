@@ -1,0 +1,776 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>
+  Class: GtfsApi::Importer
+  
+    &mdash; Documentation by YARD 0.8.7.4
+  
+</title>
+
+  <link rel="stylesheet" href="../css/style.css" type="text/css" charset="utf-8" />
+
+  <link rel="stylesheet" href="../css/common.css" type="text/css" charset="utf-8" />
+
+<script type="text/javascript" charset="utf-8">
+  hasFrames = window.top.frames.main ? true : false;
+  relpath = '../';
+  framesUrl = "../frames.html#!GtfsApi/Importer.html";
+</script>
+
+
+  <script type="text/javascript" charset="utf-8" src="../js/jquery.js"></script>
+
+  <script type="text/javascript" charset="utf-8" src="../js/app.js"></script>
+
+
+  </head>
+  <body>
+    <div id="header">
+      <div id="menu">
+  
+    <a href="../_index.html">Index (I)</a> &raquo;
+    <span class='title'><span class='object_link'><a href="../GtfsApi.html" title="GtfsApi (module)">GtfsApi</a></span></span>
+     &raquo; 
+    <span class="title">Importer</span>
+  
+
+  <div class="noframes"><span class="title">(</span><a href="." target="_top">no frames</a><span class="title">)</span></div>
+</div>
+
+      <div id="search">
+  
+    <a class="full_list_link" id="class_list_link"
+        href="../class_list.html">
+      Class List
+    </a>
+  
+    <a class="full_list_link" id="method_list_link"
+        href="../method_list.html">
+      Method List
+    </a>
+  
+    <a class="full_list_link" id="file_list_link"
+        href="../file_list.html">
+      File List
+    </a>
+  
+</div>
+      <div class="clear"></div>
+    </div>
+
+    <iframe id="search_frame"></iframe>
+
+    <div id="content"><h1>Class: GtfsApi::Importer
+  
+  
+  
+</h1>
+
+<dl class="box">
+  
+    <dt class="r1">Inherits:</dt>
+    <dd class="r1">
+      <span class="inheritName">Object</span>
+      
+        <ul class="fullTree">
+          <li>Object</li>
+          
+            <li class="next">GtfsApi::Importer</li>
+          
+        </ul>
+        <a href="#" class="inheritanceTree">show all</a>
+      
+      </dd>
+    
+  
+  
+    
+  
+    
+  
+  
+  
+    <dt class="r2 last">Defined in:</dt>
+    <dd class="r2 last">lib/gtfs_api/importer.rb</dd>
+  
+</dl>
+<div class="clear"></div>
+
+<h2>Overview</h2><div class="docstring">
+  <div class="discussion">
+    
+<p>Imports a zip file / url into a GtfsApi datbase</p>
+
+<p>usage sample:</p>
+
+<pre class="code ruby"><code class="ruby">GtfsApi::Importer.import(&#39;http://www.agency.com/gtfs_feed.zip&#39;)
+
+# if you are using a database that already has a feed, and you want to avoid id collision
+# you can use the prefix
+GtfsApi::Importer.import(&#39;http://www.agency.com/gtfs_feed.zip&#39;, &#39;agency_&#39;).</code></pre>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div>
+
+
+
+
+
+
+  
+    <h2>
+      Class Method Summary
+      <small>(<a href="#" class="summary_toggle">collapse</a>)</small>
+    </h2>
+
+    <ul class="summary">
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#import-class_method" title="import (class method)">+ (Object) <strong>import</strong>(feed_file, options = {}) </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'>
+<p>imports a gtfs feed zip into the local database.</p>
+</div></span>
+  
+</li>
+
+      
+    </ul>
+  
+    <h2>
+      Instance Method Summary
+      <small>(<a href="#" class="summary_toggle">collapse</a>)</small>
+    </h2>
+
+    <ul class="summary">
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#feed_definition-instance_method" title="#feed_definition (instance method)">- (Object) <strong>feed_definition</strong> </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'></div></span>
+  
+</li>
+
+      
+    </ul>
+  
+
+
+
+  <div id="class_method_details" class="method_details_list">
+    <h2>Class Method Details</h2>
+
+    
+      <div class="method_details first">
+  <h3 class="signature first" id="import-class_method">
+  
+    + (<tt>Object</tt>) <strong>import</strong>(feed_file, options = {}) 
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    
+<p>imports a gtfs feed zip into the local database</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  <p class="tag_title">Parameters:</p>
+<ul class="param">
+  
+    <li>
+      
+        <span class='name'>source</span>
+      
+      
+        <span class='type'>(<tt>string</tt>)</span>
+      
+      
+      
+        &mdash;
+        <div class='inline'>
+<p>path/url to feed file</p>
+</div>
+      
+    </li>
+  
+    <li>
+      
+        <span class='name'>options</span>
+      
+      
+        <span class='type'>(<tt>Hash</tt>)</span>
+      
+      
+        <em class="default">(defaults to: <tt>{}</tt>)</em>
+      
+      
+        &mdash;
+        <div class='inline'>
+<p>verbose(bool) and prefix (string)</p>
+</div>
+      
+    </li>
+  
+</ul>
+
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+24
+25
+26
+27
+28
+29
+30
+31
+32
+33
+34
+35
+36
+37
+38
+39
+40
+41
+42
+43
+44
+45
+46
+47
+48
+49
+50
+51
+52</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/gtfs_api/importer.rb', line 24</span>
+
+<span class='kw'>def</span> <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_import'>import</span><span class='lparen'>(</span><span class='id identifier rubyid_feed_file'>feed_file</span><span class='comma'>,</span> <span class='id identifier rubyid_options'>options</span> <span class='op'>=</span> <span class='lbrace'>{</span><span class='rbrace'>}</span><span class='rparen'>)</span>
+  <span class='id identifier rubyid_options'>options</span> <span class='op'>=</span> <span class='lbrace'>{</span><span class='label'>prefix:</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_end'>&#39;</span></span><span class='comma'>,</span> <span class='label'>verbose:</span> <span class='kw'>false</span> <span class='rbrace'>}</span><span class='period'>.</span><span class='id identifier rubyid_merge'>merge</span><span class='lparen'>(</span><span class='id identifier rubyid_options'>options</span><span class='rparen'>)</span>
+  <span class='const'>GtfsReader</span><span class='period'>.</span><span class='id identifier rubyid_config'>config</span> <span class='kw'>do</span>
+    <span class='id identifier rubyid_return_hashes'>return_hashes</span> <span class='kw'>true</span>
+    <span class='id identifier rubyid_verbose'>verbose</span> <span class='id identifier rubyid_options'>options</span><span class='lbracket'>[</span><span class='symbol'>:verbose</span><span class='rbracket'>]</span>
+    <span class='id identifier rubyid_feed_definition'>feed_definition</span> <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_feed_definition'>feed_definition</span>
+    <span class='id identifier rubyid_sources'>sources</span> <span class='kw'>do</span>
+      <span class='id identifier rubyid_gtfs'>gtfs</span> <span class='kw'>do</span>
+        <span class='id identifier rubyid_url'>url</span> <span class='id identifier rubyid_feed_file'>feed_file</span>
+        <span class='comment'>#before { |etag| puts &quot;Processing source with tag #{etag}...&quot; }
+</span>        <span class='id identifier rubyid_handlers'>handlers</span> <span class='kw'>do</span>
+          <span class='id identifier rubyid_agency'>agency</span> <span class='lbrace'>{</span><span class='op'>|</span><span class='id identifier rubyid_row'>row</span><span class='op'>|</span> 
+              <span class='id identifier rubyid_require'>require</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>gtfs_api</span><span class='tstring_end'>&#39;</span></span>
+              <span class='id identifier rubyid_a'>a</span> <span class='op'>=</span> <span class='const'>GtfsApi</span><span class='op'>::</span><span class='const'>Agency</span><span class='period'>.</span><span class='id identifier rubyid_new_from_csv'>new_from_csv</span><span class='lparen'>(</span><span class='id identifier rubyid_row'>row</span><span class='rparen'>)</span>
+              <span class='id identifier rubyid_a'>a</span><span class='period'>.</span><span class='id identifier rubyid_save!'>save!</span> <span class='kw'>if</span> <span class='id identifier rubyid_a'>a</span><span class='period'>.</span><span class='id identifier rubyid_valid?'>valid?</span>
+              <span class='const'>GtfsReader</span><span class='op'>::</span><span class='const'>Log</span><span class='period'>.</span><span class='id identifier rubyid_info'>info</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>saved </span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_row'>row</span><span class='embexpr_end'>}</span><span class='tstring_end'>&quot;</span></span> <span class='comment'>#&quot;saved #{a.io_id}&quot; 
+</span>             <span class='rbrace'>}</span>
+          <span class='id identifier rubyid_routes'>routes</span> <span class='lbrace'>{</span><span class='op'>|</span><span class='id identifier rubyid_row'>row</span><span class='op'>|</span> 
+            <span class='id identifier rubyid_puts'>puts</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>Read Route: </span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_row'>row</span><span class='embexpr_end'>}</span><span class='tstring_end'>&quot;</span></span> 
+          <span class='rbrace'>}</span>
+          <span class='comment'>#trips {|row| puts &quot;Read trip: #{row[:trip_id]} #{row[:trip_short_name]}&quot; }
+</span>          <span class='comment'>#fare_rules{|row| puts &quot;Fare Rule for fare_id: #{row[:fare_id]}&quot;}
+</span>        <span class='kw'>end</span> <span class='comment'>#handlers
+</span>      <span class='kw'>end</span> <span class='comment'># sample
+</span>    <span class='kw'>end</span> <span class='comment'>#sources
+</span>  <span class='kw'>end</span> <span class='comment'>#config
+</span>  <span class='const'>GtfsReader</span><span class='period'>.</span><span class='id identifier rubyid_update'>update</span> <span class='symbol'>:gtfs</span> <span class='comment'># or GtfsReader.update_all!
+</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+  </div>
+
+  <div id="instance_method_details" class="method_details_list">
+    <h2>Instance Method Details</h2>
+
+    
+      <div class="method_details first">
+  <h3 class="signature first" id="feed_definition-instance_method">
+  
+    - (<tt>Object</tt>) <strong>feed_definition</strong> 
+  
+
+  
+
+  
+</h3><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+54
+55
+56
+57
+58
+59
+60
+61
+62
+63
+64
+65
+66
+67
+68
+69
+70
+71
+72
+73
+74
+75
+76
+77
+78
+79
+80
+81
+82
+83
+84
+85
+86
+87
+88
+89
+90
+91
+92
+93
+94
+95
+96
+97
+98
+99
+100
+101
+102
+103
+104
+105
+106
+107
+108
+109
+110
+111
+112
+113
+114
+115
+116
+117
+118
+119
+120
+121
+122
+123
+124
+125
+126
+127
+128
+129
+130
+131
+132
+133
+134
+135
+136
+137
+138
+139
+140
+141
+142
+143
+144
+145
+146
+147
+148
+149
+150
+151
+152
+153
+154
+155
+156
+157
+158
+159
+160
+161
+162
+163
+164
+165
+166
+167
+168
+169
+170
+171
+172
+173
+174
+175
+176
+177
+178
+179
+180
+181
+182
+183
+184
+185
+186
+187
+188
+189
+190
+191
+192
+193
+194
+195
+196
+197
+198
+199
+200
+201
+202
+203
+204
+205
+206
+207
+208
+209
+210
+211
+212
+213
+214
+215
+216
+217
+218
+219
+220
+221
+222
+223
+224
+225
+226
+227
+228
+229
+230
+231
+232
+233
+234
+235
+236
+237
+238
+239
+240
+241
+242
+243
+244
+245
+246
+247
+248
+249
+250
+251
+252
+253
+254
+255</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/gtfs_api/importer.rb', line 54</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_feed_definition'>feed_definition</span>
+      <span class='const'>GtfsReader</span><span class='op'>::</span><span class='const'>FeedDefinition</span><span class='period'>.</span><span class='id identifier rubyid_new'>new</span><span class='period'>.</span><span class='id identifier rubyid_tap'>tap</span> <span class='kw'>do</span> <span class='op'>|</span><span class='id identifier rubyid_feed'>feed</span><span class='op'>|</span>
+    <span class='id identifier rubyid_feed'>feed</span><span class='period'>.</span><span class='id identifier rubyid_instance_exec'>instance_exec</span> <span class='kw'>do</span>
+      <span class='id identifier rubyid_file'>file</span> <span class='symbol'>:agency</span><span class='comma'>,</span> <span class='label'>required:</span> <span class='kw'>true</span> <span class='kw'>do</span>
+        <span class='id identifier rubyid_prefix'>prefix</span> <span class='symbol'>:agency</span> <span class='kw'>do</span>
+          <span class='id identifier rubyid_col'>col</span> <span class='symbol'>:name</span><span class='comma'>,</span>     <span class='label'>required:</span> <span class='kw'>true</span>
+          <span class='id identifier rubyid_col'>col</span> <span class='symbol'>:url</span><span class='comma'>,</span>      <span class='label'>required:</span> <span class='kw'>true</span>
+          <span class='id identifier rubyid_col'>col</span> <span class='symbol'>:timezone</span><span class='comma'>,</span> <span class='label'>required:</span> <span class='kw'>true</span>
+          <span class='id identifier rubyid_col'>col</span> <span class='symbol'>:id</span><span class='comma'>,</span>                       <span class='label'>unique:</span> <span class='kw'>true</span>
+          <span class='id identifier rubyid_col'>col</span> <span class='symbol'>:lang</span>
+          <span class='id identifier rubyid_col'>col</span> <span class='symbol'>:phone</span>
+          <span class='id identifier rubyid_col'>col</span> <span class='symbol'>:fare_url</span>
+        <span class='kw'>end</span>
+      <span class='kw'>end</span>
+
+      <span class='id identifier rubyid_file'>file</span> <span class='symbol'>:stops</span><span class='comma'>,</span> <span class='label'>required:</span> <span class='kw'>true</span> <span class='kw'>do</span>
+        <span class='id identifier rubyid_prefix'>prefix</span> <span class='symbol'>:stop</span> <span class='kw'>do</span>
+          <span class='id identifier rubyid_col'>col</span> <span class='symbol'>:id</span><span class='comma'>,</span>       <span class='label'>required:</span> <span class='kw'>true</span><span class='comma'>,</span> <span class='label'>unique:</span> <span class='kw'>true</span>
+          <span class='id identifier rubyid_col'>col</span> <span class='symbol'>:code</span>
+          <span class='id identifier rubyid_col'>col</span> <span class='symbol'>:name</span><span class='comma'>,</span>     <span class='label'>required:</span> <span class='kw'>true</span>
+          <span class='id identifier rubyid_col'>col</span> <span class='symbol'>:desc</span>
+          <span class='id identifier rubyid_col'>col</span> <span class='symbol'>:lat</span><span class='comma'>,</span>      <span class='label'>required:</span> <span class='kw'>true</span>
+          <span class='id identifier rubyid_col'>col</span> <span class='symbol'>:lon</span><span class='comma'>,</span>      <span class='label'>required:</span> <span class='kw'>true</span>
+          <span class='id identifier rubyid_col'>col</span> <span class='symbol'>:url</span>
+          <span class='id identifier rubyid_col'>col</span> <span class='symbol'>:timezone</span>
+        <span class='kw'>end</span>
+
+        <span class='id identifier rubyid_col'>col</span> <span class='symbol'>:zone_id</span>
+        <span class='id identifier rubyid_col'>col</span> <span class='symbol'>:location_type</span><span class='comma'>,</span> <span class='op'>&amp;</span><span class='id identifier rubyid_output_map'>output_map</span><span class='lparen'>(</span> <span class='symbol'>:stop</span><span class='comma'>,</span> <span class='label'>station:</span> <span class='CHAR'>?1</span> <span class='rparen'>)</span>
+        <span class='id identifier rubyid_col'>col</span> <span class='symbol'>:parent_station</span>
+
+        <span class='id identifier rubyid_col'>col</span> <span class='symbol'>:wheelchair_boarding</span> <span class='kw'>do</span> <span class='op'>|</span><span class='id identifier rubyid_val'>val</span><span class='op'>|</span>
+          <span class='kw'>if</span> <span class='id identifier rubyid_parent_station'>parent_station</span>
+            <span class='kw'>case</span> <span class='id identifier rubyid_val'>val</span>
+            <span class='kw'>when</span> <span class='CHAR'>?2</span> <span class='kw'>then</span> <span class='symbol'>:no</span>
+            <span class='kw'>when</span> <span class='CHAR'>?1</span> <span class='kw'>then</span> <span class='symbol'>:yes</span>
+            <span class='kw'>else</span> <span class='symbol'>:inherit</span>
+            <span class='kw'>end</span>
+          <span class='kw'>else</span>
+            <span class='kw'>case</span> <span class='id identifier rubyid_val'>val</span>
+            <span class='kw'>when</span> <span class='CHAR'>?2</span> <span class='kw'>then</span> <span class='symbol'>:no_vehicles</span>
+            <span class='kw'>when</span> <span class='CHAR'>?1</span> <span class='kw'>then</span> <span class='symbol'>:some_vehicles</span>
+            <span class='kw'>else</span> <span class='symbol'>:unknown</span>
+            <span class='kw'>end</span>
+          <span class='kw'>end</span>
+        <span class='kw'>end</span>
+      <span class='kw'>end</span>
+
+      <span class='id identifier rubyid_file'>file</span> <span class='symbol'>:routes</span><span class='comma'>,</span> <span class='label'>required:</span> <span class='kw'>true</span> <span class='kw'>do</span>
+        <span class='id identifier rubyid_prefix'>prefix</span> <span class='symbol'>:route</span> <span class='kw'>do</span>
+          <span class='id identifier rubyid_col'>col</span> <span class='symbol'>:id</span><span class='comma'>,</span>         <span class='label'>required:</span> <span class='kw'>true</span><span class='comma'>,</span> <span class='label'>unique:</span> <span class='kw'>true</span>
+          <span class='id identifier rubyid_col'>col</span> <span class='symbol'>:short_name</span><span class='comma'>,</span> <span class='label'>required:</span> <span class='kw'>true</span>
+          <span class='id identifier rubyid_col'>col</span> <span class='symbol'>:long_name</span><span class='comma'>,</span>  <span class='label'>required:</span> <span class='kw'>true</span>
+          <span class='id identifier rubyid_col'>col</span> <span class='symbol'>:desc</span>
+          <span class='id identifier rubyid_col'>col</span> <span class='symbol'>:type</span><span class='comma'>,</span>       <span class='label'>required:</span> <span class='kw'>true</span><span class='comma'>,</span>
+            <span class='op'>&amp;</span><span class='id identifier rubyid_output_map'>output_map</span><span class='lparen'>(</span>   <span class='symbol'>:unknown</span><span class='comma'>,</span>
+                               <span class='label'>tram:</span> <span class='CHAR'>?0</span><span class='comma'>,</span>
+                             <span class='label'>subway:</span> <span class='CHAR'>?1</span><span class='comma'>,</span>
+                               <span class='label'>rail:</span> <span class='CHAR'>?2</span><span class='comma'>,</span>
+                                <span class='label'>bus:</span> <span class='CHAR'>?3</span><span class='comma'>,</span>
+                              <span class='label'>ferry:</span> <span class='CHAR'>?4</span><span class='comma'>,</span>
+                          <span class='label'>cable_car:</span> <span class='CHAR'>?5</span><span class='comma'>,</span>
+                            <span class='label'>gondola:</span> <span class='CHAR'>?6</span><span class='comma'>,</span>
+                          <span class='label'>funicular:</span> <span class='CHAR'>?7</span> <span class='rparen'>)</span>
+          <span class='id identifier rubyid_col'>col</span> <span class='symbol'>:url</span>
+          <span class='id identifier rubyid_col'>col</span> <span class='symbol'>:color</span>
+          <span class='id identifier rubyid_col'>col</span> <span class='symbol'>:text_color</span>
+        <span class='kw'>end</span>
+
+        <span class='id identifier rubyid_col'>col</span> <span class='symbol'>:agency_id</span>
+      <span class='kw'>end</span>
+
+      <span class='id identifier rubyid_file'>file</span> <span class='symbol'>:trips</span><span class='comma'>,</span> <span class='label'>required:</span> <span class='kw'>true</span> <span class='kw'>do</span>
+        <span class='id identifier rubyid_prefix'>prefix</span> <span class='symbol'>:trip</span> <span class='kw'>do</span>
+          <span class='id identifier rubyid_col'>col</span> <span class='symbol'>:id</span><span class='comma'>,</span>         <span class='label'>required:</span> <span class='kw'>true</span><span class='comma'>,</span> <span class='label'>unique:</span> <span class='kw'>true</span>
+          <span class='id identifier rubyid_col'>col</span> <span class='symbol'>:headsign</span>
+          <span class='id identifier rubyid_col'>col</span> <span class='symbol'>:short_name</span>
+          <span class='id identifier rubyid_col'>col</span> <span class='symbol'>:long_name</span>
+        <span class='kw'>end</span>
+
+        <span class='id identifier rubyid_col'>col</span> <span class='symbol'>:route_id</span><span class='comma'>,</span>              <span class='label'>required:</span> <span class='kw'>true</span>
+        <span class='id identifier rubyid_col'>col</span> <span class='symbol'>:service_id</span><span class='comma'>,</span>            <span class='label'>required:</span> <span class='kw'>true</span>
+        <span class='id identifier rubyid_col'>col</span> <span class='symbol'>:direction_id</span><span class='comma'>,</span>
+          <span class='op'>&amp;</span><span class='id identifier rubyid_output_map'>output_map</span><span class='lparen'>(</span> <span class='label'>primary:</span> <span class='CHAR'>?0</span><span class='comma'>,</span> <span class='label'>opposite:</span> <span class='CHAR'>?1</span> <span class='rparen'>)</span>
+        <span class='id identifier rubyid_col'>col</span> <span class='symbol'>:block_id</span>
+        <span class='id identifier rubyid_col'>col</span> <span class='symbol'>:shape_id</span>
+        <span class='id identifier rubyid_col'>col</span> <span class='symbol'>:wheelchair_accessible</span><span class='comma'>,</span>
+          <span class='op'>&amp;</span><span class='id identifier rubyid_output_map'>output_map</span><span class='lparen'>(</span> <span class='symbol'>:unknown</span><span class='comma'>,</span> <span class='label'>yes:</span> <span class='CHAR'>?1</span><span class='comma'>,</span> <span class='label'>no:</span> <span class='CHAR'>?2</span> <span class='rparen'>)</span>
+        <span class='id identifier rubyid_col'>col</span> <span class='symbol'>:bikes_allowed</span><span class='comma'>,</span>
+          <span class='op'>&amp;</span><span class='id identifier rubyid_output_map'>output_map</span><span class='lparen'>(</span> <span class='symbol'>:unknown</span><span class='comma'>,</span> <span class='label'>yes:</span> <span class='CHAR'>?1</span><span class='comma'>,</span> <span class='label'>no:</span> <span class='CHAR'>?2</span> <span class='rparen'>)</span>
+      <span class='kw'>end</span>
+
+      <span class='id identifier rubyid_file'>file</span> <span class='symbol'>:stop_times</span><span class='comma'>,</span> <span class='label'>required:</span> <span class='kw'>true</span> <span class='kw'>do</span>
+        <span class='id identifier rubyid_col'>col</span> <span class='symbol'>:trip_id</span><span class='comma'>,</span>        <span class='label'>required:</span> <span class='kw'>true</span>
+        <span class='id identifier rubyid_col'>col</span> <span class='symbol'>:arrival_time</span><span class='comma'>,</span>   <span class='label'>required:</span> <span class='kw'>true</span>
+        <span class='id identifier rubyid_col'>col</span> <span class='symbol'>:departure_time</span><span class='comma'>,</span> <span class='label'>required:</span> <span class='kw'>true</span>
+
+        <span class='id identifier rubyid_prefix'>prefix</span> <span class='symbol'>:stop</span> <span class='kw'>do</span>
+          <span class='id identifier rubyid_col'>col</span> <span class='symbol'>:id</span><span class='comma'>,</span>       <span class='label'>required:</span> <span class='kw'>true</span>
+          <span class='id identifier rubyid_col'>col</span> <span class='symbol'>:sequence</span><span class='comma'>,</span> <span class='label'>required:</span> <span class='kw'>true</span>
+          <span class='id identifier rubyid_col'>col</span> <span class='symbol'>:headsign</span>
+        <span class='kw'>end</span>
+
+        <span class='id identifier rubyid_col'>col</span> <span class='symbol'>:pickup_type</span><span class='comma'>,</span>
+          <span class='op'>&amp;</span><span class='id identifier rubyid_output_map'>output_map</span><span class='lparen'>(</span>    <span class='symbol'>:regular</span><span class='comma'>,</span>
+                              <span class='label'>none:</span> <span class='CHAR'>?1</span><span class='comma'>,</span>
+                      <span class='label'>phone_agency:</span> <span class='CHAR'>?2</span><span class='comma'>,</span>
+            <span class='label'>coordinate_with_driver:</span> <span class='CHAR'>?3</span> <span class='rparen'>)</span>
+
+        <span class='id identifier rubyid_col'>col</span> <span class='symbol'>:drop_off_type</span><span class='comma'>,</span>
+          <span class='op'>&amp;</span><span class='id identifier rubyid_output_map'>output_map</span><span class='lparen'>(</span>    <span class='symbol'>:regular</span><span class='comma'>,</span>
+                              <span class='label'>none:</span> <span class='CHAR'>?1</span><span class='comma'>,</span>
+                      <span class='label'>phone_agency:</span> <span class='CHAR'>?2</span><span class='comma'>,</span>
+            <span class='label'>coordinate_with_driver:</span> <span class='CHAR'>?3</span> <span class='rparen'>)</span>
+
+        <span class='id identifier rubyid_col'>col</span> <span class='symbol'>:shape_dist_traveled</span>
+      <span class='kw'>end</span>
+
+      <span class='id identifier rubyid_file'>file</span> <span class='symbol'>:calendar</span><span class='comma'>,</span> <span class='label'>required:</span> <span class='kw'>true</span> <span class='kw'>do</span>
+        <span class='id identifier rubyid_col'>col</span> <span class='symbol'>:service_id</span><span class='comma'>,</span> <span class='label'>required:</span> <span class='kw'>true</span><span class='comma'>,</span> <span class='label'>unique:</span> <span class='kw'>true</span>
+
+        <span class='id identifier rubyid_col'>col</span> <span class='symbol'>:monday</span><span class='comma'>,</span>    <span class='label'>required:</span> <span class='kw'>true</span><span class='comma'>,</span> <span class='op'>&amp;</span><span class='id identifier rubyid_output_map'>output_map</span><span class='lparen'>(</span> <span class='label'>yes:</span> <span class='CHAR'>?1</span><span class='comma'>,</span> <span class='label'>no:</span> <span class='CHAR'>?0</span> <span class='rparen'>)</span>
+        <span class='id identifier rubyid_col'>col</span> <span class='symbol'>:tuesday</span><span class='comma'>,</span>   <span class='label'>required:</span> <span class='kw'>true</span><span class='comma'>,</span> <span class='op'>&amp;</span><span class='id identifier rubyid_output_map'>output_map</span><span class='lparen'>(</span> <span class='label'>yes:</span> <span class='CHAR'>?1</span><span class='comma'>,</span> <span class='label'>no:</span> <span class='CHAR'>?0</span> <span class='rparen'>)</span>
+        <span class='id identifier rubyid_col'>col</span> <span class='symbol'>:wednesday</span><span class='comma'>,</span> <span class='label'>required:</span> <span class='kw'>true</span><span class='comma'>,</span> <span class='op'>&amp;</span><span class='id identifier rubyid_output_map'>output_map</span><span class='lparen'>(</span> <span class='label'>yes:</span> <span class='CHAR'>?1</span><span class='comma'>,</span> <span class='label'>no:</span> <span class='CHAR'>?0</span> <span class='rparen'>)</span>
+        <span class='id identifier rubyid_col'>col</span> <span class='symbol'>:thursday</span><span class='comma'>,</span>  <span class='label'>required:</span> <span class='kw'>true</span><span class='comma'>,</span> <span class='op'>&amp;</span><span class='id identifier rubyid_output_map'>output_map</span><span class='lparen'>(</span> <span class='label'>yes:</span> <span class='CHAR'>?1</span><span class='comma'>,</span> <span class='label'>no:</span> <span class='CHAR'>?0</span> <span class='rparen'>)</span>
+        <span class='id identifier rubyid_col'>col</span> <span class='symbol'>:friday</span><span class='comma'>,</span>    <span class='label'>required:</span> <span class='kw'>true</span><span class='comma'>,</span> <span class='op'>&amp;</span><span class='id identifier rubyid_output_map'>output_map</span><span class='lparen'>(</span> <span class='label'>yes:</span> <span class='CHAR'>?1</span><span class='comma'>,</span> <span class='label'>no:</span> <span class='CHAR'>?0</span> <span class='rparen'>)</span>
+        <span class='id identifier rubyid_col'>col</span> <span class='symbol'>:saturday</span><span class='comma'>,</span>  <span class='label'>required:</span> <span class='kw'>true</span><span class='comma'>,</span> <span class='op'>&amp;</span><span class='id identifier rubyid_output_map'>output_map</span><span class='lparen'>(</span> <span class='label'>yes:</span> <span class='CHAR'>?1</span><span class='comma'>,</span> <span class='label'>no:</span> <span class='CHAR'>?0</span> <span class='rparen'>)</span>
+        <span class='id identifier rubyid_col'>col</span> <span class='symbol'>:sunday</span><span class='comma'>,</span>    <span class='label'>required:</span> <span class='kw'>true</span><span class='comma'>,</span> <span class='op'>&amp;</span><span class='id identifier rubyid_output_map'>output_map</span><span class='lparen'>(</span> <span class='label'>yes:</span> <span class='CHAR'>?1</span><span class='comma'>,</span> <span class='label'>no:</span> <span class='CHAR'>?0</span> <span class='rparen'>)</span>
+
+        <span class='id identifier rubyid_col'>col</span> <span class='symbol'>:start_date</span>
+        <span class='id identifier rubyid_col'>col</span> <span class='symbol'>:end_date</span>
+      <span class='kw'>end</span>
+
+      <span class='id identifier rubyid_file'>file</span> <span class='symbol'>:calendar_dates</span> <span class='kw'>do</span>
+        <span class='id identifier rubyid_col'>col</span> <span class='symbol'>:service_id</span><span class='comma'>,</span>     <span class='label'>required:</span> <span class='kw'>true</span>
+        <span class='id identifier rubyid_col'>col</span> <span class='symbol'>:date</span><span class='comma'>,</span>           <span class='label'>required:</span> <span class='kw'>true</span>
+        <span class='id identifier rubyid_col'>col</span> <span class='symbol'>:exception_type</span><span class='comma'>,</span> <span class='label'>required:</span> <span class='kw'>true</span><span class='comma'>,</span>
+          <span class='op'>&amp;</span><span class='id identifier rubyid_output_map'>output_map</span><span class='lparen'>(</span> <span class='label'>added:</span> <span class='CHAR'>?1</span><span class='comma'>,</span> <span class='label'>removed:</span> <span class='CHAR'>?2</span> <span class='rparen'>)</span>
+      <span class='kw'>end</span>
+
+      <span class='id identifier rubyid_file'>file</span> <span class='symbol'>:fare_attributes</span> <span class='kw'>do</span>
+        <span class='id identifier rubyid_col'>col</span> <span class='symbol'>:fare_id</span><span class='comma'>,</span>        <span class='label'>required:</span> <span class='kw'>true</span><span class='comma'>,</span> <span class='label'>unique:</span> <span class='kw'>true</span>
+        <span class='id identifier rubyid_col'>col</span> <span class='symbol'>:price</span><span class='comma'>,</span>          <span class='label'>required:</span> <span class='kw'>true</span>
+        <span class='id identifier rubyid_col'>col</span> <span class='symbol'>:currency_type</span><span class='comma'>,</span>  <span class='label'>required:</span> <span class='kw'>true</span>
+        <span class='id identifier rubyid_col'>col</span> <span class='symbol'>:payment_method</span><span class='comma'>,</span> <span class='label'>required:</span> <span class='kw'>true</span><span class='comma'>,</span>
+          <span class='op'>&amp;</span><span class='id identifier rubyid_output_map'>output_map</span><span class='lparen'>(</span> <span class='label'>on_board:</span> <span class='int'>0</span><span class='comma'>,</span> <span class='label'>before:</span> <span class='int'>1</span> <span class='rparen'>)</span>
+        <span class='id identifier rubyid_col'>col</span> <span class='symbol'>:transfers</span><span class='comma'>,</span>      <span class='label'>required:</span> <span class='kw'>true</span><span class='comma'>,</span>
+          <span class='op'>&amp;</span><span class='id identifier rubyid_output_map'>output_map</span><span class='lparen'>(</span> <span class='symbol'>:unlimited</span><span class='comma'>,</span> <span class='label'>none:</span> <span class='int'>0</span><span class='comma'>,</span> <span class='label'>once:</span> <span class='int'>1</span><span class='comma'>,</span> <span class='label'>twice:</span> <span class='int'>2</span> <span class='rparen'>)</span>
+        <span class='id identifier rubyid_col'>col</span> <span class='symbol'>:transfer_duration</span>
+      <span class='kw'>end</span>
+
+      <span class='id identifier rubyid_file'>file</span> <span class='symbol'>:fare_rules</span> <span class='kw'>do</span>
+        <span class='id identifier rubyid_col'>col</span> <span class='symbol'>:fare_id</span><span class='comma'>,</span>        <span class='label'>required:</span> <span class='kw'>true</span>
+        <span class='id identifier rubyid_col'>col</span> <span class='symbol'>:route_id</span>
+        <span class='id identifier rubyid_col'>col</span> <span class='symbol'>:origin_id</span>
+        <span class='id identifier rubyid_col'>col</span> <span class='symbol'>:destination_id</span>
+        <span class='id identifier rubyid_col'>col</span> <span class='symbol'>:contains_id</span>
+      <span class='kw'>end</span>
+
+      <span class='id identifier rubyid_file'>file</span> <span class='symbol'>:shapes</span> <span class='kw'>do</span>
+        <span class='id identifier rubyid_prefix'>prefix</span> <span class='symbol'>:shape</span> <span class='kw'>do</span>
+          <span class='id identifier rubyid_col'>col</span> <span class='symbol'>:id</span><span class='comma'>,</span>            <span class='label'>required:</span> <span class='kw'>true</span>
+          <span class='id identifier rubyid_col'>col</span> <span class='symbol'>:pt_lat</span><span class='comma'>,</span>        <span class='label'>required:</span> <span class='kw'>true</span>
+          <span class='id identifier rubyid_col'>col</span> <span class='symbol'>:pt_lon</span><span class='comma'>,</span>        <span class='label'>required:</span> <span class='kw'>true</span>
+          <span class='id identifier rubyid_col'>col</span> <span class='symbol'>:pt_sequence</span><span class='comma'>,</span>   <span class='label'>required:</span> <span class='kw'>true</span>
+          <span class='id identifier rubyid_col'>col</span> <span class='symbol'>:dist_traveled</span>
+        <span class='kw'>end</span>
+      <span class='kw'>end</span>
+
+      <span class='id identifier rubyid_file'>file</span> <span class='symbol'>:frequencies</span> <span class='kw'>do</span>
+        <span class='id identifier rubyid_col'>col</span> <span class='symbol'>:trip_id</span><span class='comma'>,</span>      <span class='label'>required:</span> <span class='kw'>true</span>
+        <span class='id identifier rubyid_col'>col</span> <span class='symbol'>:start_time</span><span class='comma'>,</span>   <span class='label'>required:</span> <span class='kw'>true</span>
+        <span class='id identifier rubyid_col'>col</span> <span class='symbol'>:end_time</span><span class='comma'>,</span>     <span class='label'>required:</span> <span class='kw'>true</span>
+        <span class='id identifier rubyid_col'>col</span> <span class='symbol'>:headway_secs</span><span class='comma'>,</span> <span class='label'>required:</span> <span class='kw'>true</span>
+        <span class='id identifier rubyid_col'>col</span> <span class='symbol'>:exact_times</span><span class='comma'>,</span>
+          <span class='op'>&amp;</span><span class='id identifier rubyid_output_map'>output_map</span><span class='lparen'>(</span> <span class='symbol'>:inexact</span><span class='comma'>,</span> <span class='label'>exact:</span> <span class='int'>1</span> <span class='rparen'>)</span>
+      <span class='kw'>end</span>
+
+      <span class='id identifier rubyid_file'>file</span> <span class='symbol'>:transfers</span> <span class='kw'>do</span>
+        <span class='id identifier rubyid_col'>col</span> <span class='symbol'>:from_stop_id</span><span class='comma'>,</span>      <span class='label'>required:</span> <span class='kw'>true</span>
+        <span class='id identifier rubyid_col'>col</span> <span class='symbol'>:to_stop_id</span><span class='comma'>,</span>        <span class='label'>required:</span> <span class='kw'>true</span>
+        <span class='id identifier rubyid_col'>col</span> <span class='symbol'>:transfer_type</span><span class='comma'>,</span>     <span class='label'>required:</span> <span class='kw'>true</span><span class='comma'>,</span>
+          <span class='op'>&amp;</span><span class='id identifier rubyid_output_map'>output_map</span><span class='lparen'>(</span> <span class='symbol'>:recommended</span><span class='comma'>,</span>
+                     <span class='label'>timed_transfer:</span> <span class='int'>1</span><span class='comma'>,</span>
+              <span class='label'>minimum_time_required:</span> <span class='int'>2</span><span class='comma'>,</span>
+                         <span class='label'>impossible:</span> <span class='int'>3</span> <span class='rparen'>)</span>
+        <span class='id identifier rubyid_col'>col</span> <span class='symbol'>:min_transfer_time</span>
+      <span class='kw'>end</span>
+
+      <span class='id identifier rubyid_file'>file</span> <span class='symbol'>:feed_info</span> <span class='kw'>do</span>
+        <span class='id identifier rubyid_prefix'>prefix</span> <span class='symbol'>:scope</span> <span class='kw'>do</span>
+          <span class='id identifier rubyid_col'>col</span> <span class='symbol'>:publisher_name</span><span class='comma'>,</span> <span class='label'>required:</span> <span class='kw'>true</span>
+          <span class='id identifier rubyid_col'>col</span> <span class='symbol'>:publisher_url</span><span class='comma'>,</span>  <span class='label'>required:</span> <span class='kw'>true</span>
+          <span class='id identifier rubyid_col'>col</span> <span class='symbol'>:lang</span><span class='comma'>,</span>           <span class='label'>required:</span> <span class='kw'>true</span>
+          <span class='id identifier rubyid_col'>col</span> <span class='symbol'>:start_date</span>
+          <span class='id identifier rubyid_col'>col</span> <span class='symbol'>:end_date</span>
+          <span class='id identifier rubyid_col'>col</span> <span class='symbol'>:version</span>
+        <span class='kw'>end</span>
+      <span class='kw'>end</span>
+    <span class='kw'>end</span>
+  <span class='kw'>end</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+  </div>
+
+</div>
+
+    <div id="footer">
+  Generated on Mon Aug 11 01:05:27 2014 by
+  <a href="http://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
+  0.8.7.4 (ruby-2.1.1).
+</div>
+
+  </body>
+</html>

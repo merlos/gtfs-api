@@ -1,5 +1,11 @@
 module GtfsApi
   class Transfer < ActiveRecord::Base
+    include GtfsApi::Concerns::Models::Concerns::Csvable
+    #gtfs feed columns definitions
+    set_gtfs_col :from_stop_id
+    set_gtfs_col :to_stop_id
+    set_gtfs_col :transfer_type
+    set_gtfs_col :min_transfer_time
     
     # Validations
     validates :from_stop, presence: true

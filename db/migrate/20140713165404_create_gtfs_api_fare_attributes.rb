@@ -3,7 +3,7 @@ class CreateGtfsApiFareAttributes < ActiveRecord::Migration
     create_table :gtfs_api_fare_attributes do |t|
       t.string :io_id
       t.decimal :price
-      t.string :currency_type
+      t.string :currency_type, limit: 3
       t.integer :payment_method
       t.integer :transfers
       t.integer :transfer_duration

@@ -14,12 +14,12 @@
 ActiveRecord::Schema.define(version: 20140713165440) do
 
   create_table "gtfs_api_agencies", force: true do |t|
-    t.string   "io_id"
+    t.string   "io_id",      limit: 48
     t.string   "name"
     t.string   "url"
-    t.string   "timezone"
-    t.string   "lang"
-    t.string   "phone"
+    t.string   "timezone",   limit: 64
+    t.string   "lang",       limit: 2
+    t.string   "phone",      limit: 24
     t.string   "fare_url"
     t.datetime "created_at"
     t.datetime "updated_at"
@@ -29,6 +29,7 @@ ActiveRecord::Schema.define(version: 20140713165440) do
 
   create_table "gtfs_api_calendar_dates", id: false, force: true do |t|
     t.integer  "id"
+    t.string   "io_id"
     t.date     "date"
     t.integer  "exception_type"
     t.datetime "created_at"
@@ -36,6 +37,7 @@ ActiveRecord::Schema.define(version: 20140713165440) do
   end
 
   add_index "gtfs_api_calendar_dates", ["id"], name: "index_gtfs_api_calendar_dates_on_id"
+  add_index "gtfs_api_calendar_dates", ["io_id"], name: "index_gtfs_api_calendar_dates_on_io_id"
 
   create_table "gtfs_api_calendars", force: true do |t|
     t.string   "io_id"
@@ -57,7 +59,7 @@ ActiveRecord::Schema.define(version: 20140713165440) do
   create_table "gtfs_api_fare_attributes", force: true do |t|
     t.string   "io_id"
     t.decimal  "price"
-    t.string   "currency_type"
+    t.string   "currency_type",     limit: 3
     t.integer  "payment_method"
     t.integer  "transfers"
     t.integer  "transfer_duration"
@@ -67,7 +69,7 @@ ActiveRecord::Schema.define(version: 20140713165440) do
 
   add_index "gtfs_api_fare_attributes", ["io_id"], name: "index_gtfs_api_fare_attributes_on_io_id"
 
-  create_table "gtfs_api_fare_rules", id: false, force: true do |t|
+  create_table "gtfs_api_fare_rules", force: true do |t|
     t.integer  "fare_id"
     t.integer  "route_id"
     t.string   "origin_id"
@@ -86,10 +88,11 @@ ActiveRecord::Schema.define(version: 20140713165440) do
   create_table "gtfs_api_feed_infos", force: true do |t|
     t.string   "feed_publisher_name"
     t.string   "feed_publisher_url"
-    t.string   "feed_lang"
+    t.string   "feed_lang",           limit: 2
     t.date     "feed_start_date"
     t.date     "feed_end_date"
     t.string   "feed_version"
+    t.integer  "version"
     t.datetime "created_at"
     t.datetime "updated_at"
   end
@@ -104,16 +107,18 @@ ActiveRecord::Schema.define(version: 20140713165440) do
     t.datetime "updated_at"
   end
 
+  add_index "gtfs_api_frequencies", ["trip_id"], name: "index_gtfs_api_frequencies_on_trip_id"
+
   create_table "gtfs_api_routes", force: true do |t|
     t.string   "io_id"
     t.integer  "agency_id"
     t.string   "short_name"
     t.string   "long_name"
-    t.string   "desc"
+    t.text     "desc"
     t.integer  "route_type"
     t.string   "url"
-    t.string   "color"
-    t.string   "text_color"
+    t.string   "color",      limit: 8
+    t.string   "text_color", limit: 8
     t.datetime "created_at"
     t.datetime "updated_at"
   end
@@ -140,26 +145,29 @@ ActiveRecord::Schema.define(version: 20140713165440) do
     t.integer  "stop_id"
     t.integer  "stop_sequence"
     t.string   "stop_headsign"
-    t.integer  "pickup_type"
-    t.integer  "drop_off_type"
+    t.integer  "pickup_type",    default: 0
+    t.integer  "drop_off_type",  default: 0
     t.decimal  "dist_traveled"
     t.datetime "created_at"
     t.datetime "updated_at"
   end
 
+  add_index "gtfs_api_stop_times", ["stop_id"], name: "index_gtfs_api_stop_times_on_stop_id"
+  add_index "gtfs_api_stop_times", ["trip_id"], name: "index_gtfs_api_stop_times_on_trip_id"
+
   create_table "gtfs_api_stops", force: true do |t|
     t.string   "io_id"
     t.string   "code"
     t.string   "name"
-    t.string   "desc"
-    t.decimal  "lat",                 precision: 10, scale: 6
-    t.decimal  "lon",                 precision: 10, scale: 6
+    t.text     "desc"
+    t.decimal  "lat",                            precision: 10, scale: 6
+    t.decimal  "lon",                            precision: 10, scale: 6
     t.string   "zone_id"
     t.string   "url"
-    t.integer  "location_type"
+    t.integer  "location_type",                                           default: 0
     t.string   "io_parent_station"
     t.integer  "parent_station_id"
-    t.string   "timezone"
+    t.string   "timezone",            limit: 64
     t.integer  "wheelchair_boarding"
     t.datetime "created_at"
     t.datetime "updated_at"

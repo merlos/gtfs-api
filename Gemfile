@@ -14,3 +14,4 @@ gemspec
 # gem 'debugger'
 
 gem 'iso639-validator','>=0.0.2'
+gem 'gtfs-reader', :git=>"https://github.com/merlos/gtfs-reader.git", :branch => 'develop'

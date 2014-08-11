@@ -48,9 +48,8 @@ module GtfsApi
      
      #
      # requires fixtures with:
-     #  - fare_rule with id = 1 should belong_to a fare_attribute with io_id '_fare_one'
+     #  - fare_rule that belongs_to a fare_attribute with io_id '_fare_one'
      test 'fare_rule belongs_to fare_attribute' do
-       #we find a fare rule with the io_fare_id == _fare_one
        
        fare_attribute = FareAttribute.find_by_io_id('_fare_one')
        f = FareRule.where(fare: fare_attribute).first

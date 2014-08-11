@@ -1,7 +1,7 @@
 class CreateGtfsApiShapes < ActiveRecord::Migration
   def change
     create_table :gtfs_api_shapes, {id: false} do |t|
-      t.integer :id  #a shape identified by id has many points
+      t.integer :id  #a shape identified by an id has many points
       t.string :io_id
       t.decimal :pt_lat, presence: true, precision: 10, scale: 6
       t.decimal :pt_lon, presence: true, precision: 10, scale: 6

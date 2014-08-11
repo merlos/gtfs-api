@@ -1,6 +1,19 @@
 module GtfsApi
   class Route < ActiveRecord::Base
     
+    include GtfsApi::Concerns::Models::Concerns::Csvable
+    #gtfs feed columns definitions
+    set_gtfs_col :io_id, :route_id
+    set_gtfs_col :agency_id
+    set_gtfs_col :short_name, :route_short_name
+    set_gtfs_col :long_name, :route_long_name
+    set_gtfs_col :desc, :route_desc
+    set_gtfs_col :route_type, :route_type
+    set_gtfs_col :color, :route_color
+    set_gtfs_col :text_color, :route_text_color
+    
+    
+    
     validates :io_id, uniqueness: true, presence:true
     validates :short_name, presence: true
     validates :long_name, presence: true
@@ -17,14 +30,13 @@ module GtfsApi
     #
     
     #
-    #ROUTE TYPES
+    # ROUTE TYPES
     # https://developers.google.com/transit/gtfs/reference#routes_fields
     #
     # 
-    # Sample of usage:
-    # 
-    # r = Route.new
-    # r.route_type = Route::TYPE_TRAM
+    # @example 
+    #   r = Route.new
+    #   r.route_type = Route::TYPE_TRAM
     #
     #
     # 0 - Tram, Streetcar, Light rail. Any light rail or street level system within 

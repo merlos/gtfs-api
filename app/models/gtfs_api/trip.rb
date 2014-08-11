@@ -16,7 +16,7 @@ module GtfsApi
     belongs_to :route
     belongs_to :calendar, foreign_key: 'service_id', class: 'Calendar'
     belongs_to :calendar_dates, foreign_key: 'service_id', class: 'CalendarDate' 
-    
+    has_many :frequencies
     #Constants 
     
     #Direction_id

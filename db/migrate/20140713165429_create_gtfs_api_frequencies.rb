@@ -9,5 +9,6 @@ class CreateGtfsApiFrequencies < ActiveRecord::Migration
 
       t.timestamps
     end
+    add_index :gtfs_api_frequencies, :trip_id
   end
 end

@@ -2,7 +2,6 @@ class CreateGtfsApiFareRules < ActiveRecord::Migration
   def change
     create_table :gtfs_api_fare_rules do |t|
       t.belongs_to :fare
-            
       t.belongs_to :route # => route->route_id 
       t.string :origin_id # => stops->zone_id
       t.string :destination_id # => stops->zone_id

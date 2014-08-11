@@ -6,11 +6,11 @@ class CreateGtfsApiRoutes < ActiveRecord::Migration
       
       t.string :short_name
       t.string :long_name
-      t.string :desc
+      t.text :desc
       t.integer :route_type
       t.string :url
-      t.string :color
-      t.string :text_color
+      t.string :color, limit: 8 # it is an RGB value, but with length 8, supports ARGB
+      t.string :text_color, limit: 8 
 
       t.timestamps
     end
