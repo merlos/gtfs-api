@@ -9,8 +9,9 @@ module GtfsApi
     set_gtfs_col :end_date, :feed_end_date
     set_gtfs_col :version, :feed_version
     
-    #Validations
     
+    #Validations
+    validates :publisher_url, :'gtfs_api/validators/url'=>true, allow_nil: true
     
   end
 end

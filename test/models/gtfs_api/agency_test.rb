@@ -44,8 +44,20 @@ module GtfsApi
       a = self.create_valid_agency 
       a.url = nil
       assert_not a.valid?, 'agency url shall be present; ' + a.errors.to_a.to_s  
- 
     end
+    
+    test "agency url format" do
+      a = self.create_valid_agency
+      a.url = "http://www.foofoofoo.es"
+      assert a.valid?, a.errors.to_a.to_s
+      a.url = "https://barbarbar.es/drunk"
+      assert a.valid?, a.errors.to_a.to_s
+      a.url = "ftp://www.fetepe.es"
+      assert a.invalid?
+      a2 = self.create_valid_agency
+      a2.url = "/agency/absolute"
+      assert a.invalid?
+    end  
     
     test "agency timezone presence" do
       a = self.create_valid_agency 

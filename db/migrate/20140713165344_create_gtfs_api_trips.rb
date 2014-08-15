@@ -4,14 +4,14 @@ class CreateGtfsApiTrips < ActiveRecord::Migration
       t.string :io_id
       t.belongs_to :route
       
-      t.integer :service_id
+      t.string :service_id
       t.string :headsign
       t.string :short_name
       
       t.integer :direction_id #boolean
       
       t.string :block_id
-      t.integer :shape_id
+      t.string :shape_id
       
       t.integer :wheelchair_accesible
       t.integer :bikes_allowed

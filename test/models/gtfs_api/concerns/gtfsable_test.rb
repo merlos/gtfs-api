@@ -79,6 +79,8 @@ module GtfsApi::Concerns::Models::Concerns
       assert c[:io_id] == :service_id
     end
     
+    #
+    #
     test "file names for all classes are the ones defined in GTFS feed specification" do
       assert_equal GtfsApi::Agency.gtfs_file, :agency
       assert_equal GtfsApi::Stop.gtfs_file, :stops

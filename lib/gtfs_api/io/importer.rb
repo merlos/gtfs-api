@@ -79,12 +79,14 @@ module GtfsApi
                 transfers {
                   puts "Read Transfer: "
                 }
-                fare_rules{|row| puts "Fare Rule for fare_id: #{row[:fare_id]}"}
+                fare_rules{|row| 
+                  puts "Fare Rule for fare_id: #{row[:fare_id]}"
+                }
               end #handlers
             end # sample
           end #sources
         end #config
-        GtfsReader.update :gtfs # or GtfsReader.update_all!
+        GtfsReader.update :gtfs_api # or GtfsReader.update_all!
       end
     end          
   end #io

@@ -56,6 +56,18 @@ module GtfsApi
       assert s4.invalid?
     end
     
+    test "url format" do 
+      s = self.fill_valid_stop
+      s.url = "http://www.lalala.com"
+      assert s.valid?
+      s.url = "https://www.lalala.com"
+      assert s.valid?
+      s.url = "ftp://www.site.com"
+      assert s.invalid?
+      s2 = self.fill_valid_stop
+      s.url = "/home/merlos/caracoles"
+      assert s.invalid?
+    end
     test "location_type range and type is integer" do
       s2 = self.fill_valid_stop
       s2.location_type = 2

@@ -29,6 +29,9 @@ module GtfsApi
     belongs_to :calendar, foreign_key: 'service_id', class: 'Calendar'
     belongs_to :calendar_dates, foreign_key: 'service_id', class: 'CalendarDate' 
     has_many :frequencies
+    
+    # TODO review associations to calendar, calendar_dates and shapes
+    
     #Constants 
     
     #Direction_id

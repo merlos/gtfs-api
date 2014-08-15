@@ -1,4 +1,4 @@
-module GtfsApi
+module GtfsApi  
   class Stop < ActiveRecord::Base
     
     include GtfsApi::Concerns::Models::Concerns::Gtfsable
@@ -22,10 +22,12 @@ module GtfsApi
     validates :name, presence: true
     validates :lat, presence: true, numericality: { greater_than: -90.000000, less_than: 90.000000}
     validates :lon, presence: true, numericality: {greater_than: -180.000000, less_than: 180.000000}
+    validates :url, allow_nil: true, :'gtfs_api/validators/url' => true
     validates :location_type, numericality: {only_integer: true, greater_than_or_equal_to: 0, less_than_or_equal_to: 1}
     
     # TODO
     # Validate timezone
+    
     
     # ASSOCIATIONS
     belongs_to :parent_station, foreign_key: 'parent_station_id', class_name: 'Stop'
