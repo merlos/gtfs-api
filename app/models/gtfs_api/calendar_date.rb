@@ -1,10 +1,10 @@
 module GtfsApi
   class CalendarDate < ActiveRecord::Base
     
-    include GtfsApi::Concerns::Models::Concerns::Csvable
+    include GtfsApi::Concerns::Models::Concerns::Gtfsable
     set_gtfs_col :io_id, :service_id
-    set_gtfs_col :date, :date
-    set_gtfs_col :exception_type, :exception_type
+    set_gtfs_col :date
+    set_gtfs_col :exception_type
     
     #VALIDATIONS
     validates :id, presence: true

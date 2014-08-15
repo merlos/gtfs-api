@@ -3,7 +3,7 @@ require 'test_helper'
 module GtfsApi::Concerns::Models::Concerns
   
   class TestSetGtfsRow 
-    include GtfsApi::Concerns::Models::Concerns::Csvable
+    include GtfsApi::Concerns::Models::Concerns::Gtfsable
     #gtfs feed columns definitions
     set_gtfs_col :io_id 
     set_gtfs_col :default_col_map
@@ -11,7 +11,7 @@ module GtfsApi::Concerns::Models::Concerns
   end
   
   class OverrideId 
-    include GtfsApi::Concerns::Models::Concerns::Csvable
+    include GtfsApi::Concerns::Models::Concerns::Gtfsable
     #gtfs feed columns definitions
     set_gtfs_col :io_id, :override_id 
   end
@@ -77,6 +77,22 @@ module GtfsApi::Concerns::Models::Concerns
     test "that set_csv_col io_id is overriden setting a second argument" do
       c =  GtfsApi::CalendarDate.gtfs_cols
       assert c[:io_id] == :service_id
-    end 
+    end
+    
+    test "file names for all classes are the ones defined in GTFS feed specification" do
+      assert_equal GtfsApi::Agency.gtfs_file, :agency
+      assert_equal GtfsApi::Stop.gtfs_file, :stops
+      assert_equal GtfsApi::Route.gtfs_file, :routes
+      assert_equal GtfsApi::Trip.gtfs_file, :trips
+      assert_equal GtfsApi::StopTime.gtfs_file, :stop_times
+      assert_equal GtfsApi::Calendar.gtfs_file, :calendar
+      assert_equal GtfsApi::CalendarDate.gtfs_file, :calendar_dates
+      assert_equal GtfsApi::FareAttribute.gtfs_file, :fare_attributes
+      assert_equal GtfsApi::FareRule.gtfs_file, :fare_rules
+      assert_equal GtfsApi::Shape.gtfs_file, :shapes
+      assert_equal GtfsApi::Frequency.gtfs_file, :frequencies
+      assert_equal GtfsApi::Transfer.gtfs_file, :transfers
+      assert_equal GtfsApi::FeedInfo.gtfs_file, :feed_info
+    end
   end
 end

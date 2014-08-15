@@ -1,17 +1,18 @@
 module GtfsApi
   class Calendar < ActiveRecord::Base
     
-    include GtfsApi::Concerns::Models::Concerns::Csvable
+    include GtfsApi::Concerns::Models::Concerns::Gtfsable
+    set_gtfs_file :calendar
     set_gtfs_col :io_id, :service_id
-    set_gtfs_col :monday, :monday
-    set_gtfs_col :tuesday, :tuesday
-    set_gtfs_col :wednesday, :wednesday
-    set_gtfs_col :thursday, :thursday
-    set_gtfs_col :friday, :friday
-    set_gtfs_col :saturday, :saturday
-    set_gtfs_col :sunday, :sunday
-    set_gtfs_col :start_date, :start_date
-    set_gtfs_col :end_date, :end_date
+    set_gtfs_col :monday
+    set_gtfs_col :tuesday
+    set_gtfs_col :wednesday
+    set_gtfs_col :thursday
+    set_gtfs_col :friday
+    set_gtfs_col :saturday
+    set_gtfs_col :sunday
+    set_gtfs_col :start_date
+    set_gtfs_col :end_date
     
     # Validations
     validates :io_id, uniqueness: true, presence:true #service_id

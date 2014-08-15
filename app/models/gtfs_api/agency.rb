@@ -1,7 +1,8 @@
 module GtfsApi
   class Agency < ActiveRecord::Base
  
-    include GtfsApi::Concerns::Models::Concerns::Csvable
+    include GtfsApi::Concerns::Models::Concerns::Gtfsable
+    set_gtfs_file :agency
     set_gtfs_col :io_id, :agency_id
     set_gtfs_col :name, :agency_name
     set_gtfs_col :url, :agency_url

@@ -1,6 +1,6 @@
 module GtfsApi
   class StopTime < ActiveRecord::Base
-    include GtfsApi::Concerns::Models::Concerns::Csvable
+    include GtfsApi::Concerns::Models::Concerns::Gtfsable
     #gtfs feed columns definitions
     set_gtfs_col :trip_id
     set_gtfs_col :arrival_time

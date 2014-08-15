@@ -1,6 +1,6 @@
 module GtfsApi
   class Shape < ActiveRecord::Base
-    include GtfsApi::Concerns::Models::Concerns::Csvable
+    include GtfsApi::Concerns::Models::Concerns::Gtfsable
     #gtfs feed columns definitions
     set_gtfs_col :io_id, :shape_id
     set_gtfs_col :pt_lat, :shape_pt_lat

@@ -5,8 +5,10 @@
 #
 # 
 module GtfsApi
-  class Exporter
-    def self.export(prefix)
+  module Io
+    class Exporter
+      def self.export(prefix)
+      end
     end
-  end
+  end #io
 end

@@ -1,6 +1,18 @@
 module GtfsApi
   class Trip < ActiveRecord::Base
     
+    include GtfsApi::Concerns::Models::Concerns::Gtfsable
+    set_gtfs_col :route_id
+    set_gtfs_col :service_id
+    set_gtfs_col :io_id, :trip_id
+    set_gtfs_col :headsign, :trip_headsign
+    set_gtfs_col :short_name, :trip_short_name
+    set_gtfs_col :direction_id
+    set_gtfs_col :block_id
+    set_gtfs_col :shape_id
+    set_gtfs_col :wheelchair_accesible
+    set_gtfs_col :bikes_allowed
+    
     #validation 
     validates :io_id, uniqueness: true
     validates :route, presence: true

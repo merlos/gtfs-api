@@ -1,13 +1,13 @@
 module GtfsApi
   class FareAttribute < ActiveRecord::Base
     
-    include GtfsApi::Concerns::Models::Concerns::Csvable
+    include GtfsApi::Concerns::Models::Concerns::Gtfsable
     set_gtfs_col :io_id, :fare_id
-    set_gtfs_col :price, :price
-    set_gtfs_col :currency_type, :currency_type
-    set_gtfs_col :payment_method, :payment_method
-    set_gtfs_col :tranfers, :transfers
-    set_gtfs_col :transfer_duration, :transfer_duration
+    set_gtfs_col :price
+    set_gtfs_col :currency_type
+    set_gtfs_col :payment_method
+    set_gtfs_col :tranfers
+    set_gtfs_col :transfer_duration
     
     
     #valdations

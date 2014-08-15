@@ -1,21 +1,18 @@
-GIT
-  remote: https://github.com/merlos/gtfs-reader.git
-  revision: 722b34167d7c2098b28a2635ad9a0b1f930a48d9
-  branch: develop
+PATH
+  remote: .
+  specs:
+    gtfs_api (0.0.1)
+      iso639-validator
+      rails (~> 4.1.4)
+
+PATH
+  remote: ../support_gems/gtfs-reader
   specs:
     gtfs-reader (0.2.8)
       activesupport (~> 4.0)
       colorize (~> 0.7)
       log4r (~> 1.1)
       rubyzip (~> 1.1)
-
-PATH
-  remote: .
-  specs:
-    gtfs_api (0.0.1)
-      gtfs-reader
-      iso639-validator
-      rails (~> 4.1.4)
 
 GEM
   remote: https://rubygems.org/

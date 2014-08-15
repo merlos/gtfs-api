@@ -1,7 +1,7 @@
 module GtfsApi
   class Stop < ActiveRecord::Base
     
-    include GtfsApi::Concerns::Models::Concerns::Csvable
+    include GtfsApi::Concerns::Models::Concerns::Gtfsable
     #gtfs feed columns definitions
     set_gtfs_col :io_id, :stop_id
     set_gtfs_col :code, :stop_code

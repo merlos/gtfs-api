@@ -1,7 +1,7 @@
 module GtfsApi
   class Route < ActiveRecord::Base
     
-    include GtfsApi::Concerns::Models::Concerns::Csvable
+    include GtfsApi::Concerns::Models::Concerns::Gtfsable
     #gtfs feed columns definitions
     set_gtfs_col :io_id, :route_id
     set_gtfs_col :agency_id

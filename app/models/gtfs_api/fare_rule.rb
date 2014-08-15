@@ -1,12 +1,12 @@
 module GtfsApi
   class FareRule < ActiveRecord::Base
     
-    include GtfsApi::Concerns::Models::Concerns::Csvable
-    set_gtfs_col :fare_id, :fare_id
-    set_gtfs_col :route_id, :route_id
-    set_gtfs_col :origin_id, :origin_id
-    set_gtfs_col :destination_id, :destination_id
-    set_gtfs_col :contains_id, :contains_id
+    include GtfsApi::Concerns::Models::Concerns::Gtfsable
+    set_gtfs_col :fare_id
+    set_gtfs_col :route_id
+    set_gtfs_col :origin_id
+    set_gtfs_col :destination_id
+    set_gtfs_col :contains_id
     
     
     validates :fare_id, presence: true

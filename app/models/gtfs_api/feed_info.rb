@@ -1,6 +1,7 @@
 module GtfsApi
   class FeedInfo < ActiveRecord::Base
-    include GtfsApi::Concerns::Models::Concerns::Csvable
+    include GtfsApi::Concerns::Models::Concerns::Gtfsable
+    set_gtfs_file :feed_info
     set_gtfs_col :publisher_name, :feed_publisher_name
     set_gtfs_col :publisher_url, :feed_publisher_url
     set_gtfs_col :lang, :feed_lang
