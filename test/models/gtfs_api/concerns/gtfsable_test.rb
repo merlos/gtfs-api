@@ -31,29 +31,7 @@ module GtfsApi::Concerns::Models::Concerns
     test "overriding default mapping" do
       assert TestSetGtfsRow.gtfs_cols[:test1] == :test2
     end
-    
-    test "override io_id works" do
-      assert OverrideId.gtfs_cols[:io_id] == :override_id
-    end
-    
-    #
-    # NOW Let's check this out with real classes
-    # 
-    # this test assumes that GtfsApi::Agency isCsvable
-    test "io_id works and that removes the name" do
-      csv_row = {:agency_id => 'agency_id', :agency_name=>'agency_name'}
-      a = GtfsApi::Agency.new_from_gtfs_feed(csv_row)
-      assert(a.io_id == 'agency_id')
-      assert(a.name == 'agency_name')
-    end
-    
-    #
-    # this test assumes that GtfsApi::Route is Csvable
-    test "that type is an exception" do
-      csv_row = {:route_type=>1}
-      assert_nothing_raised (ActiveRecord::UnknownAttributeError) { GtfsApi::Route.new_from_gtfs_feed(csv_row)}
-    end
-    
+              
     # this test assumes that GtfsApi::Route is Csvable
     # and that that the model includes this line 
     # set_gtfs_col :io_id

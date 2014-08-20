@@ -15,6 +15,6 @@ module GtfsApi
     validates :dist_traveled, numericality: {greater_than_or_equal_to: 0}
     
     #associations
-    has_and_belongs_to_many :trips, join_table: 'gtfs_api_trips', foreign_key: 'shape_id', association_foreign_key: 'id'
+    has_and_belongs_to_many :trips, join_table: 'gtfs_api_trips', foreign_key: 'shape_id', association_foreign_key: 'io_id'
   end
 end

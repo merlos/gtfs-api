@@ -28,22 +28,24 @@ module GtfsApi
     # TODO
     # Validate timezone
     
-    
     # ASSOCIATIONS
     belongs_to :parent_station, foreign_key: 'parent_station_id', class_name: 'Stop'
     
     has_many :stops, foreign_key: 'parent_station_id', class_name: 'Stop'
     
     # to get the fares this stop is the origin
-    has_many :fares_as_origin, foreign_key: 'origin_id', primary_key: 'zone_id', class_name: 'FareRules'
+    has_many :origins, foreign_key: 'origin_id', primary_key: 'zone_id', class_name: 'FareRules'
     # to get the fares this stop is the destination
-    has_many :fares_as_destination, foreign_key: 'destination_id', primary_key: 'zone_id', class_name: 'FareRules'
+    has_many :destinations, foreign_key: 'destination_id', primary_key: 'zone_id', class_name: 'FareRules'
     # to get the fares this stop is contained
-    has_many :fares_contained, foreign_key: 'contains_id', primary_key: 'zone_id', class_name: 'FareRules'
+    has_many :contained, foreign_key: 'contains_id', primary_key: 'zone_id', class_name: 'FareRules'
     
     has_many :stop_times
     #to get stop trips
     has_many :trips, through: 'stop_times'
+    # to get transfers
+    has_many :transfers_from, foreign_key: 'to_stop_id', class_name: 'Transfers'
+    has_many :transfers_to, foreign_key: 'to_stop_id', class_name: 'Transfers'
     
     # CONSTANTS 
     # Values for location_type
@@ -52,8 +54,7 @@ module GtfsApi
     STOP_TYPE = 0
     STATION_TYPE = 1
     
-    has_many :transfers_from, foreign_key: 'to_stop_id', class_name: 'Transfers'
-    has_many :transfers_to, foreign_key: 'to_stop_id', class_name: 'Transfers'
+   
     
   end
 end

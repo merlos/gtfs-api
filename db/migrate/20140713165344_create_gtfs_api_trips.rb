@@ -13,8 +13,8 @@ class CreateGtfsApiTrips < ActiveRecord::Migration
       t.string :block_id
       t.string :shape_id
       
-      t.integer :wheelchair_accesible
-      t.integer :bikes_allowed
+      t.integer :wheelchair_accesible, default: 0
+      t.integer :bikes_allowed, default: 0
 
       t.timestamps
     end

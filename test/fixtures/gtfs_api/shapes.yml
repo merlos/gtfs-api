@@ -9,7 +9,6 @@ shape_one_1:
   dist_traveled: 0.00
 
 shape_one_2:
-  id: 1
   io_id: '_shape_one'
   pt_lat: 1.22
   pt_lon: 1.22
@@ -18,7 +17,6 @@ shape_one_2:
   
 
 shape_one_3:
-  id: 1
   io_id: '_shape_one'
   pt_lat: 1.33
   pt_lon: 1.33
@@ -28,7 +26,6 @@ shape_one_3:
 # shape two
 
 shape_two_1:
-  id: 2
   io_id: '_shape_two'
   pt_lat: 2.11
   pt_lon: 2.11
@@ -36,7 +33,6 @@ shape_two_1:
   dist_traveled: 0.00
 
 shape_two_2:
-  id: 2
   io_id: '_shape_two'
   pt_lat: 2.22
   pt_lon: 2.22
@@ -45,7 +41,6 @@ shape_two_2:
   
 
 shape_two_3:
-  id: 2
   io_id: '_shape_two'
   pt_lat: 2.33
   pt_lon: 2.33

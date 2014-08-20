@@ -1,14 +1,12 @@
 
 # remove date from calendar one
 calendar_date_one:
-  id: calendar_one
   io_id: '_calendar_one'
   date: 2014-12-25
   exception_type: 2
 
 #add date to calendar two
 calendar_date_two:
-  id: calendar_two
   io_id: '_calendar_two'
   date: 2014-12-25
   exception_type: 1

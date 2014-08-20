@@ -27,8 +27,7 @@ ActiveRecord::Schema.define(version: 20140713165440) do
 
   add_index "gtfs_api_agencies", ["io_id"], name: "index_gtfs_api_agencies_on_io_id"
 
-  create_table "gtfs_api_calendar_dates", id: false, force: true do |t|
-    t.integer  "id"
+  create_table "gtfs_api_calendar_dates", force: true do |t|
     t.string   "io_id"
     t.date     "date"
     t.integer  "exception_type"
@@ -125,8 +124,7 @@ ActiveRecord::Schema.define(version: 20140713165440) do
 
   add_index "gtfs_api_routes", ["io_id"], name: "index_gtfs_api_routes_on_io_id"
 
-  create_table "gtfs_api_shapes", id: false, force: true do |t|
-    t.integer  "id"
+  create_table "gtfs_api_shapes", force: true do |t|
     t.string   "io_id"
     t.decimal  "pt_lat",        precision: 10, scale: 6
     t.decimal  "pt_lon",        precision: 10, scale: 6
@@ -191,12 +189,12 @@ ActiveRecord::Schema.define(version: 20140713165440) do
   create_table "gtfs_api_trips", force: true do |t|
     t.string   "io_id"
     t.integer  "route_id"
-    t.integer  "service_id"
+    t.string   "service_id"
     t.string   "headsign"
     t.string   "short_name"
     t.integer  "direction_id"
     t.string   "block_id"
-    t.integer  "shape_id"
+    t.string   "shape_id"
     t.integer  "wheelchair_accesible"
     t.integer  "bikes_allowed"
     t.datetime "created_at"

@@ -32,62 +32,48 @@ module GtfsApi
               #before { |etag| puts "Processing source with tag #{etag}..." }
               feed_definition &GtfsApi::Io::FeedDefinitionBlock
               handlers do
-                
-                agency {|row| 
-                  a = GtfsApi::Agency.new_from_gtfs_feed(row)
-                  if a.valid?
-                    a.save!
-                    GtfsReader::Log.info "saved #{row}" #"saved #{a.io_id}" 
-                  else 
-                    GtfsReader::Log.error "problems in #{row}"
-                    GtfsReader::Log.error a.errors.to_a 
-                  end
-                }
-                
+                agency {|row| Importer.import_one_row_of(GtfsApi::Agency,row) } 
                 routes {|row| 
-                  puts "Read Route: #{row}" 
-                }
-                
-                calendar {|row|
-                  puts "Read Calendar"
-                }
-                
-                calendar_dates{ |row|
-                  puts "Read Calendar Dates"
-                }
-                
-                shapes { |row|
-                  puts "Read Shape:"
-                }
-                
-                trips {|row| 
-                  puts "Read trip: #{row[:trip_id]} #{row[:trip_short_name]}" 
-                }
-                stops { |row|
-                  puts "Read stop" 
-                }
-                stop_times {
-                  puts "Read Stop Times"
-                }
-                frequencies { |row|
-                  puts "Read frequencies: "
-                }
-                
-                fare_attributes {
-                  puts "Read FareAttributes"
-                }
-                transfers {
-                  puts "Read Transfer: "
-                }
-                fare_rules{|row| 
-                  puts "Fare Rule for fare_id: #{row[:fare_id]}"
-                }
+                  puts "#{row}"
+                  Importer.import_one_row_of(GtfsApi::Route,row) }
+                calendar {|row| Importer.import_one_row_of(GtfsApi::Calendar,row)}
+                calendar_dates{ |row| Importer.import_one_row_of(GtfsApi::CalendarDate,row)}
+                shapes { |row| Importer.import_one_row_of(GtfsApi::Shape,row)}
+                trips {|row| Importer.import_one_row_of(GtfsApi::Trip, row)}
+                stops { |row| Importer.import_one_row_of(GtfsApi::Stop, row)}
+                stop_times { Importer.import_one_row_of(GtfsApi::StopTime, row)}
+                frequencies { |row| Importer.import_one_row_of(GtfsApi::Fequency, row)}
+                fare_attributes { |row| Importer.import_one_row_of(GtfsApi::FareAttribute, row)}
+                transfers { |row| Importer.import_one_row_of(GtfsApi::FareAttribute, row)}
+                fare_rules{ |row| Importer.import_one_row_of(GtfsApi::FareRule, row)}
               end #handlers
             end # sample
           end #sources
         end #config
         GtfsReader.update :gtfs_api # or GtfsReader.update_all!
       end
+      
+      private
+      #
+      #
+      # @param[Class] gtfsable_class is one of the GtfsApi model classes that implements the Gtfsable concern
+      # @param[Hash] row read from the gtfs file linked to the class  
+      def self.import_one_row_of(gtfsable_class, row)
+        a = gtfsable_class.new_from_gtfs_feed(row)
+        if a.valid?
+          begin 
+            a.save!
+            GtfsReader::Log.info "saved #{row}" #"saved #{a.io_id}" 
+          rescue Exception => e
+            GtfsReader::Log.error e.message
+            raise e
+          end
+        else 
+          GtfsReader::Log.error a.errors.to_a 
+          GtfsReader::Log.error "Row contents: #{row}"
+        end
+      end
+    
     end          
   end #io
 end
