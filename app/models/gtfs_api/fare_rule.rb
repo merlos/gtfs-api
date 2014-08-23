@@ -2,20 +2,65 @@ module GtfsApi
   class FareRule < ActiveRecord::Base
     
     include GtfsApi::Concerns::Models::Concerns::Gtfsable
-    set_gtfs_col :fare_id
-    set_gtfs_col :route_id
+    set_gtfs_col :fare_io_id, :fare_id
+    set_gtfs_col :route_io_id, :route_id
     set_gtfs_col :origin_id
     set_gtfs_col :destination_id
     set_gtfs_col :contains_id
     
     
     validates :fare_id, presence: true
-    # associations
+    
+    # ASSOCIATIONS
     belongs_to :fare, foreign_key: 'fare_id', class_name: 'FareAttribute'
     belongs_to :route
-    belongs_to :origin, foreign_key: 'origin_id', class_name: 'Stop', primary_key:'zone_id'
-    belongs_to :destination, foreign_key: 'destination_id', class_name: 'Stop', primary_key: 'zone_id'
-    belongs_to :contains, foreign_key: 'contains_id', class_name: 'Stop', primary_key: 'zone_id'
-
+    
+    # TODO see which association  has more sense based on these examples
+    # https://code.google.com/p/googletransitdatafeed/wiki/FareExamples
+    #
+    #belongs_to :origin, foreign_key: 'zone_id', class_name: 'Stop'
+    #belongs_to :destination, foreign_key: 'zone_id', class_name: 'Stop'
+    #belongs_to :contains, foreign_key: 'zone_id', class_name: 'Stop'
+    
+    has_many :origins, 
+      foreign_key: 'zone_id', 
+      class_name: 'Stop', 
+      primary_key: 'origin_id'
+      
+    has_many :destinations, 
+      foreign_key: 'zone_id', 
+      class_name: 'Stop', 
+      primary_key: 'destination_id'
+      
+    has_many :contains, 
+      foreign_key: 'zone_id', 
+      class_name: 'Stop', 
+      primary_key: 'contains_id'
+        
+    # VIRTUAL ATTRIBUTES
+    attr_accessor :fare_io_id
+    attr_accessor :route_io_id 
+    
+    # virtual attribute that provides the fare.io_id of this FareRule (if fare is set), nil otherwise
+    def fare_io_id
+      fare.present? ? fare.io_id : nil
+    end
+    
+    # virtual attribute that sets the fare of this FareRule using as input the 
+    # io_id of that FareAttribute
+    def fare_io_id=(val)
+      self.fare = FareAttribute.find_by!(io_id: val)
+    end
+    
+    def route_io_id
+      route.present? ? route.io_id : nil
+    end
+    
+    def route_io_id=(val)
+      self.route = Route.find_by!(io_id: val)
+    end
+    
+    
+    
   end
 end

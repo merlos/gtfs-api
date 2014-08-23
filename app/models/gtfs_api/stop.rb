@@ -34,11 +34,11 @@ module GtfsApi
     has_many :stops, foreign_key: 'parent_station_id', class_name: 'Stop'
     
     # to get the fares this stop is the origin
-    has_many :origins, foreign_key: 'origin_id', primary_key: 'zone_id', class_name: 'FareRules'
+    has_many :fares_as_origin, foreign_key: 'origin_id', primary_key: 'zone_id', class_name: 'FareRule'
     # to get the fares this stop is the destination
-    has_many :destinations, foreign_key: 'destination_id', primary_key: 'zone_id', class_name: 'FareRules'
+    has_many :fares_as_destination, foreign_key: 'destination_id', primary_key: 'zone_id', class_name: 'FareRule'
     # to get the fares this stop is contained
-    has_many :contained, foreign_key: 'contains_id', primary_key: 'zone_id', class_name: 'FareRules'
+    has_many :fares_is_contained, foreign_key: 'contains_id', primary_key: 'zone_id', class_name: 'FareRule'
     
     has_many :stop_times
     #to get stop trips

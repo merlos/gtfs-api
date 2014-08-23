@@ -44,13 +44,13 @@ module GtfsApi
       s2.save!
       c = Calendar.new(
         io_id: 'cal_1' + uniquer,
-        monday: Calendar::SERVICE_AVAILABLE,
-        tuesday: Calendar::SERVICE_AVAILABLE,
-        wednesday: Calendar::SERVICE_AVAILABLE,
-        thursday: Calendar::SERVICE_AVAILABLE,
-        friday: Calendar::SERVICE_AVAILABLE,
-        saturday: Calendar::SERVICE_AVAILABLE,
-        sunday: Calendar::SERVICE_AVAILABLE,
+        monday: Calendar::AVAILABLE,
+        tuesday: Calendar::AVAILABLE,
+        wednesday: Calendar::AVAILABLE,
+        thursday: Calendar::AVAILABLE,
+        friday: Calendar::AVAILABLE,
+        saturday: Calendar::AVAILABLE,
+        sunday: Calendar::AVAILABLE,
         start_date: '2014-01-20',
         end_date: '2014-03-15'
       )
@@ -63,8 +63,8 @@ module GtfsApi
         wednesday: 0,
         thursday: 0,
         friday: 0,
-        saturday: Calendar::SERVICE_AVAILABLE,
-        sunday: Calendar::SERVICE_AVAILABLE,
+        saturday: Calendar::AVAILABLE,
+        sunday: Calendar::AVAILABLE,
         start_date: '2015-01-20',
         end_date: '2015-03-15'
       )
@@ -121,7 +121,7 @@ module GtfsApi
     
     test 'direction_id valid range' do
       t = TripTest.fill_valid_trip
-      t.direction_id = Trip::OUTBOUND_TRAVEL
+      t.direction_id = Trip::Direction[:outbound_travel]
       assert t.valid?, t.errors.to_a.to_s
       t.direction_id = Trip::INBOUND_TRAVEL
       assert t.valid?
@@ -197,6 +197,37 @@ module GtfsApi
       t.service_id = "lololololo" #a service that does not exist
       assert t.invalid?
     end
+    
+    
+    #TEST ASSOCIAIONS
+    
+    test 'route is a route' do
+    end
+    
+    test 'shapes association is correclty defined' do
+    end
+    
+    test 'calendar association is correctly defined' do
+    end
+    
+    test 'calendar_dates association is correctly defined' do
+    end
+    
+    # Test Virtual Attribute
+    test 'virtual attribute route_io_id works properly' do
+      r = RouteTest.fill_valid_route
+      assert r.valid?
+      r.save!
+      t = TripTest.fill_valid_trip
+      t.route = nil
+      assert_equal t.route, nil #the route has no agency set
+      assert_equal t.route_io_id, nil # trip.route_io_id is therefore nil
+      t.route_io_id = r.io_id # by assigning the route_io_id we assign the route as well      
+      assert_equal t.route.io_id, r.io_id #check it out
+      assert t.valid?
+      t.save!
+      assert_equal t.route.io_id, r.io_id #check now I can access agency
+    end
+    
   end
-  
 end

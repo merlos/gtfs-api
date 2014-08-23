@@ -50,13 +50,16 @@ module GtfsApi
       a = AgencyTest.fill_valid_agency
       a.url = "http://www.foofoofoo.es"
       assert a.valid?, a.errors.to_a.to_s
-      a.url = "https://barbarbar.es/drunk"
+      a.url = "https://barbarbar.es/drunk?param=holitas&vecinito"
       assert a.valid?, a.errors.to_a.to_s
+      a.url = "http://this.is.a.valid%20url%20that%20has%20some%20stuff"
+      assert a.valid?
       a.url = "ftp://www.fetepe.es"
       assert a.invalid?
       a2 = AgencyTest.fill_valid_agency
       a2.url = "/agency/absolute"
       assert a.invalid?
+      
     end  
     
     test "agency timezone presence" do

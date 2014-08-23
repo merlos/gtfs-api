@@ -11,7 +11,7 @@ module GtfsApi
         id: 1,
         io_id: 'calendar_one',
         date: '2014-06-10',
-        exception_type: CalendarDate::SERVICE_ADDED
+        exception_type: CalendarDate::ExceptionTypes[:service_added]
         )
     end
     
@@ -40,9 +40,9 @@ module GtfsApi
     
     test 'exception type range' do
       c = self.fill_valid_calendar_date
-      c.exception_type = CalendarDate::SERVICE_ADDED
+      c.exception_type = CalendarDate::ExceptionTypes[:service_added]
       assert c.valid?, c.errors.to_a
-      c.exception_type = CalendarDate::SERVICE_REMOVED
+      c.exception_type = CalendarDate::ExceptionTypes[:service_removed]
       assert c.valid?, c.errors.to_a
       
       #test out of range
@@ -50,7 +50,7 @@ module GtfsApi
       assert c.invalid?
       
       c.errors.clear
-      c.exception_type= CalendarDate::SERVICE_ADDED
+      c.exception_type= CalendarDate::ExceptionTypes[:service_added]
       assert c.valid?, c.errors.to_a
       c.exception_type = 3
       assert c.invalid?

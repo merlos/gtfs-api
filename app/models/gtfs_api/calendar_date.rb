@@ -15,7 +15,13 @@ module GtfsApi
     # CONSTANTS
     #exception_types
     SERVICE_ADDED = 1
-    SERVICE_REMOVED = 2
+    SERVICE_REMOVED =2
+    
+    ExceptionTypes = {
+      :service_added => SERVICE_ADDED,
+      :service_removed => SERVICE_REMOVED
+    }
+    
     
     has_many :trips, foreign_key: 'service_id'
   end

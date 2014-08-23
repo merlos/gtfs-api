@@ -3,59 +3,155 @@ require 'test_helper'
 module GtfsApi
   class FareRuleTest < ActiveSupport::TestCase
      
-    def fill_valid_fare_rule 
-      # TODO check how to generate a valid fare attribute using the FareAttibuteTest.fill_valid_fare_attribute
-      
-      #Note, that io_id of fare attribute shall be unique, so to be able to call fill_valid_fare_rule
-      # more than once in the same test we have to generate different io_ids.
+    def self.fill_valid_fare_rule 
+      unique = (0...8).map { (65 + rand(26)).chr }.join
       fa = FareAttribute.new(
-        io_id: (0...8).map { (65 + rand(26)).chr }.join,
+        io_id: unique,
         price: 11.11,
         currency_type: 'EUR',
-        payment_method: FareAttribute::PAID_ON_BOARD)
+        payment_method: FareAttribute::ON_BOARD)
+      fa.save!   
       
-      assert fa.valid? 
-      fa.save      
+      r = RouteTest.fill_valid_route
+      r.io_id = unique
+      r.save!
+      
+      s_o = StopTest.fill_valid_stop
+      s_o.zone_id = unique + "origin"
+      s_o.save!
+      
+      s_d = StopTest.fill_valid_stop
+      s_d.zone_id = unique + "destination"
+      s_d.save!
+      
+      s_c = StopTest.fill_valid_stop
+      s_c.zone_id = unique + "contains"
+      s_c.save!
+      
       return FareRule.new( 
         fare: fa,
-        origin_id: 'zone_init',
-        destination_id: 'zone_end',
-        contains_id: 'contains_zone')
+        route: r,
+        origin_id: s_c.zone_id,
+        destination_id: s_d.zone_id,
+        contains_id: s_c.zone_id)
     end
     
-     test 'a valid fare_rule is valid' do
-      f = self.fill_valid_fare_rule
-       assert f.valid?, f.errors.to_a
-     end
+    test 'a valid fare_rule is valid' do
+      f = FareRuleTest.fill_valid_fare_rule
+      assert f.valid?, f.errors.to_a
+    end
      
-     test 'fare_id presence required' do
-      f = self.fill_valid_fare_rule
-       f.fare = nil
-       assert f.invalid?, f.errors.to_a       
-     end
+    test 'fare_id presence required' do
+      f = FareRuleTest.fill_valid_fare_rule
+      f.fare = nil
+      assert f.invalid?, f.errors.to_a       
+    end
      
-     test 'fare presence required' do
-       f = self.fill_valid_fare_rule
-       f.fare = nil
-       assert f.invalid?
-
-     end
+    test 'fare presence required' do
+      f = FareRuleTest.fill_valid_fare_rule
+      f.fare = nil
+      assert f.invalid?
+    end
      
+    test 'route is optional' do
+      f = FareRuleTest.fill_valid_fare_rule
+      f.route = nil
+      assert f.valid?  
+    end
+     
+    test 'origin_id is optional' do
+      f = FareRuleTest.fill_valid_fare_rule
+      f.origin_id = nil
+      assert f.valid?
+    end
+     
+    test 'destination_id is optional' do
+      f = FareRuleTest.fill_valid_fare_rule
+      f.destination_id = nil
+      assert f.valid?
+    end
+     
+    test 'contains_id is optional' do
+      f = FareRuleTest.fill_valid_fare_rule
+      f.contains_id = nil
+      assert f.valid?
+    end
+     
+    # Associations 
+     
+    test 'belongs to fare' do
+        f = FareRuleTest.fill_valid_fare_rule
+        assert_not f.fare.io_id.nil?
+    end
     
-     #
-     # Associations
-     #
+    test 'belongs to route' do
+      f = FareRuleTest.fill_valid_fare_rule
+      assert_not f.route.io_id.nil?
+    end
      
+    test 'has_many origins associations returns the stops' do
+      f = FareRuleTest.fill_valid_fare_rule
+      assert (f.origins != nil)
+      stops_where_num = Stop.where(zone_id: f.origin_id).count
+      assert_equal f.origins.size, stops_where_num 
+      f.origins.each do |record| 
+        assert_equal record.zone_id, f.origin_id 
+      end
+    end
+    
+     
+    test 'has_many destinations association returns the stops' do
+      f = FareRuleTest.fill_valid_fare_rule
+      assert (f.destinations != nil)
+      stops_where_num = Stop.where(zone_id: f.destination_id).count
+      assert_equal f.destinations.size, stops_where_num 
+      f.destinations.each do |record| 
+        assert_equal record.zone_id, f.destination_id 
+      end 
+    end
+      
+    test 'contains has_many association returns the expected stops' do
+      f = FareRuleTest.fill_valid_fare_rule
+      assert (f.contains != nil)
+      stops_where_num = Stop.where(zone_id: f.contains_id).count
+      assert_equal f.contains.size, stops_where_num 
+      f.origins.each do |record| 
+        assert_equal record.zone_id, f.contains_id 
+      end
+    end
+      
+    test 'virtual attribute route_io_id sets and gets route info' do
+      f = FareRuleTest.fill_valid_fare_rule
+      r = RouteTest.fill_valid_route
+      r.io_id = "holitas"
+      assert r.valid?
+      r.save!
+      assert_not_equal f.route.io_id, r.io_id 
+      f.route_io_id = r.io_id
+      assert_equal f.route.io_id, r.io_id
+      assert_equal f.route_io_id, r.io_id
+    end 
+     
+    test 'virtual attribute fare_io_id sets and gets fare info' do
+      f = FareRuleTest.fill_valid_fare_rule
+      fa = FareAttributeTest.fill_valid_fare_attribute
+      fa.io_id = "holitas"
+      assert fa.valid?
+      fa.save!
+      assert_not_equal f.fare.io_id, fa.io_id 
+      f.fare_io_id = fa.io_id
+      assert_equal f.fare.io_id, fa.io_id
+      assert_equal f.fare_io_id, fa.io_id
+    end
+    
      #
      # requires fixtures with:
      #  - fare_rule that belongs_to a fare_attribute with io_id '_fare_one'
      test 'fare_rule belongs_to fare_attribute' do
-       
        fare_attribute = FareAttribute.find_by_io_id('_fare_one')
        f = FareRule.where(fare: fare_attribute).first
        #check if we can access to the record
        assert (f.fare.io_id=='_fare_one')
-       
      end
   end
 end

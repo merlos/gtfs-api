@@ -30,8 +30,13 @@ module GtfsApi
     has_many :trips, foreign_key: 'service_id'
   
     # CONSTANTS
-    SERVICE_AVAILABLE = 1
-    SERVICE_NOT_AVAILABLE = 0
+    AVAILABLE = 1
+    NOT_AVAILABLE = 0
+    
+    Available = {
+      :yes => AVAILABLE,
+      :no => NOT_AVAILABLE
+    }    
   
   end
 end

@@ -2,7 +2,7 @@ module GtfsApi
   class Frequency < ActiveRecord::Base
     
     include GtfsApi::Concerns::Models::Concerns::Gtfsable
-    set_gtfs_col :trip_id
+    set_gtfs_col :trip_io_id
     set_gtfs_col :start_time
     set_gtfs_col :end_time
     set_gtfs_col :headway_secs
@@ -17,6 +17,10 @@ module GtfsApi
     
     # ASSOCIATIONS 
     belongs_to :trip
+    
+    # VIRTUAL ATTRIBUTES
+    attr_accessor :trip_io_id
+    #TODO setter and getter
     
     # CONSTANTS
     

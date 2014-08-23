@@ -3,13 +3,14 @@ require 'test_helper'
 module GtfsApi
   class FareAttributeTest < ActiveSupport::TestCase
     
-    def fill_valid_fare_attribute
+    def self.fill_valid_fare_attribute
+      unique = Time.now.to_f.to_s
       return FareAttribute.new(
-        io_id: 'Fare',
+        io_id: unique,
         price: 11.11,
         currency_type: 'EUR',
-        payment_method: FareAttribute::PAID_ON_BOARD,
-        transfers: FareAttribute::TRANSFER_TWICE,
+        payment_method: FareAttribute::ON_BOARD,
+        transfers: FareAttribute::TWICE,
         transfer_duration: 10)
     end
     
@@ -18,52 +19,52 @@ module GtfsApi
     #
     
     test "valid fare_attribute" do
-      f = self.fill_valid_fare_attribute
+      f = FareAttributeTest.fill_valid_fare_attribute
       assert f.valid?, f.errors.full_messages
     end
     
     test "fare_attribute io_id presence required" do
-      f = self.fill_valid_fare_attribute
+      f = FareAttributeTest.fill_valid_fare_attribute
       f.io_id = nil
       assert f.invalid?, '_fare_id not present but fare_attributes valid'
     end
     
     test "price presence required" do
-      f = self.fill_valid_fare_attribute
+      f = FareAttributeTest.fill_valid_fare_attribute
       f.price = nil
       assert f.invalid?, 'price presence not required?'
     end
     
     test "currency_type presence required" do
-      f = self.fill_valid_fare_attribute
+      f = FareAttributeTest.fill_valid_fare_attribute
       f.currency_type = nil
       assert f.invalid?
     end
      
     
     test "currency_type length is exactly 3" do
-      f = self.fill_valid_fare_attribute
+      f = FareAttributeTest.fill_valid_fare_attribute
       f.currency_type = "EURO"
       assert f.invalid?
       
-      f2 = self.fill_valid_fare_attribute
+      f2 = FareAttributeTest.fill_valid_fare_attribute
       f2.currency_type = "EU"
       assert f.invalid? 
     end
     
     test "currency_type is a valid ISO4217 code" do
-      f = self.fill_valid_fare_attribute
+      f = FareAttributeTest.fill_valid_fare_attribute
       # TODO
     end 
     
     test "payment_method presence" do
-      f = self.fill_valid_fare_attribute
+      f = FareAttributeTest.fill_valid_fare_attribute
       f.payment_method = nil
       assert f.invalid?
     end
     
     test "payment_method range" do
-      f = self.fill_valid_fare_attribute
+      f = FareAttributeTest.fill_valid_fare_attribute
       #valid
       f.payment_method = 0
       assert f.valid?
@@ -75,7 +76,7 @@ module GtfsApi
     end
     
     test "transfers range" do
-     f = self.fill_valid_fare_attribute
+     f = FareAttributeTest.fill_valid_fare_attribute
      f.transfers = nil
      assert f.valid?
      f.transfers = 0
@@ -87,11 +88,12 @@ module GtfsApi
    end
    
    test "uniqueness of _fare_id" do
-     f = self.fill_valid_fare_attribute
+     f = FareAttributeTest.fill_valid_fare_attribute
      f.save!
-     f2 = self.fill_valid_fare_attribute
+     f2 = FareAttributeTest.fill_valid_fare_attribute
+     f2.io_id = f.io_id
      assert_raises ( ActiveRecord::RecordInvalid) {f2.save!}
-     f3 = self.fill_valid_fare_attribute
+     f3 = FareAttributeTest.fill_valid_fare_attribute
      f3.io_id="newValidId"
      assert_nothing_raised(ActiveRecord::RecordInvalid) {f3.save!}
    end

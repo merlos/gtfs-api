@@ -138,8 +138,8 @@ ActiveRecord::Schema.define(version: 20140713165440) do
 
   create_table "gtfs_api_stop_times", force: true do |t|
     t.integer  "trip_id"
-    t.time     "arrival_time"
-    t.time     "departure_time"
+    t.datetime "arrival_time"
+    t.datetime "departure_time"
     t.integer  "stop_id"
     t.integer  "stop_sequence"
     t.string   "stop_headsign"
@@ -195,8 +195,8 @@ ActiveRecord::Schema.define(version: 20140713165440) do
     t.integer  "direction_id"
     t.string   "block_id"
     t.string   "shape_id"
-    t.integer  "wheelchair_accesible"
-    t.integer  "bikes_allowed"
+    t.integer  "wheelchair_accesible", default: 0
+    t.integer  "bikes_allowed",        default: 0
     t.datetime "created_at"
     t.datetime "updated_at"
   end

@@ -42,14 +42,14 @@ module GtfsApi
         assert c.invalid?
         
         c.errors.clear
-        c[d]=Calendar::SERVICE_AVAILABLE
+        c[d]=Calendar::AVAILABLE
         assert c.valid?, c.errors.to_a
         
         c[d]=0.5
         assert c.invalid?
         
         c.errors.clear
-        c[d]=Calendar::SERVICE_NOT_AVAILABLE
+        c[d]=Calendar::NOT_AVAILABLE
         assert c.valid?, c.errors.to_a
         
         c[d]=-1

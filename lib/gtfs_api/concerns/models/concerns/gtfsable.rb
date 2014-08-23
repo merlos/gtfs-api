@@ -1,4 +1,4 @@
-require 'gtfs_api/io/feed_definition'
+
 
 #
 # This concern helps a GtfsApi model to import and export from and to a GTFS Feed file

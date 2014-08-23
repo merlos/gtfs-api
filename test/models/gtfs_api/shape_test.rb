@@ -70,6 +70,9 @@ module GtfsApi
       s.pt_sequence = -1
       assert s.invalid?
     end
+     
+    # ASSOCIATIONS
+    
             
   end
 end

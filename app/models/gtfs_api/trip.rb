@@ -2,7 +2,7 @@ module GtfsApi
   class Trip < ActiveRecord::Base
     
     include GtfsApi::Concerns::Models::Concerns::Gtfsable
-    set_gtfs_col :route_id
+    set_gtfs_col :route_io_id, :route_id
     set_gtfs_col :service_id
     set_gtfs_col :io_id, :trip_id
     set_gtfs_col :headsign, :trip_headsign
@@ -16,8 +16,8 @@ module GtfsApi
     #Associations
     has_and_belongs_to_many :shapes, join_table: 'gtfs_api_trips', foreign_key: 'shape_id', association_foreign_key: 'io_id'
     belongs_to :route
-    has_and_belongs_to_many :calendar, join_table: 'gtfs_api_trips', foreign_key: 'service_id', class: 'Calendar', association_foreign_key: 'io_id'
-    has_and_belongs_to_many :calendar_dates, join_table: 'gtfs_api_trips', foreign_key: 'service_id', class: 'CalendarDate', association_foreign_key: 'io_id'
+    has_and_belongs_to_many :calendar, join_table: 'gtfs_api_trips', foreign_key: 'service_id', class_name: 'Calendar', association_foreign_key: 'io_id'
+    has_and_belongs_to_many :calendar_dates, join_table: 'gtfs_api_trips', foreign_key: 'service_id', class_name: 'CalendarDate', association_foreign_key: 'io_id'
     has_many :frequencies
     
     #validation 
@@ -34,17 +34,42 @@ module GtfsApi
         
     # TODO review associations to calendar, calendar_dates and shapes
     
+    # Virtual Attributes 
+    attr_accessor :route_io_id 
+    #gets the agency.io_id (useful for import/export)
+    def route_io_id
+      route.present? ? route.io_id : nil
+    end
+    
+    # associates the agency to the route by providing the agency.io_id
+    def route_io_id=(val)
+      self.route = Route.find_by!(io_id: val)
+    end
+  
+    
     #CONSTANTS
     #Direction_id
     OUTBOUND_TRAVEL = 0
     INBOUND_TRAVEL = 1
-    
+    Direction = {
+      :outbound_travel => OUTBOUND_TRAVEL,
+      :inbound_travel => INBOUND_TRAVEL
+    }
     #Wheelchair and bike info
     NO_INFO = 0 #or nil
     YES = 1
     NO = 2
     
-    
+    WheelChairAccesible = {
+      :no_info => NO_INFO,
+      :yes => YES,
+      :no => NO
+    }
+    BikesAllowed = {
+      :no_info => NO_INFO,
+      :yes => YES,
+      :no => NO
+    }
     
     private
     

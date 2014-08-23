@@ -2,8 +2,8 @@ class CreateGtfsApiStopTimes < ActiveRecord::Migration
   def change
     create_table :gtfs_api_stop_times do |t|
       t.belongs_to :trip
-      t.time :arrival_time
-      t.time :departure_time
+      t.datetime :arrival_time
+      t.datetime :departure_time
       t.belongs_to :stop
       t.integer :stop_sequence
       t.string :stop_headsign

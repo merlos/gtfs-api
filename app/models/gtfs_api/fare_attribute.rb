@@ -34,14 +34,26 @@ module GtfsApi
     
     
     #payment_method
-    PAID_ON_BOARD = 0
-    PAID_BEFORE_BOARDING = 1
+    ON_BOARD = 0
+    BEFORE_BOARDING = 1
+    
+    Payment = {
+      :on_board => ON_BOARD,
+      :before_boarding => BEFORE_BOARDING
+    }
   
     #transfers
-    NO_TRANSFERS = 0
-    TRANSFER_ONCE = 1
-    TRANSFER_TWICE = 2
-    UNLIMITED_TRANSFERS = nil
+    NO = 0
+    ONCE = 1
+    TWICE = 2
+    UNLIMITED = nil
+    
+    Transfers = {
+      :no => NO,
+      :once => ONCE,
+      :twice => TWICE,
+      :unlimited => UNLIMITED
+    }
     
   end
 end
