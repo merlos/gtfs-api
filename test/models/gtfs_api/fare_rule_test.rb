@@ -77,6 +77,24 @@ module GtfsApi
       assert f.valid?
     end
      
+    test 'origin_id has to exit' do
+      f = FareRuleTest.fill_valid_fare_rule
+      f.origin_id = "bla bla"
+      assert f.invalid?
+    end
+    
+    test 'destination_id has to exist' do
+      f = FareRuleTest.fill_valid_fare_rule
+      f.destination_id = "bla bla"
+      assert f.invalid? 
+    end
+    
+    test 'contains_id has to exist' do
+      f = FareRuleTest.fill_valid_fare_rule
+      f.contains_id = "bla bla"
+      assert f.invalid?
+    end
+     
     # Associations 
      
     test 'belongs to fare' do
@@ -99,7 +117,6 @@ module GtfsApi
       end
     end
     
-     
     test 'has_many destinations association returns the stops' do
       f = FareRuleTest.fill_valid_fare_rule
       assert (f.destinations != nil)
@@ -153,5 +170,6 @@ module GtfsApi
        #check if we can access to the record
        assert (f.fare.io_id=='_fare_one')
      end
+     
   end
 end

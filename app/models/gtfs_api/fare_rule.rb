@@ -10,6 +10,9 @@ module GtfsApi
     
     
     validates :fare_id, presence: true
+    validate :origin_id_exists_if_set
+    validate :destination_id_exists_if_set
+    validate :contains_id_exists_if_set
     
     # ASSOCIATIONS
     belongs_to :fare, foreign_key: 'fare_id', class_name: 'FareAttribute'
@@ -60,7 +63,34 @@ module GtfsApi
       self.route = Route.find_by!(io_id: val)
     end
     
+    #VALIDATIONS
+    
+    def origin_id_exists_if_set
+      validate_stop_zone_id_exists(:origin_id) if origin_id.present?
+    end
+    
+    def destination_id_exists_if_set
+       validate_stop_zone_id_exists(:destination_id) if destination_id.present?
+    end
+    
+    def contains_id_exists_if_set
+       validate_stop_zone_id_exists(:contains_id) if contains_id.present?
+    end
     
     
+    private
+
+    # checks if the value of the attribute exists as zone_id in Stops
+    # if the zone_id is not found, adds to the attriburte a :not_found 
+    # validation error 
+    #
+    # @param attribute_sym[Symbol] attribute with the name of the zone_id(string)
+    #
+    def validate_stop_zone_id_exists(attribute_sym) 
+      if attribute_sym.present?
+          errors.add(attribute_sym, :not_found) if Stop.find_by(zone_id: self[attribute_sym]).nil?
+      end
+    end
+        
   end
 end
