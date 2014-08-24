@@ -13,12 +13,19 @@ module GtfsApi
     set_gtfs_col :wheelchair_accesible
     set_gtfs_col :bikes_allowed
     
-    #Associations
-    has_and_belongs_to_many :shapes, join_table: 'gtfs_api_trips', foreign_key: 'shape_id', association_foreign_key: 'io_id'
+    # Associations
     belongs_to :route
-    has_and_belongs_to_many :calendar, join_table: 'gtfs_api_trips', foreign_key: 'service_id', class_name: 'Calendar', association_foreign_key: 'io_id'
-    has_and_belongs_to_many :calendar_dates, join_table: 'gtfs_api_trips', foreign_key: 'service_id', class_name: 'CalendarDate', association_foreign_key: 'io_id'
     has_many :frequencies
+    
+    has_many :shapes, foreign_key: 'io_id', primary_key: 'shape_id'
+    has_many :calendars, foreign_key: 'io_id', primary_key: 'service_id'
+    has_many :calendar_dates, foreign_key: 'io_id', primary_key: 'service_id'
+    
+    
+    #has_and_belongs_to_many :shapes, join_table: 'gtfs_api_trips', foreign_key: 'io_id', association_foreign_key: 'service_id'
+    #has_and_belongs_to_many :calendar, join_table: 'gtfs_api_trips', foreign_key: 'service_id', class_name: 'Calendar', association_foreign_key: 'io_id'
+    #has_and_belongs_to_many :calendar_dates, join_table: 'gtfs_api_trips', foreign_key: 'service_id', class_name: 'CalendarDate', association_foreign_key: 'io_id'
+    
     
     #validation 
     validates :io_id, uniqueness: true

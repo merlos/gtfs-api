@@ -3,8 +3,7 @@
 trip_one:
   io_id: '_trip_one'
   route: route_one
-  #service_id: calendar_one
-  calendar: calendar_one
+  service_id: _calendar_one
   headsign: 'headsign trip one'
   short_name: 'shortname trip one'
   direction_id: 1
@@ -16,8 +15,7 @@ trip_one:
 trip_two:
   io_id: '_trip_two'
   route: route_two
-  #service: calendar_one
-  calendar: calendar_one
+  service_id: _calendar_one
   headsign: 'headsign trip two'
   short_name: 'shortname trip two'
   direction_id: 1
@@ -30,8 +28,7 @@ trip_two:
 trip_three:
   io_id: '_trip_three'
   route: route_three
-  #service: calendar_two 
-  calendar: calendar_two
+  service_id: _calendar_one 
   headsign: 'headsign trip one'
   short_name: 'shortname trip one'
   direction_id: 1

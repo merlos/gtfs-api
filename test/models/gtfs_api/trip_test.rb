@@ -201,16 +201,35 @@ module GtfsApi
     
     #TEST ASSOCIAIONS
     
-    test 'route is a route' do
+    test 'shapes association returns shapes' do
+      t = TripTest.fill_valid_trip
+      
+      sh1 = Shape.where(io_id: t.shape_id)
+      #puts "sh1:" + sh1.count.to_s
+      #puts "shapes: " + t.shapes.length.to_s
+      assert_equal t.shapes.size, sh1.count
+      t.shapes.each do |shape|
+        assert_equal sh1.first.io_id, shape.io_id 
+        #puts shape.io_id
+      end
     end
     
-    test 'shapes association is correclty defined' do
-    end
-    
-    test 'calendar association is correctly defined' do
+    test 'calendar association returns calendars' do
+      t = TripTest.fill_valid_trip
+      cal1 = Calendar.where(io_id: t.service_id)
+      assert_equal t.calendars.size, cal1.count
+      t.calendars.each do |cal|
+        assert_equal t.service_id, cal.io_id
+      end
     end
     
     test 'calendar_dates association is correctly defined' do
+      t = TripTest.fill_valid_trip
+      cal1 = CalendarDate.where(io_id: t.service_id)
+      assert_equal t.calendar_dates.size, cal1.count
+      t.calendar_dates.each do |cal|
+        assert_equal t.service_id, cal.io_id
+      end 
     end
     
     # Test Virtual Attribute
