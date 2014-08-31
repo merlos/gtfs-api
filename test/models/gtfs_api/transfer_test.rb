@@ -59,5 +59,42 @@ module GtfsApi
        t3.transfer_type = nil
        assert t3.invalid?
      end
+     
+     test 'from_stop_io_id cannot set nil' do
+       t = self.fill_valid_transfer
+       assert_raises ( ActiveRecord::RecordNotFound) {t.from_stop_io_id = nil}
+     end
+      
+     test 'to_stop_io_id cannot set nil' do
+       t = self.fill_valid_transfer
+       assert_raises ( ActiveRecord::RecordNotFound) {t.to_stop_io_id = nil}
+     end
+    
+     test 'from_stop_io_id gets and sets from_stop' do
+       t = self.fill_valid_transfer
+       assert t.from_stop.present?
+       assert_equal t.from_stop.io_id, t.from_stop_io_id
+       t.from_stop = nil
+       assert_equal t.from_stop_io_id, nil
+       s = StopTest.fill_valid_stop
+       assert s.valid?
+       s.save!
+       t.from_stop_io_id = s.io_id
+       assert_equal t.from_stop.io_id, t.from_stop_io_id
+     end
+     
+     test 'to_stop_io_id gets and sets to_stop' do
+       t = self.fill_valid_transfer
+       assert t.to_stop.present?
+       assert_equal t.to_stop.io_id, t.to_stop_io_id
+       t.to_stop = nil
+       assert_equal t.to_stop_io_id, nil
+       s = StopTest.fill_valid_stop
+       assert s.valid?
+       s.save!
+       t.to_stop_io_id = s.io_id
+       assert_equal t.to_stop.io_id, t.to_stop_io_id
+     end
+     
   end
 end

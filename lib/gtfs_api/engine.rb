@@ -3,6 +3,7 @@ module GtfsApi
     isolate_namespace GtfsApi
     
     # Autoload from lib directory
-       config.autoload_paths << File.expand_path('../../', __FILE__)
+    config.autoload_paths << File.expand_path('../../', __FILE__)
+       
   end
 end

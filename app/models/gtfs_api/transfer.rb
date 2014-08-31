@@ -20,8 +20,28 @@ module GtfsApi
     # Virtual Attributes
     attr_accessor :from_stop_io_id
     attr_accessor :to_stop_io_id
-    #TODO create the getters and setters and tests
     
+    def from_stop_io_id
+      from_stop.present? ? from_stop.io_id : nil
+    end
+    
+    def from_stop_io_id=(val)
+      self.from_stop = Stop.find_by!(io_id: val)
+    end
+    
+    #Alternative implementation in case we want to allow to set nil
+    #def from_stop_io_id=(val)
+    #  stop = Stop.find_by(io_id: val) 
+    #  self.from_stop = stop ? stop : nil
+    #end
+    
+    def to_stop_io_id
+      to_stop.present? ? to_stop.io_id : nil
+    end
+    
+    def to_stop_io_id=(val)    
+      self.to_stop = Stop.find_by!(io_id: val)    
+    end    
     # Constants
     #transfer_types
     RECOMMENDED_TRANSFER = 0 #default

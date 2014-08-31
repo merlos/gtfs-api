@@ -3,20 +3,42 @@
 #
 # This concern helps a GtfsApi model to import and export from and to a GTFS Feed file
 #
-# 
+# TODO add docummentation of this Concern as it is important to understand the code
+#
 # 
 module GtfsApi::Concerns::Models::Concerns::Gtfsable
     extend ActiveSupport::Concern
     
     #
-    # returns the columns of this model with the names of the gtfs feed
-    def rehash_to_gtfs_feed 
-      gtfs_feed_hash = {}
-      self.gtfs_cols.each { |gtfs_api_col,gtfs_feed_col| 
-        gtfs_feed_hash[gtfs_feed_col] = self[gtfs_api_col] 
-      }
-      
+    # returns a hash with the cols of the row of the corresponding file.
+    # It assigns to each key (column of the file) the value of the mapped
+    #  attribute. 
+    #
+    # To see how to map each column to an attribute @see set_gtfs_col
+    #
+    # It calls the hook after_rehash_to_gtfs_feed (gtfs_feed_row) which allows the
+    # model to override the default assignation if necessary 
+    #
+    def to_gtfs
+      gtfs_feed_row = {}
+      #rehash to gtfs feed
+      self.class.gtfs_cols.each do |model_attr,feed_col| 
+        #call send because virt. attr can only be accessed like that
+        gtfs_feed_row[feed_col] = self.send(model_attr) 
+      end
+      self.after_rehash_to_gtfs(gtfs_feed_row)
     end
+    
+    # overwrite if required
+    # it receives an standard mapping of the model attributes to gtfs feed columns
+    # this method should be overridden if the default value of an attribute needs
+    # to be processed. For example, a time or a date may be reformatted.
+    #
+    # it shall return the final gtfs_feed_row
+    def after_rehash_to_gtfs (gtfs_feed_row)
+      return gtfs_feed_row
+    end
+    
     
     module ClassMethods
       
@@ -40,10 +62,10 @@ module GtfsApi::Concerns::Models::Concerns::Gtfsable
       # Defines a map between GtfsApi model column name and the GTFS column spcecification. 
       # Used for import and export
       #
-      # @param gtfs_api_name[Symbol] name of column in the GtfsApi Model 
-      # @param gtfs_feed_name[Symbol] name of the column in the GTFS feed specification. 
-      #   Optional if the names follows the conventions defined.
-      # 
+      # @param model_name[Symbol] name of attr in the model 
+      # @param gtfs_feed_col[Symbol] name of the column in the GTFS feed specification. (optional)
+      #
+      # If model_name and gtfs_feed_col are equal you can skipt setting gtfs_feed_col
       #
       # @example
       #   class GtfsApi::Agency < ActiveRecord::Base
@@ -51,12 +73,15 @@ module GtfsApi::Concerns::Models::Concerns::Gtfsable
       #     set_gtfs_col :name            # expected GTFS feed file column: name 
       #     set_gtfs_col :example, :test  # expected GTFS feed file column: test
       #   end
-      def set_gtfs_col (gtfs_api_name, gtfs_feed_name = nil )
-        gtfs_feed_name = gtfs_api_name if gtfs_feed_name.nil?
+      def set_gtfs_col (model_attr, gtfs_feed_col = nil )
+        gtfs_feed_col = model_attr if gtfs_feed_col.nil?
         @@gtfs_cols[self] = {} if @@gtfs_cols[self].nil? 
-        @@gtfs_cols[self][gtfs_api_name] = gtfs_feed_name 
+        @@gtfs_cols[self][model_attr] = gtfs_feed_col 
       end
       
+      def gtfs_col_for_attr(model_attr)
+        @@gtfs_cols[self][model_attr]
+      end
       #
       # sets the gtfs feed file name (without extension) linked to this class
       # Default value set is the plural of the containing class. Example Agency => :agencies
@@ -86,7 +111,7 @@ module GtfsApi::Concerns::Models::Concerns::Gtfsable
       end
       
       # map of gtfs_feed_col => gtfs_api_col
-      def gtfs_cols_inverted
+      def gtfs_attr
         @@gtfs_cols[self].invert
       end
       
@@ -106,17 +131,18 @@ module GtfsApi::Concerns::Models::Concerns::Gtfsable
       #
       # @param csv_row[Hash] a row of one of the file feeds
       # @return [Hash]
-      def rehash_from_gtfs_feed(csv_row)
-        to_gtfs_api = self.gtfs_cols_inverted
+      def rehash_from_gtfs(csv_row)
+        to_gtfs_api = self.gtfs_attr
         csv_rehashed = Hash[csv_row.map {|gtfs_feed_col, v| 
           [to_gtfs_api[gtfs_feed_col],v]
           }
         ]
       end 
       
-      def new_from_gtfs_feed(csv_row)
-        self.new(self.rehash_from_gtfs_feed(csv_row)) 
+      def new_from_gtfs(csv_row)
+        self.new(self.rehash_from_gtfs(csv_row)) 
       end 
+      
         
     end #ClassMethods  
 end

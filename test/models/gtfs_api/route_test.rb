@@ -17,7 +17,23 @@ module GtfsApi
       r.text_color = '000000'
       return r
     end
-  
+    
+    def self.valid_gtfs_feed_route
+      a = AgencyTest.fill_valid_agency
+      a.save!
+      {
+        route_id: Time.new.to_f.to_s,
+        agency_id: a.io_id,
+        route_short_name: 'short name',
+        route_long_name: 'long name',
+        route_desc: 'route desc',
+        route_type: Route::FUNICULAR_TYPE,
+        route_url: 'http://github.com/merlos/route/url',
+        route_color: 'CACADE',
+        route_text_color: 'BACACA'
+      }
+    end
+    
     test "route io_id has to be present" do
       r = RouteTest.fill_valid_route
       r.io_id = nil
@@ -147,6 +163,41 @@ module GtfsApi
       r.save!
       assert_equal r.agency.io_id, a.io_id #check no I can access agency
     end
+    
+    #
+    # GTFSABLE
+    #
+    # IMPORT EXPORT
+    
+    test "routes row can be imported into a Route model" do
+      model_class = Route
+      test_class = RouteTest
+      exceptions = [] #exceptions to avoid test
+      #--- common part
+      feed_row = test_class.send('valid_gtfs_feed_' + model_class.to_s.split("::").last.underscore)
+      model = model_class.new_from_gtfs(feed_row)
+      assert model.valid?
+      model_class.gtfs_cols.each do |model_attr, feed_col|
+        next if exceptions.include? (model_attr)
+        assert_equal model.send(model_attr), feed_row[feed_col], "Testing " + model_attr.to_s + " vs " + feed_col.to_s
+      end
+      #------
+    end
+    
+    test "a Route model can be exported into a gtfs row" do
+      model_class = Route
+      test_class = RouteTest
+      exceptions = []
+      #------ Common_part
+      model = test_class.send('fill_valid_' + model_class.to_s.split("::").last.underscore)
+      feed_row = model.to_gtfs
+      model_class.gtfs_cols.each do |model_attr, feed_col|
+        next if exceptions.include? (model_attr)
+        assert_equal model.send(model_attr), feed_row[feed_col], "Testing " + model_attr.to_s + " vs " + feed_col.to_s
+      end
+    end
+      
+    
   
   end #class
 end #module

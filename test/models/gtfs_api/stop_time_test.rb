@@ -13,7 +13,7 @@ module GtfsApi
       ## create a trip
       t = TripTest.fill_valid_trip
       t.io_id = unique
-      s.save!
+      t.save!
       StopTime.new(
         trip: t,
         stop: s,
@@ -24,6 +24,28 @@ module GtfsApi
         pickup_type: StopTime::PHONE_AGENCY,
         drop_off_type: StopTime::REGULAR, 
         dist_traveled: 100.1 )
+    end
+    
+    def self.valid_gtfs_feed_stop_time
+      unique = Time.now.to_f.to_s
+      s = StopTest.fill_valid_stop
+      s.io_id = unique
+      s.save!
+      ## create a trip
+      t = TripTest.fill_valid_trip
+      t.io_id = unique
+      t.save!
+      { 
+        trip_id: t.io_id,
+        stop_id: s.io_id,
+        arrival_time: '10:11:12',
+        departure_time: '22:33:44',
+        stop_sequence: 1,
+        stop_headsign: 'headsign',
+        pickup_type: StopTime::PHONE_AGENCY,
+        drop_off_type: StopTime::REGULAR, 
+        shape_dist_traveled: 100.1 
+      }
     end
     
     test 'valid stop time' do
@@ -211,6 +233,35 @@ module GtfsApi
       assert s.valid?
       s.save!
       assert_equal s.trip.io_id, trip.io_id 
+    end
+  
+    test 'a stop_time row can be imported to a stop_time model' do
+       feed_row = StopTimeTest.valid_gtfs_feed_stop_time
+       #puts StopTime.gtfs_cols
+       #puts feed_row
+       model = StopTime.new_from_gtfs(feed_row)
+       assert model.valid?
+       StopTime.gtfs_cols.each do |model_attr, feed_col|
+         # arrival time and departure time return a Time obj =! gtfs input, so we convert them
+         # we use send() Because virtual attributes need cannot be called model_instance[:attr]  
+         if [:arrival_time, :departure_time].include? (model_attr)
+           assert_equal feed_row[feed_col], model.send(model_attr).to_gtfs, "Testing " + model_attr.to_s + " vs " + feed_col.to_s
+           next
+         end
+         assert_equal model.send(model_attr), feed_row[feed_col], "Testing " + model_attr.to_s + " vs " + feed_col.to_s
+       end
+    end
+    
+    test "a stop_time model can be exported to gtfs row" do
+      model = StopTimeTest.fill_valid_stop_time
+      feed_row = model.to_gtfs
+      StopTime.gtfs_cols.each do |model_attr, feed_col|
+        if [:arrival_time, :departure_time].include? (model_attr)
+          assert_equal feed_row[feed_col], model.send(model_attr).to_gtfs, "Testing " + model_attr.to_s + " vs " + feed_col.to_s
+          next
+        end
+        assert_equal model.send(model_attr), feed_row[feed_col], "Testing " + model_attr.to_s + " vs " + feed_col.to_s
+      end
     end
     
   end

@@ -6,7 +6,6 @@ class CreateGtfsApiCalendarDates < ActiveRecord::Migration
       t.integer :exception_type
       t.timestamps
     end
-    add_index :gtfs_api_calendar_dates, :id
     add_index :gtfs_api_calendar_dates, :io_id
   end
 end

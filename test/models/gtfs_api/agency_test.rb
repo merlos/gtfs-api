@@ -2,20 +2,33 @@ require 'test_helper'
 
 module GtfsApi
   class AgencyTest < ActiveSupport::TestCase
-    # test "the truth" do
-    #   assert true
-    # end
+    
     fixtures :all
     #call this method to create a valid agency. Change values to invalidate
     def self.fill_valid_agency     
-      return Agency.new(
-        io_id: 'AgencyID',
+      Agency.new(
+        io_id: 'AgencyID' + Time.new.to_f.to_s,
         name: 'Agency Name',
         url: 'http://www.agency-url.com',
         timezone: 'Madrid/Spain',
         lang: 'es',
         phone: '+34 600 100 200',
         fare_url: 'http://www.agency-fare-url.es')
+    end
+    
+    # @return[Hash] Fills a hash with the data of an agency. The keys are the names
+    #  of the cols of agency.txt file. The id of the agecy is unique.
+    def self.valid_gtfs_feed_agency
+      unique = Time.new.to_f.to_s
+      {
+        agency_name: 'gtfs agency name ' + unique,
+        agency_id: 'gtfs-agency-' + unique,
+        agency_url: 'http://github.com/merlos',
+        agency_timezone: 'Madrid/Spain',
+        agency_lang: 'es',
+        agency_phone: '+34 555 3434',
+        agency_fare_url: 'http://www.agency-fare-url.es'
+      }
     end
     
     #
@@ -89,8 +102,10 @@ module GtfsApi
     
     test "agency io_id uniqueness" do
       a = AgencyTest.fill_valid_agency 
+      a.io_id = "agency"
       a.save!
       a2 = AgencyTest.fill_valid_agency 
+      a2.io_id = "agency" 
       assert_raises ( ActiveRecord::RecordInvalid) {a2.save!}
       a2.io_id = 'new_validagency_id'
       assert_nothing_raised ( ActiveRecord::RecordInvalid) {a2.save!}
@@ -100,6 +115,28 @@ module GtfsApi
       #defined in fixtures
       a = Agency.find_by_io_id('_agency_one'); 
       assert (a.routes.count == 2)
+    end
+   
+    #
+    # GTFSABLE Test
+    #
+    test 'gtfs agency file row can be imported into a valid model' do
+      agency_row = AgencyTest.valid_gtfs_feed_agency
+      a = Agency.new_from_gtfs(agency_row)
+      assert a.valid?, a.errors.to_a.to_s
+      #also check the values are the expected
+      Agency.gtfs_cols.each do |k_api,k_feed|
+        assert_equal agency_row[k_feed], a[k_api]
+        #puts k_api.to_s + " " + a[k_api]
+      end
+    end
+    
+    test "agency model can be exported to gtfs feed row" do
+      a = AgencyTest.fill_valid_agency
+      agency_row = a.to_gtfs
+      Agency.gtfs_cols.each do |model_attr, gtfs_col|
+       assert_equal a[model_attr], agency_row[gtfs_col]
+      end
     end
     
   end

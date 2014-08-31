@@ -38,5 +38,10 @@ module GtfsApi
       :no => NOT_AVAILABLE
     }    
   
+    def after_rehash_to_gtfs(gtfs_row)
+      gtfs_row[:start_date] = self.start_date.to_gtfs
+      gtfs_row[:end_date] = self.end_date.to_gtfs
+      return gtfs_row
+    end
   end
 end

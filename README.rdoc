@@ -1,49 +1,84 @@
-= GtfsApi
+# GtfsApi
 
-This gem is a rails engine for GTFS data.
+This gem is a ruby on rails engine that populates an JSON API of a GTFS feed. (https://developers.google.com/transit/gtfs/reference).
 
+If you plan to build a public transport mobile app or a web based on a GTFS feed, this gem may help you to forget about all the server side.
 
-== Install
+If you are part of the IT crew of a transport agency this can help you to populate your data and make it available for developers to create apps.
 
-Add to your Gemfile
+Note: This project is still on an early stage.
 
+## Install
+
+Add the gem to your Gemfile
+
+```
 gem gtfs_api
-
+```
 Then run 
-bundle install
+```
+$ bundle install
+```
 
-Then migrate the db.
+Perform the migrations and import the data. You may have your own GTFS feed
+Copy your gtfs feed zipped in db/gtfs/feed.zip and run this task:
 
 
 
-This step will create a set of tables defined in https://developers.google.com/transit/gtfs/reference
+```
+rake app:gtfs_api:install:migrations 
+rake gtfs:import
+
+````
+Optionally you can download the feed directly from a URL:
+
+````
+rake gtfs:import[http://www.site.com/gtfs_file.zip]
+```
+You can find many GTFS feeds on this website http://www.gtfs-data-exchange.com/
+
+Edit your routes.rb, and add this line
+```
+mount GtfsApi::Engine => "/gtfs/"
+```
+
+Finally you can run the server
+```
+rails s
+```
+
+
+
+This step will create a set of tables defined in 
 
 For example, for the agency file, the table gtfs_api_agencies will be created
 
-== Importing data
-
-This gem includes a set of scripts that make usage of gtfs-reader LINK by AUTHOR.
+This gem includes a set of rake tasks to import da
 
 You can get the data from (** page to import data **)
 
-== Sample Client
+## Sample Client
 
 To test the API, you have available a simple javascript client that consumes from
 this API.
 
-== JSON API Methods
+## JSON API Methods
 
 Now the hussle.
 
-Once the engine is installed, and the data is populated
+Once the engine is installed, and the data has been imported you'll have available
+these methods:
 
 
+## Extending the
 
+## Getting Involved
 
-== Developers Zone
+Do you want to help to create the best open framework for public transport? Help is welcome! 
 
+## Notes for developers
 
-=== Models Notes
+### Models Notes
 
 Because rails ids are integers, instead of using an string as primary key in the
 database, I've opted to keep rails default id. Integers are faster and the standard in the
@@ -58,17 +93,17 @@ TODO: list the pids
 
 For easing the imports references (pid)
 
-== Author & contributors
+## Author & contributors
 
 Juan Manuel Merlos http://merlos.org
 
 Want to contribute? Your name here :)
 
-== License
+## License
 This project rocks and uses MIT-LICENSE.
 
 
-http://www.gtfs-data-exchange.com/
+##Acknoledgements
 
-Importing using gem:
+Thanks to Sangster for creating the gem gtfs-reader
 https://github.com/sangster/gtfs-reader/

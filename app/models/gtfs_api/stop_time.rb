@@ -2,15 +2,15 @@ module GtfsApi
   class StopTime < ActiveRecord::Base
     include GtfsApi::Concerns::Models::Concerns::Gtfsable
     #gtfs feed columns definitions
-    set_gtfs_col :trip_io_id
+    set_gtfs_col :trip_io_id, :trip_id
     set_gtfs_col :arrival_time
     set_gtfs_col :departure_time
-    set_gtfs_col :stop_io_id
+    set_gtfs_col :stop_io_id, :stop_id
     set_gtfs_col :stop_sequence
-    set_gtfs_col :strop_headsign
+    set_gtfs_col :stop_headsign
     set_gtfs_col :pickup_type
     set_gtfs_col :drop_off_type
-    set_gtfs_col :shape_dist_traveled
+    set_gtfs_col :dist_traveled, :shape_dist_traveled
     
     # VALIDATIONS
     validates :trip, presence: true
@@ -74,23 +74,23 @@ module GtfsApi
     # @param val[String] the time string in gtfs format, ex: 25:33:33 or Time objet 
     #
     #
-    # @TODO Think: it is better to store it as an integer or timestamp?
+    # @TODO Think: if is it better to store it as an integer or timestamp?
     # 
     def time_setter(attribute_sym, val) 
       if val.is_a? String
-        #puts is a string => parse
-        if (hh,mm,ss = val.scan(/^0?(\d+):([0-5][0-9]):([0-5][0-9])+$/)[0]).nil?
+        t = Time.new_from_gtfs(val)
+        if t.nil?
           self.errors.add(attribute_sym,:invalid)
           write_attribute(attribute_sym, val)
           return
         end
-        parsed_val = Time.new(0,1,(hh.to_f/24).floor+1,hh.to_f%24,mm,ss,'+00:00') #save utc 
-        write_attribute(attribute_sym, parsed_val)
+        write_attribute(attribute_sym, t)
         return
       end
       write_attribute(attribute_sym, val)
       
     end
+    
     # ASSOCIATIONS
     belongs_to :stop
     belongs_to :trip 
@@ -115,6 +115,17 @@ module GtfsApi
     NO = 1
     PHONE_AGENCY = 2
     COORDINATE_WITH_DRIVER = 3
+    
+    
+    # GTFSAble override method
+    # see @gtfsable
+    # implementation of the hook after_rehash_to_gtfs_feed
+    def after_rehash_to_gtfs(gtfs_feed_row)
+      gtfs_feed_row[self.class.gtfs_col_for_attr(:arrival_time)] = arrival_time.to_gtfs
+      gtfs_feed_row[self.class.gtfs_col_for_attr(:departure_time)] = departure_time.to_gtfs
+      return gtfs_feed_row
+    end
+   
     
     
   end

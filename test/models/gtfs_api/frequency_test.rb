@@ -74,9 +74,21 @@ module GtfsApi
       f.exact_times = 2
       assert f.invalid? 
       
-      
     end
     
+    test "virtual attribute trip_io_id sets and gets trip" do
+      t = TripTest.fill_valid_trip
+      assert t.valid?
+      t.save!
+      f = self.fill_valid_frequency
+      f.trip = nil
+      assert_equal f.trip, nil 
+      assert_equal f.trip_io_id, nil 
+      f.trip_io_id = t.io_id 
+      assert_equal f.trip.io_id, t.io_id
+      assert_equal f.trip_io_id, t.io_id
+      assert t.valid?
+    end
     
   end
 end
