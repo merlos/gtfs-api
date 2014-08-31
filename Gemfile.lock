@@ -2,7 +2,8 @@ PATH
   remote: .
   specs:
     gtfs_api (0.0.1)
-      iso639-validator
+      iso4217-validator (~> 0.0.2)
+      iso639-validator (~> 0.0.2)
       rails (~> 4.1.4)
 
 PATH
@@ -49,7 +50,8 @@ GEM
     erubis (2.7.0)
     hike (1.2.3)
     i18n (0.6.11)
-    iso-639 (0.2.4)
+    iso-639 (0.2.5)
+    iso4217-validator (0.0.2)
     iso639-validator (0.0.2)
       iso-639
     json (1.8.1)
@@ -107,6 +109,5 @@ PLATFORMS
 DEPENDENCIES
   gtfs-reader!
   gtfs_api!
-  iso639-validator (>= 0.0.2)
   sqlite3
   yard

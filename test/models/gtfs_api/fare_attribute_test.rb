@@ -52,9 +52,17 @@ module GtfsApi
       assert f.invalid? 
     end
     
+    test "currency_type is a valid ISO4217 uppercase code " do
+      f = FareAttributeTest.fill_valid_fare_attribute
+      f.currency_type = 'eur'
+      assert f.invalid?
+    end 
+    
+    
     test "currency_type is a valid ISO4217 code" do
       f = FareAttributeTest.fill_valid_fare_attribute
-      # TODO
+      f.currency_type = 'ZZZ'
+      assert f.invalid?
     end 
     
     test "payment_method presence" do

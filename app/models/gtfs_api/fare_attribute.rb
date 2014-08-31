@@ -1,5 +1,6 @@
 module GtfsApi
   class FareAttribute < ActiveRecord::Base
+    include Iso4217::Validator
     
     include GtfsApi::Concerns::Models::Concerns::Gtfsable
     set_gtfs_col :io_id, :fare_id
@@ -13,7 +14,8 @@ module GtfsApi
     #valdations
     validates :io_id, uniqueness: true, presence:true
     validates :price, presence: true
-    validates :currency_type, presence: true, length: {is: 3}
+    
+    validates :currency_type, presence: true, length: {is: 3}, iso4217Code: true
     validates :payment_method, presence: true, numericality: {only_integer: true, 
       greater_than_or_equal_to: 0, less_than_or_equal_to: 1}
       
@@ -24,11 +26,7 @@ module GtfsApi
     validates :transfer_duration,numericality: {only_integer: true, 
       greater_than_or_equal_to: 0}, allow_nil: true
       # time in seconds
-          
-    #TODO validate that the currency code is corect
-    # ISO4217
-    # see this gem https://github.com/hexorx/currencies
-    
+              
     # Associations
     has_many :fare_rules, foreign_key:'fare_id'
     

@@ -1,6 +1,7 @@
+
 module GtfsApi
   class Agency < ActiveRecord::Base
-    
+    include Iso639::Validator
     include GtfsApi::Concerns::Models::Concerns::Gtfsable
     set_gtfs_file :agency
     set_gtfs_col :io_id, :agency_id
@@ -10,9 +11,7 @@ module GtfsApi
     set_gtfs_col :lang, :agency_lang
     set_gtfs_col :phone, :agency_phone
     set_gtfs_col :fare_url, :agency_fare_url
-    
-    include Iso639::Validator
-        
+          
     validates :io_id, uniqueness: true, allow_nil:true
     validates :name, presence: true
     validates :url, presence: true, :'gtfs_api/validators/url' => true 
