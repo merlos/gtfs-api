@@ -18,12 +18,12 @@ module GtfsApi
         trip: t,
         stop: s,
         arrival_time: '10:11:12',
-        departure_time: '22:33:44',
-        stop_sequence: 1,
+        departure_time: '25:33:44',
+        stop_sequence: '1',
         stop_headsign: 'hola',
         pickup_type: StopTime::PHONE_AGENCY,
         drop_off_type: StopTime::REGULAR, 
-        dist_traveled: 100.1 )
+        dist_traveled: '100.1' )
     end
     
     def self.valid_gtfs_feed_stop_time
@@ -39,7 +39,7 @@ module GtfsApi
         trip_id: t.io_id,
         stop_id: s.io_id,
         arrival_time: '10:11:12',
-        departure_time: '22:33:44',
+        departure_time: '25:33:44',
         stop_sequence: 1,
         stop_headsign: 'headsign',
         pickup_type: StopTime::PHONE_AGENCY,

@@ -17,6 +17,23 @@ module GtfsApi
       )
     end  
     
+    def self.valid_gtfs_feed_stop 
+      return {
+        stop_id: "stop_" + Time.now.to_f.to_s,
+        stop_code: 'stop_code',
+        stop_name: 'stop_name',
+        stop_desc: 'stop_desc',
+        stop_lat: '1.1',
+        stop_lon: '2.2',
+        zone_id: "zone",
+        stop_url: "http://github.com/merlos/",
+        location_type: "0",
+        parent_station: nil,
+        stop_timezone: 'Madrid/España',
+        wheelchair_boarding: '0'
+      }
+    end
+    
     test "valid stop" do
       s = StopTest.fill_valid_stop
       assert s.valid?
@@ -108,6 +125,51 @@ module GtfsApi
     
     #TODO test parent_station
     
+    
+    # GTFSABLE tests
+    
+    test "stop row can be imported into a Stop model" do
+       model_class = Stop
+       test_class = StopTest
+       exceptions = [] #exceptions, in test
+       #--- common part
+       feed_row = test_class.send('valid_gtfs_feed_' + model_class.to_s.split("::").last.underscore)
+       #puts feed_row
+       model = model_class.new_from_gtfs(feed_row)
+       assert model.valid?
+       model_class.gtfs_cols.each do |model_attr, feed_col|
+         next if exceptions.include? (model_attr)
+         model_value = model.send(model_attr)
+         model_value = model_value.to_s if model_value.is_a? Numeric
+         assert_equal feed_row[feed_col], model_value, "Testing " + model_attr.to_s + " vs " + feed_col.to_s
+       end
+       #------
+     end
+   
+     test "a Stop model can be exported into a gtfs row" do
+       model_class = Stop
+       test_class = StopTest
+       exceptions = []
+       #------ Common_part
+       model = test_class.send('fill_valid_' + model_class.to_s.split("::").last.underscore)
+       feed_row = model.to_gtfs
+       #puts feed_row
+       model_class.gtfs_cols.each do |model_attr, feed_col|
+         next if exceptions.include? (model_attr)
+         feed_value = feed_row[feed_col]
+         feed_value = feed_value.to_f if model.send(model_attr).is_a? Numeric
+         assert_equal model.send(model_attr), feed_value, "Testing " + model_attr.to_s + " vs " + feed_col.to_s
+       end
+     end
+     
+     test "a stop row that belongs to a station can be imported into a gtfs row" do
+       
+     end
+    
+    
+     test "a Stop model that belongs to a station can be exported" do
+       
+     end
     
     
   end # class

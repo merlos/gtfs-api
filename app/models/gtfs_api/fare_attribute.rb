@@ -7,7 +7,7 @@ module GtfsApi
     set_gtfs_col :price
     set_gtfs_col :currency_type
     set_gtfs_col :payment_method
-    set_gtfs_col :tranfers
+    set_gtfs_col :transfers
     set_gtfs_col :transfer_duration
     
     

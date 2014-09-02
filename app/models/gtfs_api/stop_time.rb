@@ -53,43 +53,19 @@ module GtfsApi
     
     #
     # gtfs time string or utc time 
-    # @see time_setter
+    # @see Gtfsable::gtfs_time_setter
     def arrival_time=(val)
-      time_setter(:arrival_time, val)
+      gtfs_time_setter(:arrival_time, val) 
     end
   
     #
     # @param val[mixed] gtfs time string or utc Time
-    # @see time_setter
+    # @see Gtfsable::gtfs_time_setter
     def departure_time=(val)
-      time_setter(:departure_time, val)
+      gtfs_time_setter(:departure_time, val)
     end
     
-    #
-    # GTFS Spec allows times > 24h, but rails does not. this is a parser
-    # It is stored a time object with that has as 00:00:00 => '0000-01-01 00:00 +00:00(UTC)'
-    # Times are always kept in UTC
-    #
-    # @param attribute_sym[Symbol] attribute that will be parsed
-    # @param val[String] the time string in gtfs format, ex: 25:33:33 or Time objet 
-    #
-    #
-    # @TODO Think: if is it better to store it as an integer or timestamp?
-    # 
-    def time_setter(attribute_sym, val) 
-      if val.is_a? String
-        t = Time.new_from_gtfs(val)
-        if t.nil?
-          self.errors.add(attribute_sym,:invalid)
-          write_attribute(attribute_sym, val)
-          return
-        end
-        write_attribute(attribute_sym, t)
-        return
-      end
-      write_attribute(attribute_sym, val)
-      
-    end
+
     
     # ASSOCIATIONS
     belongs_to :stop
@@ -117,7 +93,7 @@ module GtfsApi
     COORDINATE_WITH_DRIVER = 3
     
     
-    # GTFSAble override method
+    # GTFSAble overrided method
     # see @gtfsable
     # implementation of the hook after_rehash_to_gtfs_feed
     def after_rehash_to_gtfs(gtfs_feed_row)

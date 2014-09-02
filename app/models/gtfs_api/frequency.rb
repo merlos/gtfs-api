@@ -2,7 +2,7 @@ module GtfsApi
   class Frequency < ActiveRecord::Base
     
     include GtfsApi::Concerns::Models::Concerns::Gtfsable
-    set_gtfs_col :trip_io_id
+    set_gtfs_col :trip_io_id, :trip_id
     set_gtfs_col :start_time
     set_gtfs_col :end_time
     set_gtfs_col :headway_secs
@@ -27,6 +27,14 @@ module GtfsApi
     
     def trip_io_id=(val)
       self.trip = Trip.find_by!(io_id: val)
+    end
+    
+    def start_time=(val)
+      gtfs_time_setter(:start_time, val)
+    end
+    
+    def end_time=(val)
+      gtfs_time_setter(:end_time, val)
     end
     
     # CONSTANTS

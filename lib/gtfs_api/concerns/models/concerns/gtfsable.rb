@@ -24,7 +24,9 @@ module GtfsApi::Concerns::Models::Concerns::Gtfsable
       #rehash to gtfs feed
       self.class.gtfs_cols.each do |model_attr,feed_col| 
         #call send because virt. attr can only be accessed like that
-        gtfs_feed_row[feed_col] = self.send(model_attr) 
+        col_value = self.send(model_attr) 
+        col_value = col_value.to_gtfs if (col_value.is_a?(Date) || col_value.is_a?(Time))
+        gtfs_feed_row[feed_col] = col_value
       end
       self.after_rehash_to_gtfs(gtfs_feed_row)
     end
@@ -37,6 +39,33 @@ module GtfsApi::Concerns::Models::Concerns::Gtfsable
     # it shall return the final gtfs_feed_row
     def after_rehash_to_gtfs (gtfs_feed_row)
       return gtfs_feed_row
+    end
+    
+    
+    #
+    # GTFS Spec allows times > 24h, but rails does not. this is a parser
+    # It is stored a time object with that has as 00:00:00 => '0000-01-01 00:00 +00:00(UTC)'
+    # Times are always kept in UTC
+    #
+    # @param attribute_sym[Symbol] attribute that will be parsed
+    # @param val[String] the time string in gtfs format, ex: 25:33:33 or Time objet 
+    #
+    #
+    # @TODO Think: if is it better to store it as an integer or timestamp?
+    # 
+    def gtfs_time_setter(attribute_sym, val) 
+      if val.is_a? String
+        t = Time.new_from_gtfs(val)
+        if t.nil?
+          self.errors.add(attribute_sym,:invalid)
+          write_attribute(attribute_sym, val)
+          return
+        end
+        write_attribute(attribute_sym, t)
+        return
+      end
+      write_attribute(attribute_sym, val)
+      
     end
     
     

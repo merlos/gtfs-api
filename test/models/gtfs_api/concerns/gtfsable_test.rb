@@ -9,7 +9,10 @@ module GtfsApi::Concerns::Models::Concerns
     set_gtfs_col :io_id 
     set_gtfs_col :default_col_map
     set_gtfs_col :test1, :test2
+    set_gtfs_col :sample_date
+    set_gtfs_col :sample_time
     
+    attr_accessor :sample_date, :sample_time
     #setters and getters of attributtes
     def io_id=(val) 
       @io_id = val 
@@ -32,12 +35,50 @@ module GtfsApi::Concerns::Models::Concerns
       @test1 
     end
     
+    def sample_time=(val)
+      gtfs_time_setter(:sample_time, val)
+    end
+    
     # overrides the value of io_id when exporting to gtfs
     def after_rehash_to_gtfs(gtfs_feed_row)
       gtfs_feed_row[:io_id] = "after_rehash_was_called"
       return gtfs_feed_row
     end
     
+  end
+  
+  class GtfsTimeSetterTest
+    include GtfsApi::Concerns::Models::Concerns::Gtfsable
+    #gtfs feed columns definitions
+    set_gtfs_col :sample_time
+    set_gtfs_col :sample_date
+    
+  
+    def initialize
+      @attribute_tmp = {}
+    end
+    
+    #fake write attribute to test
+    # TODO think a better solution
+    # this method is called within gtfs_time_setter
+    def write_attribute(symbol, val)
+      @attribute_tmp[symbol] = val
+    end
+    
+    def sample_time=(val)
+      gtfs_time_setter(:sample_time, val)
+    end
+    def sample_time
+      @attribute_tmp[:sample_time]
+    end
+    
+    
+    def sample_date=(val)
+      @attribute_tmp[:sample_date] = val
+    end
+    def sample_date
+      @attribute_tmp[:sample_date]
+    end
   end
   
   #Support class for test that implements gtfsable
@@ -97,8 +138,37 @@ module GtfsApi::Concerns::Models::Concerns
        assert_equal :io_id , GtfsableTestSupport1.gtfs_col_for_attr(:io_id)
        assert_equal :test2 , GtfsableTestSupport1.gtfs_col_for_attr(:test1)
     end
+    
+    #
+    # TIME SETTER 
+    #
        
-              
+    test "gtfs_time_setter works without trailing 0" do
+      t = GtfsTimeSetterTest.new
+      t.sample_time = "09:44:45" #without 0
+      assert Time.new(0,1,1,9,55,33,'+00:00'), t.sample_time
+    end   
+    
+    test 'arrival_time with values greater than 24h is properly stored' do
+      t = GtfsTimeSetterTest.new
+      t.sample_time = "29:55:55" # 1d + 5h 55m 55s
+      assert_equal Time.new(0000,01,02,5,55,55,'+00:00'), t.sample_time # 0000-01-02 5:55:55 +0000
+    end
+        
+    test "to_gtfs returns dates in the gtfs format" do
+      t = GtfsTimeSetterTest.new
+      t.sample_date = Date.new(2014,06,20)
+      gtfs_row = t.to_gtfs #io_id is like any other field in this fake model
+      assert_equal '2014-06-20', gtfs_row[:sample_date]
+    end
+    
+    test "to_gtfs returns times in the gtfs format" do
+      c = GtfsTimeSetterTest.new
+      c.sample_time = Time.new(0000,01,02,5,55,55,'+00:00')
+      gtfs_row = c.to_gtfs #io_id is like any other field in this fake model
+      assert_equal "29:55:55" , gtfs_row[:sample_time]
+    end
+    
     # this test assumes that GtfsApi::Route is gtfsable
     # and that that the model includes this line 
     # set_gtfs_col :io_id

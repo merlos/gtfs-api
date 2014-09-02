@@ -21,7 +21,7 @@ class ::Time
     s = (m - m.floor) * 60
     hh =  h > 10 ? h.floor.to_s : '0' + h.floor.to_s 
     mm =  m > 10 ? m.floor.to_s : '0' + m.floor.to_s
-    ss =  m > 10 ? s.round.to_s : '0' + s.round.to_s
+    ss =  s > 10 ? s.round.to_s : '0' + s.round.to_s
     "#{hh}:#{mm}:#{ss}"
   end
     

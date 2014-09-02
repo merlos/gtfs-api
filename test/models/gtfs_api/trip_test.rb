@@ -84,6 +84,22 @@ module GtfsApi
     #
     #VALIDATION TESTS
     #
+    def self.valid_gtfs_feed_trip 
+      t = TripTest.fill_valid_trip
+      {
+        trip_id: t.io_id,
+        route_id: t.route.io_id,
+        service_id: t.service_id,
+        trip_headsign: 'trip headsign',
+        trip_short_name: 'trip short name',
+        direction_id: "0",
+        block_id: "block_id",
+        shape_id: t.shape_id,
+        wheelchair_accesible: "0",
+        bikes_allowed: "0",
+      }
+    end
+    
     
     test 'valid trip' do
       t = TripTest.fill_valid_trip
@@ -247,6 +263,45 @@ module GtfsApi
       t.save!
       assert_equal t.route.io_id, r.io_id #check now I can access agency
     end
+    
+    
+    test "trip row can be imported into a Trip model" do
+       model_class = Trip
+       test_class = TripTest
+       exceptions = [] #exceptions, in test
+       #--- common part
+       feed_row = test_class.send('valid_gtfs_feed_' + model_class.to_s.split("::").last.underscore)
+       #puts feed_row
+       model = model_class.new_from_gtfs(feed_row)
+       assert model.valid?, model.errors.to_a.to_s
+      
+       model_class.gtfs_cols.each do |model_attr, feed_col|
+         next if exceptions.include? (model_attr)
+         model_value = model.send(model_attr)
+         model_value = model_value.to_s if model_value.is_a? Numeric
+         model_value = model_value.to_gtfs if model_value.is_a? Time
+         assert_equal feed_row[feed_col], model_value, "Testing " + model_attr.to_s + " vs " + feed_col.to_s
+       end
+       #------
+     end
+  
+     test "a Trip model can be exported into a gtfs row" do
+       model_class = Trip
+       test_class = TripTest
+       exceptions = []
+       #------ Common_part
+       model = test_class.send('fill_valid_' + model_class.to_s.split("::").last.underscore)
+       feed_row = model.to_gtfs
+       #puts feed_row
+       model_class.gtfs_cols.each do |model_attr, feed_col|
+         next if exceptions.include? (model_attr)
+         feed_value = feed_row[feed_col]
+         feed_value = feed_value.to_f if model.send(model_attr).is_a? Numeric
+         feed_value = Time.new_from_gtfs(feed_value) if model.send(model_attr).is_a? Time
+         assert_equal model.send(model_attr), feed_value, "Testing " + model_attr.to_s + " vs " + feed_col.to_s
+       end
+     end 
+    
     
   end
 end

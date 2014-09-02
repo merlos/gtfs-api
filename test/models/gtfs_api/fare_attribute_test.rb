@@ -14,6 +14,16 @@ module GtfsApi
         transfer_duration: 10)
     end
     
+    def self.valid_gtfs_feed_fare_attribute
+      return {
+        fare_id: Time.now.to_f.to_s,
+        price: 11.11,
+        currency_type: 'EUR',
+        payment_method: FareAttribute::ON_BOARD,
+        transfers: FareAttribute::TWICE,
+        transfer_duration: 10}
+    end
+    
     #
     # VALIDATIONS
     #
@@ -117,6 +127,37 @@ module GtfsApi
      f = FareAttribute.find_by_io_id('_fare_one')
      assert (f.fare_rules.count == 1)
    end
-  
+   
+   
+   # GTFSABLE IMPORT/EXPORT
+   
+   test "fare_attribute row can be imported into a FareAttribute model" do
+     model_class = FareAttribute
+     test_class = FareAttributeTest
+     exceptions = [] #exceptions, in test
+     #--- common part
+     feed_row = test_class.send('valid_gtfs_feed_' + model_class.to_s.split("::").last.underscore)
+     model = model_class.new_from_gtfs(feed_row)
+     assert model.valid?
+     model_class.gtfs_cols.each do |model_attr, feed_col|
+       next if exceptions.include? (model_attr)
+       assert_equal model.send(model_attr), feed_row[feed_col], "Testing " + model_attr.to_s + " vs " + feed_col.to_s
+     end
+     #------
+   end
+   
+   test "a FareAttribute model can be exported into a gtfs row" do
+     model_class = FareAttribute
+     test_class = FareAttributeTest
+     exceptions = []
+     #------ Common_part
+     model = test_class.send('fill_valid_' + model_class.to_s.split("::").last.underscore)
+     feed_row = model.to_gtfs
+     model_class.gtfs_cols.each do |model_attr, feed_col|
+       next if exceptions.include? (model_attr)
+       assert_equal model.send(model_attr), feed_row[feed_col], "Testing " + model_attr.to_s + " vs " + feed_col.to_s
+     end
+   end
+   
   end #class 
 end #module

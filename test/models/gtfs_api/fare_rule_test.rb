@@ -36,6 +36,18 @@ module GtfsApi
         contains_id: s_c.zone_id)
     end
     
+    
+    def self.valid_gtfs_feed_fare_rule
+      f = FareRuleTest.fill_valid_fare_rule
+      return {
+        fare_id: f.fare.io_id,
+        route_id: f.route.io_id,
+        origin_id: f.origin_id,
+        destination_id: f.destination_id,
+        contains_id: f.contains_id
+      }
+    end
+    
     test 'a valid fare_rule is valid' do
       f = FareRuleTest.fill_valid_fare_rule
       assert f.valid?, f.errors.to_a
@@ -169,6 +181,36 @@ module GtfsApi
        f = FareRule.where(fare: fare_attribute).first
        #check if we can access to the record
        assert (f.fare.io_id=='_fare_one')
+     end
+     
+     
+     test "fare_rule row can be imported into a FareRule model" do
+       model_class = FareRule
+       test_class = FareRuleTest
+       exceptions = [] #exceptions, in test
+       #--- common part
+       feed_row = test_class.send('valid_gtfs_feed_' + model_class.to_s.split("::").last.underscore)
+       #puts feed_row
+       model = model_class.new_from_gtfs(feed_row)
+       assert model.valid?
+       model_class.gtfs_cols.each do |model_attr, feed_col|
+         next if exceptions.include? (model_attr)
+         assert_equal model.send(model_attr), feed_row[feed_col], "Testing " + model_attr.to_s + " vs " + feed_col.to_s
+       end
+       #------
+     end
+   
+     test "a FareRule model can be exported into a gtfs row" do
+       model_class = FareRule
+       test_class = FareRuleTest
+       exceptions = []
+       #------ Common_part
+       model = test_class.send('fill_valid_' + model_class.to_s.split("::").last.underscore)
+       feed_row = model.to_gtfs
+       model_class.gtfs_cols.each do |model_attr, feed_col|
+         next if exceptions.include? (model_attr)
+         assert_equal model.send(model_attr), feed_row[feed_col], "Testing " + model_attr.to_s + " vs " + feed_col.to_s
+       end
      end
      
   end
