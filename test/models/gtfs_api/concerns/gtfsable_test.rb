@@ -2,17 +2,51 @@ require 'test_helper'
 
 module GtfsApi::Concerns::Models::Concerns
   
-  #Support class for test that implements gtfsable
-  class GtfsableTestSupport1 
+  # SUPPORT CLASSES
+  
+  # empty col assignment
+  class GtfsableTestEmptyMapping
     include GtfsApi::Concerns::Models::Concerns::Gtfsable
+  end
+  
+  # mapping
+  class GtfsableTestMapping
+  include GtfsApi::Concerns::Models::Concerns::Gtfsable
     #gtfs feed columns definitions
-    set_gtfs_col :io_id 
-    set_gtfs_col :default_col_map
-    set_gtfs_col :test1, :test2
-    set_gtfs_col :sample_date
-    set_gtfs_col :sample_time
+    set_gtfs_file :forced_name
+    set_gtfs_col :default_map
+    set_gtfs_col :gtfs_model, :gtfs_feed
     
-    attr_accessor :sample_date, :sample_time
+    def initialize 
+      @attributes = {}
+    end
+    
+    def initialize(hash = {})
+      @attributes = {}
+      hash.each do |key, val|
+        @attributes[key] = val
+      end
+    end
+    
+    def default_map=(val) 
+      @attributes[:default_map] = val 
+    end
+    def default_map 
+      @attributes[:default_map]
+    end
+    
+    def gtfs_model=(val) 
+      @attributes[:gtfs_model] = val 
+    end
+    def gtfs_model 
+      @attributes[:gtfs_model]
+    end
+  end
+  
+  # after rehash
+  class GtfsableTestAfterRehash
+    include GtfsApi::Concerns::Models::Concerns::Gtfsable
+     set_gtfs_col :io_id
     #setters and getters of attributtes
     def io_id=(val) 
       @io_id = val 
@@ -20,25 +54,6 @@ module GtfsApi::Concerns::Models::Concerns
     def io_id 
       @io_id 
     end
-  
-    def default_col_map=(val) 
-      @default_col_map = val 
-    end
-    def default_col_map 
-      @default_col_map 
-    end
-    
-    def test1=(val) 
-      @test1 = val 
-    end
-    def test1 
-      @test1 
-    end
-    
-    def sample_time=(val)
-      gtfs_time_setter(:sample_time, val)
-    end
-    
     # overrides the value of io_id when exporting to gtfs
     def after_rehash_to_gtfs(gtfs_feed_row)
       gtfs_feed_row[:io_id] = "after_rehash_was_called"
@@ -47,13 +62,13 @@ module GtfsApi::Concerns::Models::Concerns
     
   end
   
+  # time and date setters
   class GtfsTimeSetterTest
     include GtfsApi::Concerns::Models::Concerns::Gtfsable
     #gtfs feed columns definitions
     set_gtfs_col :sample_time
     set_gtfs_col :sample_date
     
-  
     def initialize
       @attribute_tmp = {}
     end
@@ -81,81 +96,88 @@ module GtfsApi::Concerns::Models::Concerns
     end
   end
   
-  #Support class for test that implements gtfsable
-  class OverrideId 
-    include GtfsApi::Concerns::Models::Concerns::Gtfsable
-    #gtfs feed columns definitions
-    set_gtfs_col :io_id, :override_id 
-    
-    @io_id
-  
-    def io_id=(val) 
-      @io_id = val 
-    end
-    def io_id 
-      @io_id 
-    end
-  end
-  
-  
   class GtfsableTest < ActiveSupport::TestCase
-    
-    test "io_id is automatically converted into classname_id" do
-      c = GtfsableTestSupport1.gtfs_cols
-      assert c[:io_id] == :io_id
+     
+    test "gtfs_cols returns nil when no mapping defined" do
+      assert_nil GtfsableTestEmptyMapping.gtfs_cols
+    end
+    test "gtfs_attr returns nil when no mapping defined" do
+        assert_nil GtfsableTestEmptyMapping.gtfs_attr
+    end
+         
+    test "to_gtfs returns a hash with no cols mapping" do
+      c = GtfsableTestEmptyMapping.new
+      assert_empty c.to_gtfs
     end
     
-    test "default mapping" do
-      assert GtfsableTestSupport1.gtfs_cols[:default_col_map] == :default_col_map
+    
+    test "gtfs_file returns the pluralized uderscore class name when not set" do
+      assert_equal :gtfsable_test_empty_mappings, GtfsableTestEmptyMapping.gtfs_file
     end
     
-    test "overriding default mapping" do
-      assert GtfsableTestSupport1.gtfs_cols[:test1] == :test2
+    test "gtfs_filename returns the pluralized underscore class name adding .txt when not set" do
+      assert_equal 'gtfsable_test_empty_mappings.txt', GtfsableTestEmptyMapping.gtfs_filename
+    end
+    
+    test "default set_col_map with no second argument are equal" do
+      assert_equal :default_map, GtfsableTestMapping.gtfs_cols[:default_map]
+    end
+    
+    test "set_col_map maps to the second argument when set" do
+      assert_equal :gtfs_feed, GtfsableTestMapping.gtfs_cols[:gtfs_model]
+    end
+    
+    test "gfts_file returns the name set by set_gtfs_file linked to the class" do
+      assert_equal :forced_name, GtfsableTestMapping.gtfs_file
+    end
+    
+    test "gtfs_filename returns the name set by set_gtfs_file" do
+      assert_equal 'forced_name.txt', GtfsableTestMapping.gtfs_filename
     end
     
     test "to_gtfs returns a hash" do
-      c = OverrideId.new
-      c.io_id = "hola"
+      c = GtfsableTestMapping.new
+      c.default_map = "hola"
+      c.gtfs_model = "adios"
       gtfs = c.to_gtfs
       assert_kind_of Hash, gtfs
     end
     
     test "to_gtfs returns THE expected hash" do
-      c = OverrideId.new
-      c.io_id = "hola"
-      gtfs = c.to_gtfs
-      assert_equal 'hola', gtfs[:override_id]
+      c = GtfsableTestMapping.new
+      c.default_map = "hola"
+      gtfs_feed_hash = c.to_gtfs
+      assert_equal 'hola', gtfs_feed_hash[:default_map]
     end
     
     test "to_gtfs calls after_rehash_to_gtfs" do
-      c = GtfsableTestSupport1.new
+      c = GtfsableTestAfterRehash.new
       c.io_id = "hola"
       gtfs = c.to_gtfs
       assert_equal "after_rehash_was_called", gtfs[:io_id]
     end
     
     test "gtfs_col_for_attr returns the name of the col" do
-       assert_equal :io_id , GtfsableTestSupport1.gtfs_col_for_attr(:io_id)
-       assert_equal :test2 , GtfsableTestSupport1.gtfs_col_for_attr(:test1)
+       assert_equal :default_map , GtfsableTestMapping.gtfs_col_for_attr(:default_map)
+       assert_equal :gtfs_feed , GtfsableTestMapping.gtfs_col_for_attr(:gtfs_model)
     end
     
-    #
-    # TIME SETTER 
-    #
+    # TIME SETTER and date tests
+  
        
-    test "gtfs_time_setter works without trailing 0" do
+    test "gtfs_time_setter sets a time with a time with trailing 0" do
       t = GtfsTimeSetterTest.new
       t.sample_time = "09:44:45" #without 0
       assert Time.new(0,1,1,9,55,33,'+00:00'), t.sample_time
     end   
     
-    test 'arrival_time with values greater than 24h is properly stored' do
+    test 'gtfs_time_setter sets a time with hours large than 25' do
       t = GtfsTimeSetterTest.new
       t.sample_time = "29:55:55" # 1d + 5h 55m 55s
       assert_equal Time.new(0000,01,02,5,55,55,'+00:00'), t.sample_time # 0000-01-02 5:55:55 +0000
     end
         
-    test "to_gtfs returns dates in the gtfs format" do
+    test "to_gtfs returns date attributes in the gtfs format" do
       t = GtfsTimeSetterTest.new
       t.sample_date = Date.new(2014,06,20)
       gtfs_row = t.to_gtfs #io_id is like any other field in this fake model
@@ -168,6 +190,34 @@ module GtfsApi::Concerns::Models::Concerns
       gtfs_row = c.to_gtfs #io_id is like any other field in this fake model
       assert_equal "29:55:55" , gtfs_row[:sample_time]
     end
+    
+    
+    test "new_from_gtfs assigns the values to the attributes" do
+      gtfs_feed_row = {default_map: 'value1', gtfs_feed: 'value2'}
+      c = GtfsableTestMapping.new_from_gtfs(gtfs_feed_row)
+      assert_equal 'value1', c.default_map
+      assert_equal 'value2', c.gtfs_model
+    end
+    
+    test "new_from_gtfs ignores those values not included" do
+      gtfs_feed_row = {default_map: 'value1', gtfs_feed: 'value2', caca:''}
+      assert_nothing_raised do 
+        c = GtfsableTestMapping.new_from_gtfs(gtfs_feed_row)
+        assert_equal 'value1', c.default_map
+        assert_equal 'value2', c.gtfs_model
+      end
+    end
+    
+    
+    # TESTS WITH REAL MODELS
+    # this test assumes there is a Route model that does not have
+    # the attribute not_attribute
+    test "new_from_gtfs does not launc attribute not found when an attributed does not exist" do
+      assert_nothing_raised do
+        GtfsApi::Route.new_from_gtfs({not_attribute: 'caca'})
+      end
+    end
+   
     
     # this test assumes that GtfsApi::Route is gtfsable
     # and that that the model includes this line 

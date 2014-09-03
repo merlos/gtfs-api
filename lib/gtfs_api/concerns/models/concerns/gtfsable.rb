@@ -19,8 +19,10 @@ module GtfsApi::Concerns::Models::Concerns::Gtfsable
     # It calls the hook after_rehash_to_gtfs_feed (gtfs_feed_row) which allows the
     # model to override the default assignation if necessary 
     #
+    # returns empty hash if there is no mapping
     def to_gtfs
       gtfs_feed_row = {}
+      return gtfs_feed_row if self.class.gtfs_cols.nil?
       #rehash to gtfs feed
       self.class.gtfs_cols.each do |model_attr,feed_col| 
         #call send because virt. attr can only be accessed like that
@@ -108,9 +110,16 @@ module GtfsApi::Concerns::Models::Concerns::Gtfsable
         @@gtfs_cols[self][model_attr] = gtfs_feed_col 
       end
       
+      # returns[Symbol] gtfs column for the model attribute
       def gtfs_col_for_attr(model_attr)
         @@gtfs_cols[self][model_attr]
       end
+      
+      #returns[Symbol] model attribute for the gtfs_col
+      def attr_for_gtfs_col(gtfs_col)
+        self.gtfs_attr[gtfs_col]
+      end
+      
       #
       # sets the gtfs feed file name (without extension) linked to this class
       # Default value set is the plural of the containing class. Example Agency => :agencies
@@ -133,15 +142,29 @@ module GtfsApi::Concerns::Models::Concerns::Gtfsable
       end
       
       #
-      # @return[Symbol] the gtfs_file name linked to this class
+      # @return[Symbol] the gtfs file name symbol linked to this class
       # 
+      # if set_gtfs_file was not called, it returns the underscore class name
+      # pluralized
+      # Example: For the class GtfsApi::Agency it would return :agencies
+      
       def gtfs_file
         @@gtfs_files[self] ||= self.to_s.split("::").last.underscore.pluralize.to_sym
       end
       
+      #
+      # @returns[String] the gtfs file name string linked to this class
+      # 
+      # if set_gtfs_file was not calle => returns the underscore class name pluralized
+      # Ex: For the class GtfsApi::Agency it would return agencies.txt
+      #
+      def gtfs_filename
+        return self.gtfs_file.to_s + '.txt'
+      end
+      
       # map of gtfs_feed_col => gtfs_api_col
       def gtfs_attr
-        @@gtfs_cols[self].invert
+        @@gtfs_cols[self].invert unless @@gtfs_cols[self].nil?
       end
       
       # cols for all classes
@@ -161,11 +184,11 @@ module GtfsApi::Concerns::Models::Concerns::Gtfsable
       # @param csv_row[Hash] a row of one of the file feeds
       # @return [Hash]
       def rehash_from_gtfs(csv_row)
-        to_gtfs_api = self.gtfs_attr
-        csv_rehashed = Hash[csv_row.map {|gtfs_feed_col, v| 
-          [to_gtfs_api[gtfs_feed_col],v]
-          }
-        ]
+        model_attr_values = {}
+        csv_row.each do |csv_col, val|
+          model_attr_values[self.attr_for_gtfs_col(csv_col)] =  val if self.gtfs_cols.values.include? (csv_col)
+        end
+        return model_attr_values
       end 
       
       def new_from_gtfs(csv_row)
