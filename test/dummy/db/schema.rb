@@ -21,10 +21,12 @@ ActiveRecord::Schema.define(version: 20140713165440) do
     t.string   "lang",       limit: 2
     t.string   "phone",      limit: 24
     t.string   "fare_url"
+    t.integer  "feed_id"
     t.datetime "created_at"
     t.datetime "updated_at"
   end
 
+  add_index "gtfs_api_agencies", ["feed_id"], name: "index_gtfs_api_agencies_on_feed_id"
   add_index "gtfs_api_agencies", ["io_id"], name: "index_gtfs_api_agencies_on_io_id"
 
   create_table "gtfs_api_calendar_dates", force: true do |t|
@@ -35,7 +37,6 @@ ActiveRecord::Schema.define(version: 20140713165440) do
     t.datetime "updated_at"
   end
 
-  add_index "gtfs_api_calendar_dates", ["id"], name: "index_gtfs_api_calendar_dates_on_id"
   add_index "gtfs_api_calendar_dates", ["io_id"], name: "index_gtfs_api_calendar_dates_on_io_id"
 
   create_table "gtfs_api_calendars", force: true do |t|
@@ -57,6 +58,7 @@ ActiveRecord::Schema.define(version: 20140713165440) do
 
   create_table "gtfs_api_fare_attributes", force: true do |t|
     t.string   "io_id"
+    t.integer  "agency_id"
     t.decimal  "price"
     t.string   "currency_type",     limit: 3
     t.integer  "payment_method"
@@ -66,6 +68,7 @@ ActiveRecord::Schema.define(version: 20140713165440) do
     t.datetime "updated_at"
   end
 
+  add_index "gtfs_api_fare_attributes", ["agency_id"], name: "index_gtfs_api_fare_attributes_on_agency_id"
   add_index "gtfs_api_fare_attributes", ["io_id"], name: "index_gtfs_api_fare_attributes_on_io_id"
 
   create_table "gtfs_api_fare_rules", force: true do |t|
@@ -85,16 +88,19 @@ ActiveRecord::Schema.define(version: 20140713165440) do
   add_index "gtfs_api_fare_rules", ["route_id"], name: "index_gtfs_api_fare_rules_on_route_id"
 
   create_table "gtfs_api_feed_infos", force: true do |t|
-    t.string   "feed_publisher_name"
-    t.string   "feed_publisher_url"
-    t.string   "feed_lang",           limit: 2
-    t.date     "feed_start_date"
-    t.date     "feed_end_date"
-    t.string   "feed_version"
-    t.integer  "version"
+    t.string   "publisher_name"
+    t.string   "publisher_url"
+    t.string   "lang",           limit: 2
+    t.date     "start_date"
+    t.date     "end_date"
+    t.string   "version"
+    t.string   "io_id"
+    t.integer  "data_version"
     t.datetime "created_at"
     t.datetime "updated_at"
   end
+
+  add_index "gtfs_api_feed_infos", ["io_id"], name: "index_gtfs_api_feed_infos_on_io_id"
 
   create_table "gtfs_api_frequencies", force: true do |t|
     t.integer  "trip_id"
@@ -167,6 +173,7 @@ ActiveRecord::Schema.define(version: 20140713165440) do
     t.integer  "parent_station_id"
     t.string   "timezone",            limit: 64
     t.integer  "wheelchair_boarding"
+    t.integer  "vehicle_type"
     t.datetime "created_at"
     t.datetime "updated_at"
   end
@@ -202,7 +209,7 @@ ActiveRecord::Schema.define(version: 20140713165440) do
   end
 
   add_index "gtfs_api_trips", ["block_id"], name: "index_gtfs_api_trips_on_block_id"
-  add_index "gtfs_api_trips", ["io_id"], name: "index_gtfs_api_trips_on_io_id", unique: true
+  add_index "gtfs_api_trips", ["io_id"], name: "index_gtfs_api_trips_on_io_id"
   add_index "gtfs_api_trips", ["shape_id"], name: "index_gtfs_api_trips_on_shape_id"
 
 end

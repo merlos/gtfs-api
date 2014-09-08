@@ -20,9 +20,33 @@ module GtfsApi
     validates :fare_url, allow_nil: true, :'gtfs_api/validators/url'=> true 
     # TODO validate timezone
     
+    #def after_save
+    #  if io_id = nil
+    #    auto_io_id
+    #    save!
+    #  end
   
     #associations
     has_many :routes
+    has_many :fare_attributes
    
+    private 
+    
+    # 
+    # sets the io_id. Use it when a io_id is not provided
+    # it creates an acronym with the first letters 
+    # Example: 
+    #  ...
+    #  other initializations
+    #  ...
+    #  agency.name = "metropolitan transports of albacete" 
+    #  agency.save!
+    #    #=> id = 100
+    #  agency.io_id
+    #   #=> 100_MTOA
+    # 
+    def auto_io_id
+      io_id = self.id + "_" + name.split(/\s+/).map(&:first).join.upcase
+    end
   end
 end

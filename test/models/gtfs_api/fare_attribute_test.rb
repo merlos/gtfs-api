@@ -5,8 +5,11 @@ module GtfsApi
     
     def self.fill_valid_fare_attribute
       unique = Time.now.to_f.to_s
+      a = AgencyTest.fill_valid_agency
+      a.save!
       return FareAttribute.new(
-        io_id: unique,
+        io_id: 'fare_attribute_' + unique,
+        agency: a,
         price: 11.11,
         currency_type: 'EUR',
         payment_method: FareAttribute::ON_BOARD,

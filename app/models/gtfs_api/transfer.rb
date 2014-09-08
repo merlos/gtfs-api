@@ -8,10 +8,12 @@ module GtfsApi
     set_gtfs_col :min_transfer_time
     
     # Validations
-    validates :from_stop, presence: true
-    validates :to_stop, presence: true
-    validates :transfer_type, presence: true, numericality:  {only_integer: true, greater_than_or_equal_to: 0, less_than_or_equal_to:3}
-    validates :min_transfer_time, numericality: {only_integer: true, greater_than_or_equal_to: 0}
+    validates :from_stop, presence: {message: :blank_or_not_found}
+    validates :to_stop, presence: {message: :blank_or_not_found}
+    validates :transfer_type, presence: true, numericality:  {only_integer: true,
+       greater_than_or_equal_to: 0, less_than_or_equal_to:3}
+    validates :min_transfer_time, numericality: {only_integer: true, 
+      greater_than_or_equal_to: 0}, allow_nil: true
     
     # Associations
     belongs_to :from_stop, class_name: 'Stop'
@@ -26,7 +28,7 @@ module GtfsApi
     end
     
     def from_stop_io_id=(val)
-      self.from_stop = Stop.find_by!(io_id: val)
+      self.from_stop = Stop.find_by(io_id: val)
     end
     
     #Alternative implementation in case we want to allow to set nil
@@ -40,7 +42,7 @@ module GtfsApi
     end
     
     def to_stop_io_id=(val)    
-      self.to_stop = Stop.find_by!(io_id: val)    
+      self.to_stop = Stop.find_by(io_id: val)    
     end    
     # Constants
     #transfer_types

@@ -13,18 +13,35 @@ module GtfsApi
     set_gtfs_col :dist_traveled, :shape_dist_traveled
     
     # VALIDATIONS
-    validates :trip, presence: true
+    validates :trip, presence: {message: :blank_or_not_found}
 
-    #TODO test if times > 24h need to be handled in a different way
-    # it seems that only mysql supports setting 25.50h as time, but postgres does not
-    validates :arrival_time, presence: true
-    validates :departure_time, presence: true
-    validates :stop, presence: true
+    #TODO validate that the 
+    #presence of arrival_time and departure_time is only required on the first and last stop
+    validate :arrival_time_and_departure_time_both_or_none_set
+    validate :departure_time_is_after_arrival_time
+    
+    validates :stop, presence: {message: :blank_or_not_found}
     validates :stop_sequence, presence: true, numericality: {only_integer: true, greater_than_or_equal_to: 0}
-    validates :dist_traveled, numericality: {greater_than_or_equal_to: 0}
+    validates :dist_traveled, numericality: {greater_than_or_equal_to: 0}, allow_nil: true
     validates :pickup_type, numericality: {only_integer: true,  greater_than_or_equal_to: 0, less_than_or_equal_to: 3}, allow_nil: true
     validates :drop_off_type, numericality: {only_integer: true, greater_than_or_equal_to: 0, less_than_or_equal_to: 3}, allow_nil: true
     
+    def arrival_time_and_departure_time_both_or_none_set
+      return if (arrival_time.nil? && departure_time.nil?)
+      if arrival_time.nil?
+        errors.add(:arrival_time, :set_both_times)
+        return
+      end
+      if departure_time.nil?
+        errors.add(:departure_time, :set_both_times) 
+        return
+      end
+    end
+      
+    def departure_time_is_after_arrival_time
+      return if (arrival_time.nil? || departure_time.nil?)
+      errors.add(:departure_time, :must_be_after_arrival_time) if (arrival_time > departure_time)
+    end
     # VIRTUAL ATTRIBUTES
     attr_accessor :stop_io_id
     attr_accessor :trip_io_id 
@@ -36,8 +53,8 @@ module GtfsApi
     
     # virtual attribute that sets the stop of this StopTime using as input the 
     # io_id of that Stop
-    def stop_io_id=(val)
-      self.stop = Stop.find_by!(io_id: val)
+    def stop_io_id=(val)    
+      self.stop = Stop.find_by(io_id: val)
     end
     
     def trip_io_id
@@ -47,9 +64,8 @@ module GtfsApi
     # virtual attribute that sets the trip of this StopTime using as input the 
     # io_id of that Trip
     def trip_io_id=(val)
-      self.trip = Trip.find_by!(io_id: val)
+      self.trip = Trip.find_by(io_id: val)
     end
-    
     
     #
     # gtfs time string or utc time 
@@ -92,16 +108,7 @@ module GtfsApi
     PHONE_AGENCY = 2
     COORDINATE_WITH_DRIVER = 3
     
-    
-    # GTFSAble overrided method
-    # see @gtfsable
-    # implementation of the hook after_rehash_to_gtfs_feed
-    def after_rehash_to_gtfs(gtfs_feed_row)
-      gtfs_feed_row[self.class.gtfs_col_for_attr(:arrival_time)] = arrival_time.to_gtfs
-      gtfs_feed_row[self.class.gtfs_col_for_attr(:departure_time)] = departure_time.to_gtfs
-      return gtfs_feed_row
-    end
-   
+
     
     
   end

@@ -47,6 +47,18 @@ module GtfsApi
       assert a.valid? 
     end
     
+    #TODO Why in the second assert a2 is not nil? in theory there is a limit:48 in the migration...
+    test "agency io_id is too long" do
+      a = AgencyTest.fill_valid_agency
+      a.io_id = (0...10024).map { ('a'..'z').to_a[rand(26)] }.join
+      assert a.valid?
+      a.save!
+      a2 = Agency.find_by_io_id(a.io_id)
+      #puts a2.io_id
+      assert_not a2.nil?
+      
+    end
+    
     test "agency name presence " do 
       a = AgencyTest.fill_valid_agency 
       a.name = nil
@@ -97,8 +109,8 @@ module GtfsApi
       assert_not a.valid?, 'agency_lang > 2' + a.errors.to_a.to_s  
     end
   
-  
-    # DATABASE TESTS based on fixtures
+
+    # DATABASE AND ASSOCIATIONS
     
     test "agency io_id uniqueness" do
       a = AgencyTest.fill_valid_agency 
@@ -113,10 +125,34 @@ module GtfsApi
      
     test "agency has_many routes" do
       #defined in fixtures
-      a = Agency.find_by_io_id('_agency_one'); 
-      assert (a.routes.count == 2)
+      a = AgencyTest.fill_valid_agency;
+      a.save!
+      
+      r1 = RouteTest.fill_valid_route
+      r1.agency = a
+      assert r1.valid?
+      r1.save!
+      
+      r2 = RouteTest.fill_valid_route
+      r2.agency = a
+      assert r2.valid?
+      r2.save!
+      
+      assert 2, a.routes.count      
     end
    
+    test "agency has many fare_attributes" do
+      a = AgencyTest.fill_valid_agency;
+      a.save!
+      # link 2 fare attributes
+      fa1 = FareAttributeTest.fill_valid_fare_attribute
+      fa1.agency = a
+      fa1.save!
+      fa2 = FareAttributeTest.fill_valid_fare_attribute
+      fa2.agency = a
+      fa2.save!
+      assert_equal 2, a.fare_attributes.count
+    end
     #
     # GTFSABLE Test
     #
@@ -138,6 +174,7 @@ module GtfsApi
        assert_equal a[model_attr], agency_row[gtfs_col]
       end
     end
+    
     
   end
 end

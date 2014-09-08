@@ -1,10 +1,17 @@
 # GtfsApi
 
-This gem is a ruby on rails engine that populates an JSON API of a GTFS feed. (https://developers.google.com/transit/gtfs/reference).
+This gem is a ruby on rails engine that populates an JSON API of a Google Transit Feed Specification (GTFS) feed (https://developers.google.com/transit/gtfs/reference).
 
-If you plan to build a public transport mobile app or a web based on a GTFS feed, this gem may help you to forget about all the server side.
+If you plan to build a public transport mobile app or web, based on a GTFS feed, this gem may help you to forget about all the server side.
 
-If you are part of the IT crew of a transport agency this can help you to populate your data and make it available for developers to create apps.
+If you are part of the development team of a transport agency this can help you to populate your data and make it available for developers to create mobile and web apps.
+
+## The why of Fry?
+The author and contributors of this software believe in open source as a key of innovation 
+as well as public transportation as a democratic path to freedom and development. 
+Please, abstain to use this gem if you don't share this thought.
+
+"An advanced city is not one where even the poor use cars, but rather one where even the rich use public transport" - Enrique Peñalosa former Mayor of Bogotá https://www.ted.com/talks/enrique_penalosa_why_buses_represent_democracy_in_action
 
 Note: This project is still on an early stage.
 
@@ -20,49 +27,76 @@ Then run
 $ bundle install
 ```
 
-Perform the migrations and import the data. You may have your own GTFS feed
-Copy your gtfs feed zipped in db/gtfs/feed.zip and run this task:
-
-
-
+Perform the migrations 
 ```
 rake app:gtfs_api:install:migrations 
+```
+Edit your routes.rb, and add this line
+```
+mount GtfsApi::Engine => "/gtfs/"
+```
+This will add the API routes under the /gtfs/ namespace
+
+
+#Importing a feed
+
+To import a feed you just need to copy the feed zipped in db/gtfs/feed.zip and run this task:
+
+```
 rake gtfs:import
 
-````
+```
 Optionally you can download the feed directly from a URL:
 
 ````
 rake gtfs:import[http://www.site.com/gtfs_file.zip]
 ```
-You can find many GTFS feeds on this website http://www.gtfs-data-exchange.com/
-
-Edit your routes.rb, and add this line
-```
-mount GtfsApi::Engine => "/gtfs/"
-```
-
-Finally you can run the server
-```
-rails s
-```
+You can find many GTFS feeds on  http://www.gtfs-data-exchange.com/
 
 
+## Importing Notes
+GtfsApi supports multiple feed imports. That is, you can import several feeds into the same database. But
+in order to do you should care about id clashing (feed one has route "Route1" and feed two has route_id "Route1"). 
 
-This step will create a set of tables defined in 
+__TODO__ __TO_TEST___
+If you want to include more than one feed without worying about the name clashing, just add the
+column feed_id with a unique value in each feed_info.txt file of all your feeds. GtfsApi importer
+will add that feed_id as prefix on all the ids of all the files of the feed. For example, in a feed
+that has feed_id= "CA" and an agency.txt has agency_id="CADE" then the stored value for agency will be "CA_CADE".
 
-For example, for the agency file, the table gtfs_api_agencies will be created
+__TODO__ __TO_TEST___
+Some feeds may not include the agency_id. In that cases agency_id is auto assigned during import.
 
-This gem includes a set of rake tasks to import da
 
-You can get the data from (** page to import data **)
+Also, in order to support multiple agencies, fare_attribute.txt should include the agency_id 
+
+###Google Transit Extensions Support
+Google Inc. has defined a set of fields with its partners that extend the GTFS Specification
+https://support.google.com/transitpartners/answer/2450962?hl=en 
+
+GtfsApi supports the following:
+  1. column agency_id in fare_attributes.txt (for multi-agency support)
+  2. additional route types (https://support.google.com/transitpartners/answer/3520902)
+  3. column vehicle_type in stops.txt
+  
+Not supported yet:
+  1.- set location_type = 2 in stops.txt where 2 indicates an entrance. Note that: In this case stop_id must also specify parent_station.
+  2.- optional column field platform_code in stops.txt
+  3.- translations.txt
+  4.- route-to-route and trip-to-trip transfers additional values
+  
 
 ## Sample Client
+__TODO__
+To test the API, you have available a simple javascript client that is ready to consume GtfsApi.
 
-To test the API, you have available a simple javascript client that consumes from
-this API.
+
+#Exporting a feed
+__TODO__
+
 
 ## JSON API Methods
+__TODO__
 
 Now the hussle.
 
@@ -70,34 +104,30 @@ Once the engine is installed, and the data has been imported you'll have availab
 these methods:
 
 
-## Extending the
+## Extending the engine
 
 ## Getting Involved
 
 Do you want to help to create the best open framework for public transport? Help is welcome! 
 
+
 ## Notes for developers
 
-### Models Notes
+### Models 
 
-Because rails ids are integers, instead of using an string as primary key in the
-database, I've opted to keep rails default id. Integers are faster and the standard in the
-rails way.
+On model attributes we got rid of all non informative prefixes of some tables. For example "agency_name" column in agency.txt was renamed to "name" in the Agency model.
 
-For those models that have an id (ie: agenciy_id,), there are two rows
-the  :id (integer) that will be used as foreign key when referring to the model
-in others, and :model_pid (p of public) which is the feed original id.
+Because rails ids are in general integers and to keep consistency among imports and exports
+internally string "whatever_ids" defined in the GTFS spec have been converted into "io_id" on each model
+and the primary key is the id.
 
-
-TODO: list the pids
-
-For easing the imports references (pid)
 
 ## Author & contributors
 
 Juan Manuel Merlos http://merlos.org
 
 Want to contribute? Your name here :)
+
 
 ## License
 This project rocks and uses MIT-LICENSE.

@@ -9,7 +9,7 @@ module GtfsApi
     set_gtfs_col :contains_id
     
     
-    validates :fare_id, presence: true
+    validates :fare_id, presence: {message: :blank_or_not_found}
     validate :origin_id_exists_if_set
     validate :destination_id_exists_if_set
     validate :contains_id_exists_if_set
@@ -52,7 +52,7 @@ module GtfsApi
     # virtual attribute that sets the fare of this FareRule using as input the 
     # io_id of that FareAttribute
     def fare_io_id=(val)
-      self.fare = FareAttribute.find_by!(io_id: val)
+      self.fare = FareAttribute.find_by(io_id: val)
     end
     
     def route_io_id
@@ -60,7 +60,7 @@ module GtfsApi
     end
     
     def route_io_id=(val)
-      self.route = Route.find_by!(io_id: val)
+      self.route = Route.find_by(io_id: val)
     end
     
     #VALIDATIONS

@@ -28,23 +28,40 @@ module GtfsApi
           verbose options[:verbose]
           sources do
             gtfs_api do
+              agency_id = nil
               url feed_file
               #before { |etag| puts "Processing source with tag #{etag}..." }
               feed_definition &GtfsApi::Io::FeedDefinitionBlock
               handlers do
-                agency {|row| Importer.import_one_row_of(GtfsApi::Agency,row) } 
+                agency {|row| 
+                  Importer.import_one_row_of(GtfsApi::Agency,row)
+                  if row[:agency_id].nil?
+                    agency_id = GtfsApi::Agency.last.io_id 
+                    GtfsReader::Log.warn "agency_id not set for agency in agency.txt. auto assigned #{agency_id}"
+                  end
+                } 
                 routes {|row| 
-                  puts "#{row}"
-                  Importer.import_one_row_of(GtfsApi::Route,row) }
+                  if row[:agency_id].nil?
+                    GtfsReader::Log.warn "agency_id not set for routes. Auto assigned #{agency_id}"
+                    row[:agency_id] = agency_id  
+                  end
+                  Importer.import_one_row_of(GtfsApi::Route,row) 
+                }
                 calendar {|row| Importer.import_one_row_of(GtfsApi::Calendar,row)}
                 calendar_dates{ |row| Importer.import_one_row_of(GtfsApi::CalendarDate,row)}
                 shapes { |row| Importer.import_one_row_of(GtfsApi::Shape,row)}
                 trips {|row| Importer.import_one_row_of(GtfsApi::Trip, row)}
                 stops { |row| Importer.import_one_row_of(GtfsApi::Stop, row)}
-                stop_times { Importer.import_one_row_of(GtfsApi::StopTime, row)}
-                frequencies { |row| Importer.import_one_row_of(GtfsApi::Fequency, row)}
-                fare_attributes { |row| Importer.import_one_row_of(GtfsApi::FareAttribute, row)}
-                transfers { |row| Importer.import_one_row_of(GtfsApi::FareAttribute, row)}
+                stop_times {|row| Importer.import_one_row_of(GtfsApi::StopTime, row)}
+                frequencies { |row| Importer.import_one_row_of(GtfsApi::Frequency, row)}
+                fare_attributes { |row| 
+                  if row[:agency_id].nil?
+                    GtfsReader::Log.warn "agency_id not set for Fare Attributes. Assigned #{agency_id}"
+                    row[:agency_id] = agency_id  
+                  end
+                  Importer.import_one_row_of(GtfsApi::FareAttribute, row)
+                }
+                transfers { |row| Importer.import_one_row_of(GtfsApi::Transfer, row)}
                 fare_rules{ |row| Importer.import_one_row_of(GtfsApi::FareRule, row)}
               end #handlers
             end # sample
@@ -59,11 +76,12 @@ module GtfsApi
       # @param[Class] gtfsable_class is one of the GtfsApi model classes that implements the Gtfsable concern
       # @param[Hash] row read from the gtfs file linked to the class  
       def self.import_one_row_of(gtfsable_class, row)
-        a = gtfsable_class.new_from_gtfs_feed(row)
+        a = gtfsable_class.new_from_gtfs(row)
         if a.valid?
           begin 
             a.save!
-            GtfsReader::Log.info "saved #{row}" #"saved #{a.io_id}" 
+            id_str = (a.has_attribute? :io_id) ? a.io_id : a.id.to_s
+            GtfsReader::Log.info "saved #{gtfsable_class.to_s} #{id_str}" #"saved #{a.io_id}" 
           rescue Exception => e
             GtfsReader::Log.error e.message
             raise e

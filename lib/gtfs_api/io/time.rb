@@ -12,7 +12,7 @@ class ::Time
   end
   
   #
-  # @return[String] in format HH:MM:SS, where HH can be > 24, ex: "25:33:25"
+  # @return[String] in format HH:MM:SS, where HH can be > 23, ex: "25:33:25"
   #
   def to_gtfs
     secs = self - Time.gtfs_zero
@@ -24,11 +24,14 @@ class ::Time
     ss =  s > 10 ? s.round.to_s : '0' + s.round.to_s
     "#{hh}:#{mm}:#{ss}"
   end
-    
+  
+  def self.is_gtfs_valid? (val)
+    !(hh,mm,ss = val.scan(/^0?(\d+):([0-5][0-9]):([0-5][0-9])+$/)[0]).nil?
+  end  
   #
   # Converts into Time object a string in GTFS time format
   #
-  # @param val a string in the format HH:MM:SS or H:MM:SS, where can be >24
+  # @param val[String] Time with the format: HH:MM:SS or H:MM:SS, where HH can be >23
   #
   # @return [Time] if the string has the correct format. nil otherwise  
   def self.new_from_gtfs(val)

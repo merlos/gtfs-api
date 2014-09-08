@@ -9,8 +9,12 @@ class CreateGtfsApiAgencies < ActiveRecord::Migration
       t.string :phone, limit: 24
       t.string :fare_url
 
+      #Non normative
+      t.belongs_to :feed
+      
       t.timestamps
     end
     add_index :gtfs_api_agencies, :io_id
+    add_index :gtfs_api_agencies, :feed_id
   end
 end

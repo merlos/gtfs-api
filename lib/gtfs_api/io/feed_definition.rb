@@ -10,40 +10,34 @@ module GtfsApi
     FeedDefinitionBlock = Proc.new {
       #The order of the file definition is important because some models link others
       file :feed_info do
-        prefix :feed do
-          col :publisher_name, required: true
-          col :publisher_url,  required: true
-          col :lang,           required: true
-          col :start_date
-          col :end_date
-          col :version
-        end
+        col :feed_publisher_name, required: true
+        col :feed_publisher_url,  required: true
+        col :feed_lang,           required: true
+        col :feed_start_date
+        col :feed_end_date
+        col :feed_version
       end
       # does not require any file   
       file :agency, required: true do
         col :agency_id,                       unique: true, alias: :io_id
-        prefix :agency do
-          col :name,     required: true
-          col :url,      required: true, alias: :cacadevaca
-          col :timezone, required: true
-          col :lang
-          col :phone
-          col :fare_url
-        end
+        col :agency_name,     required: true
+        col :agency_url,      required: true, alias: :cacadevaca
+        col :agency_timezone, required: true
+        col :agency_lang
+        col :agency_phone
+        col :agency_fare_url
       end
       
       # requires agency
       file :routes, required: true do
         col :route_id,         required: true, unique: true, alias: :io_id
-        prefix :route do
-          col :short_name, required: true
-          col :long_name,  required: true
-          col :desc
-          col :type,       required: true
-          col :url
-          col :color
-          col :text_color
-        end
+        col :route_short_name, required: true
+        col :route_long_name,  required: true
+        col :route_desc
+        col :route_type,       required: true
+        col :route_url
+        col :route_color
+        col :route_text_color
         col :agency_id
       end
       
@@ -70,23 +64,19 @@ module GtfsApi
       
       # does not require any file
       file :shapes do
-        col :id,            required: true, alias: :io_id
-        prefix :shape do
-          col :pt_lat,        required: true
-          col :pt_lon,        required: true
-          col :pt_sequence,   required: true
-          col :dist_traveled
-        end
+        col :shape_id,            required: true, alias: :io_id
+        col :shape_pt_lat,        required: true
+        col :shape_pt_lon,        required: true
+        col :shape_pt_sequence,   required: true
+        col :shape_dist_traveled
       end
       
       # requires routes
       file :trips, required: true do
-        col :id,         required: true, unique: true, alias: :io_id
-        prefix :trip do
-          col :headsign
-          col :short_name
-          col :long_name
-        end
+        col :trip_id,         required: true, unique: true, alias: :io_id
+        col :trip_headsign
+        col :trip_short_name
+        col :trip_long_name
         col :route_id,              required: true
         col :service_id,            required: true
         col :direction_id
@@ -99,19 +89,18 @@ module GtfsApi
       # does not require any file
       file :stops, required: true do
         col :stop_id,       required: true, unique: true, alias: :io_id
-        prefix :stop do
-          col :code 
-          col :name,     required: true
-          col :desc
-          col :lat,      required: true
-          col :lon,      required: true
-          col :url
-          col :timezone
-        end
+        col :stop_code 
+        col :stop_name,     required: true
+        col :stop_desc
+        col :stop_lat,      required: true
+        col :stop_lon,      required: true
+        col :stop_url
+        col :stop_timezone
         col :zone_id
         col :location_type
         col :parent_station, alias: :parent_station_id
         col :wheelchair_boarding 
+        col :vehicle_type
       end
       
       # requires stops and trips

@@ -70,14 +70,42 @@ module GtfsApi
        assert t3.invalid?
      end
      
+     test 'min_transfer_time is optional' do
+      t = TransferTest.fill_valid_transfer
+      t.min_transfer_time = nil
+      assert t.valid?
+     end
+     
+     test 'min_transfer_time has to be a number' do
+       t = TransferTest.fill_valid_transfer
+       t.min_transfer_time = "hola"
+       assert t.invalid?
+     end 
+     
+     test 'min_transfer_time has to be greater than 0' do
+       t = TransferTest.fill_valid_transfer
+       t.min_transfer_time = -1
+       assert t.invalid?
+     end
+     
+     test 'min_transfer_time has to be greater an integer' do
+       t = TransferTest.fill_valid_transfer
+       t.min_transfer_time = 1.1
+       assert t.invalid?
+     end
+     
+     
+     
      test 'from_stop_io_id cannot set nil' do
        t = TransferTest.fill_valid_transfer
-       assert_raises ( ActiveRecord::RecordNotFound) {t.from_stop_io_id = nil}
+       t.from_stop_io_id = nil
+       assert t.invalid?
      end
       
      test 'to_stop_io_id cannot set nil' do
        t = TransferTest.fill_valid_transfer
-       assert_raises ( ActiveRecord::RecordNotFound) {t.to_stop_io_id = nil}
+       t.to_stop_io_id = nil
+       assert t.invalid?
      end
     
      test 'from_stop_io_id gets and sets from_stop' do

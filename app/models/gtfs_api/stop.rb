@@ -15,6 +15,8 @@ module GtfsApi
     set_gtfs_col :parent_station_id, :parent_station
     set_gtfs_col :timezone, :stop_timezone
     set_gtfs_col :wheelchair_boarding
+    #NON normative / GTFS Extension
+    set_gtfs_col :vehicle_type
      
     
     #validations
@@ -23,7 +25,13 @@ module GtfsApi
     validates :lat, presence: true, numericality: { greater_than: -90.000000, less_than: 90.000000}
     validates :lon, presence: true, numericality: {greater_than: -180.000000, less_than: 180.000000}
     validates :url, allow_nil: true, :'gtfs_api/validators/url' => true
-    validates :location_type, numericality: {only_integer: true, greater_than_or_equal_to: 0, less_than_or_equal_to: 1}
+    validates :location_type, allow_nil: true, numericality: {only_integer: true, 
+      greater_than_or_equal_to: 0, less_than_or_equal_to: 2}
+    validates :wheelchair_boarding, allow_nil: true, numericality: {only_integer: true, 
+      greater_than_or_equal_to: 0, less_than_or_equal_to: 1}
+    validates :vehicle_type, allow_nil: true, numericality: { only_integer: true, 
+      greater_than_or_equal_to: 0, less_than_or_equal_to:1702 }
+    validate :valid_vehicle_type
     
     # TODO
     # Validate timezone
@@ -53,8 +61,22 @@ module GtfsApi
     #  1 - Station. A physical structure or area that contains one or more stop.
     STOP_TYPE = 0
     STATION_TYPE = 1
+    ENTRANCE_TYPE = 2
     
-   
+    LocationTypes = {
+      stop: 0,
+      station: 1,
+      entrance: 2
+    }
+    VehicleTypes = GtfsApi::Route::RouteTypes
+     
+    private 
     
+    def valid_vehicle_type
+      if vehicle_type.present?
+        errors.add(:vehicle_type, :invalid) unless VehicleTypes.values.include? (vehicle_type)
+      end
+    end
+  
   end
 end

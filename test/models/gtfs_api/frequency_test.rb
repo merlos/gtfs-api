@@ -66,6 +66,12 @@ module GtfsApi
      assert f.invalid?
     end
     
+    test "exact_times can be nil" do
+      f = FrequencyTest.fill_valid_frequency
+      f.exact_times = nil # has to be integer
+      assert f.valid?
+    end
+    
     test "exact_times range" do
       
       f = FrequencyTest.fill_valid_frequency
@@ -100,6 +106,12 @@ module GtfsApi
       assert_equal f.trip.io_id, t.io_id
       assert_equal f.trip_io_id, t.io_id
       assert t.valid?
+    end
+    
+    test "not valid when virtual attribute trio_io_id not found" do
+       f = FrequencyTest.fill_valid_frequency
+       f.trip_io_id = "this_trip_does_not_exist"
+       assert f.invalid?
     end
     
    # GTFS 

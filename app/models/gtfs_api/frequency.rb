@@ -9,11 +9,13 @@ module GtfsApi
     set_gtfs_col :exact_times
     
     # VALIDATIONS
-    validates :trip, presence:true
+    validates :trip, presence: {message: :blank_or_not_found}
     validates :start_time, presence: true
     validates :end_time, presence: true
-    validates :headway_secs, presence: true, numericality: {only_integer: true, greater_than_or_equal_to: 0}
-    validates :exact_times, numericality: {only_integer:true, greater_than_or_equal_to: 0, less_than_or_equal_to: 1}
+    validates :headway_secs, presence: true, numericality: {only_integer: true, 
+      greater_than_or_equal_to: 0}
+    validates :exact_times, numericality: {only_integer:true,
+      greater_than_or_equal_to: 0, less_than_or_equal_to: 1}, allow_nil: true
     
     # ASSOCIATIONS 
     belongs_to :trip
@@ -26,7 +28,7 @@ module GtfsApi
     end
     
     def trip_io_id=(val)
-      self.trip = Trip.find_by!(io_id: val)
+      self.trip = Trip.find_by(io_id: val)
     end
     
     def start_time=(val)

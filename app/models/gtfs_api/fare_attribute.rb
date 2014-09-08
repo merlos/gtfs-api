@@ -4,6 +4,7 @@ module GtfsApi
     
     include GtfsApi::Concerns::Models::Concerns::Gtfsable
     set_gtfs_col :io_id, :fare_id
+    set_gtfs_col :agency_io_id, :agency_id
     set_gtfs_col :price
     set_gtfs_col :currency_type
     set_gtfs_col :payment_method
@@ -26,10 +27,23 @@ module GtfsApi
     validates :transfer_duration,numericality: {only_integer: true, 
       greater_than_or_equal_to: 0}, allow_nil: true
       # time in seconds
-              
+    
     # Associations
     has_many :fare_rules, foreign_key:'fare_id'
+    belongs_to :agency
     
+    # Virtual Attributes 
+    attr_accessor :agency_io_id 
+    
+    #gets the agency.io_id (useful for import/export)
+    def agency_io_id
+      agency.present? ? agency.io_id : nil
+    end
+    
+    # associates the agency to the route by providing the agency.io_id
+    def agency_io_id=(val)
+      self.agency = Agency.find_by(io_id: val)
+    end
     
     #payment_method
     ON_BOARD = 0

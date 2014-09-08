@@ -18,7 +18,7 @@ class CreateGtfsApiTrips < ActiveRecord::Migration
 
       t.timestamps
     end
-    add_index :gtfs_api_trips, :io_id, unique: true
+    add_index :gtfs_api_trips, :io_id
     add_index :gtfs_api_trips, :block_id
     add_index :gtfs_api_trips, :shape_id
     

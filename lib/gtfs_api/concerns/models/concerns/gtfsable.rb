@@ -59,9 +59,9 @@ module GtfsApi::Concerns::Models::Concerns::Gtfsable
       if val.is_a? String
         t = Time.new_from_gtfs(val)
         if t.nil?
-          self.errors.add(attribute_sym,:invalid)
+          errors.add(attribute_sym, :invalid)
           write_attribute(attribute_sym, val)
-          return
+          return false
         end
         write_attribute(attribute_sym, t)
         return

@@ -6,23 +6,23 @@ module GtfsApi
   
     # it's ok For testing VALIDATORS 
     def self.fill_valid_route
-      r = Route.new 
-      r.io_id = 'RouteId'
-      r.short_name = 'short name'
-      r.long_name = 'route_long_name'
-      r.desc = "route description"
-      r.route_type = Route::FUNICULAR_TYPE
-      r.url = 'http://github.com/merlos'
-      r.color = 'FFCCDD'
-      r.text_color = '000000'
-      return r
+      Route.new( 
+        io_id: 'route_' + Time.new.to_f.to_s,
+        short_name:'short name',
+        long_name: 'route_long_name',
+        desc: "route description",
+        route_type: Route::FUNICULAR_TYPE,
+        url: 'http://github.com/merlos',
+        color: 'FFCCDD',
+        text_color: '000000'
+      )
     end
     
     def self.valid_gtfs_feed_route
       a = AgencyTest.fill_valid_agency
       a.save!
       {
-        route_id: Time.new.to_f.to_s,
+        route_id: 'route_' + Time.new.to_f.to_s,
         agency_id: a.io_id,
         route_short_name: 'short name',
         route_long_name: 'long name',
@@ -40,14 +40,21 @@ module GtfsApi
       assert r.invalid?
     end
     
-    test "route short name present" do
+    test "is valid when route short name is present but not route long" do
       r = RouteTest.fill_valid_route
       r.short_name = nil
-      assert r.invalid?
+      assert r.valid?
     end
     
-    test "route long name present" do
+    test "is valid when route long name is present but not route short name" do
       r = RouteTest.fill_valid_route
+      r.long_name = nil
+      assert r.valid?
+    end
+    
+    test "is invalid when neither long name nor short name are present" do
+      r = RouteTest.fill_valid_route
+      r.short_name = nil
       r.long_name = nil
       assert r.invalid?
     end
@@ -72,16 +79,24 @@ module GtfsApi
       assert r.valid?
     end
     
-    test "route type out of range" do
+    test "route_type out of upper limit is invalid" do
       r = RouteTest.fill_valid_route
-      r.route_type = 8 # valid range is [0..7]
+      r.route_type = 1703 # valid range is [0..1703]
       assert r.invalid?
-      r2 = RouteTest.fill_valid_route
-      assert r2.valid?
-      r2.route_type = -1
-      assert r2.invalid?
+    end
+    
+    test "route_type has to be positive" do
+      r = RouteTest.fill_valid_route
+      r.route_type = -1
+      assert r.invalid?
     end
   
+    test "route_type has to be in RouteTypes constant" do
+       r = RouteTest.fill_valid_route
+       r.route_type = 1250
+       assert r.invalid?
+       assert (r.errors.added? :route_type, :invalid)
+    end
     test "url is optional" do
       r = RouteTest.fill_valid_route
       r.url = nil
@@ -130,24 +145,26 @@ module GtfsApi
     # database stuff
     test "uniqueness of route" do
       r = RouteTest.fill_valid_route
+      r.io_id = "route_66"
       r.save!
       r2 = RouteTest.fill_valid_route
+      r2.io_id = "route_66"
+      assert r2.invalid?
       assert_raises ( ActiveRecord::RecordInvalid) {r2.save!}
-      r3 = RouteTest.fill_valid_route
-      r3.io_id="newValidPid"
-      assert_nothing_raised(ActiveRecord::RecordInvalid) {r3.save!}
     end
     
     # check belongs_to agency
-    # uses fixtures
     test 'belongs to agency' do
-      
-      r = Route.find_by io_id:'_route_one'
-      assert_equal('_agency_one', r.agency.io_id )
-      
-      # _agency_one should have been linked to 2 routes
-      a= Agency.find_by_io_id('_agency_one')
-      assert_equal(2, a.routes.count)
+      a = AgencyTest.fill_valid_agency
+      a.io_id = "known_agency_id"
+      r = RouteTest.fill_valid_route
+      r.agency = a
+      assert r.valid?
+      r.save!
+      # retrieve the saved route and check if agency is linked
+      r2 = Route.find_by io_id: r.io_id
+      assert_equal a.io_id, r2.agency.io_id
+
     end
     
     test 'virtual attribute agency_io_id works properly' do

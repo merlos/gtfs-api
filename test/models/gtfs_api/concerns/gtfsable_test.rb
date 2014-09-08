@@ -64,6 +64,7 @@ module GtfsApi::Concerns::Models::Concerns
   
   # time and date setters
   class GtfsTimeSetterTest
+    include ActiveRecord::Validations
     include GtfsApi::Concerns::Models::Concerns::Gtfsable
     #gtfs feed columns definitions
     set_gtfs_col :sample_time
@@ -161,9 +162,6 @@ module GtfsApi::Concerns::Models::Concerns
        assert_equal :default_map , GtfsableTestMapping.gtfs_col_for_attr(:default_map)
        assert_equal :gtfs_feed , GtfsableTestMapping.gtfs_col_for_attr(:gtfs_model)
     end
-    
-    # TIME SETTER and date tests
-  
        
     test "gtfs_time_setter sets a time with a time with trailing 0" do
       t = GtfsTimeSetterTest.new

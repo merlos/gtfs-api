@@ -14,6 +14,11 @@ module GtfsApi
       lon: 2.2,
       url: "http://github.com/merlos/",
       location_type: Stop::STOP_TYPE,
+      parent_station: nil,
+      timezone: 'Madrid/España',
+      wheelchair_boarding: 0,
+      #Gtfs Extension
+      vehicle_type: Stop::VehicleTypes[:tram]
       )
     end  
     
@@ -30,7 +35,10 @@ module GtfsApi
         location_type: "0",
         parent_station: nil,
         stop_timezone: 'Madrid/España',
-        wheelchair_boarding: '0'
+        wheelchair_boarding: '0',
+        #Gtfs Extension
+        vehicle_type: '100'
+        
       }
     end
     
@@ -86,6 +94,55 @@ module GtfsApi
       s = StopTest.fill_valid_stop
       s.location_type = 1.1
       assert s.invalid?    
+    end
+    
+    test "wheelchair_boarding has to be integer" do
+      s = StopTest.fill_valid_stop
+      s.wheelchair_boarding = 1.1
+      assert s.invalid?
+    end
+    
+    test "wheelchair_boarding has to be positive" do
+      s = StopTest.fill_valid_stop
+      s.wheelchair_boarding = -1
+      assert s.invalid?
+    end
+    
+    test "wheelchair_boarding has to be 0 or 1" do
+      s = StopTest.fill_valid_stop
+      s.wheelchair_boarding = 0
+      assert s.valid?
+      s.wheelchair_boarding = 1
+      assert s.valid?
+      s.wheelchair_boarding = 2
+      assert s.invalid?
+    end
+   
+    
+    # Vehicle type
+    test "vehicle_type out of upper limit is invalid" do
+      s = StopTest.fill_valid_stop
+      s.vehicle_type = 1703 # valid range is [0..1703]
+      assert s.invalid?
+    end
+    
+    test "vehicle_type has to be positive" do
+      s = StopTest.fill_valid_stop
+      s.vehicle_type = -1
+      assert s.invalid?
+    end
+  
+    test "vehicle_type has to be in VehicleTypes constant" do
+       s = StopTest.fill_valid_stop
+       s.vehicle_type = 1250
+       assert s.invalid?
+       assert (s.errors.added? :vehicle_type, :invalid)
+    end
+    
+    test "url is optional" do
+      r = RouteTest.fill_valid_route
+      r.url = nil
+      assert r.valid?
     end
     
     # ASSOCIATION 

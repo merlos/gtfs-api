@@ -1,0 +1,59 @@
+en:
+  activerecord:
+    errors:
+      models:
+        gtfs_api/route:
+          attributes:
+            short_name:
+              short_and_long_name_blank: "and long name both cannot be blank"
+            long_name:
+              short_and_long_name_blank: 'and short name both cannot be blank'
+              
+              
+        gtfs_api/frequency:
+          attributes:
+            trip:
+              blank_or_not_found: "can't be blank or the value provided does not exist"
+              
+              
+        gtfs_api/stop_time:
+          attributes:
+            trip:
+              blank_or_not_found: "can't be blank or the value provided does not exist"
+            stop:
+              blank_or_not_found: "can't be blank or the value provided does not exist"
+              
+            arrival_time:
+              set_both_times: "is set. Then departure time must be set."
+            departure_time:
+              set_both_times: "is set. Then arrival time must be set."
+              :must_be_after_arrival_time: "must be after arrival time"
+        gtfs_api/fare_rule:
+          attributes:
+            fare:
+              blank_or_not_found: "can't be blank or the value provided does not exist"
+            route:
+              not_found: " was not found. Set an existing one"
+            origin_id: 
+              not_found: " was not found. Set an existing one"
+            destination_id:
+              not_found: " was not found. Set an existing one"
+            contains_id: 
+              not_found: " was not found. Set an existing one"
+              
+              
+        gtfs_api/transfer:
+          attributes:
+            from_stop: 
+              blank_or_not_found: "can't be blank or the value provided does not exist"
+            to_stop:
+              blank_or_not_found: "can't be blank or the value provided does not exist"
+              
+              
+        gtfs_api/trip:
+          attributes:
+            shape_id:
+              not_found: " was not found. Set an existing one"
+            service_id:
+              not_found: " was not found. Set an existing one"
+          

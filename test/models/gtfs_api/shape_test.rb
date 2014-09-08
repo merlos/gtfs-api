@@ -80,6 +80,24 @@ module GtfsApi
       assert s.invalid?
     end
      
+    test 'dist_traveled is optional' do
+      s = ShapeTest.fill_valid_shape
+      s.dist_traveled = nil
+      assert s.valid?
+    end
+    
+    test 'dist_traveled has to be positive' do
+      s = ShapeTest.fill_valid_shape
+      s.dist_traveled = -1.0
+      assert s.invalid?
+    end
+    
+    test 'dist_traveled has to be a number' do
+      s = ShapeTest.fill_valid_shape
+      s.dist_traveled = "holitas"
+      assert s.invalid?
+    end
+     
     # ASSOCIATIONS
     
     

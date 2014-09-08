@@ -11,6 +11,14 @@ module GtfsApi
         assert true
       end
       
+      test 'is_gtfs_valid with a hour missing time 00:01' do
+        assert_not Time.is_gtfs_valid? ('00:01')
+      end
+      
+      test 'is_gtfs_valid with a valid time' do
+        assert Time.is_gtfs_valid? ('44:30:31')
+      end
+      
       test 'time without hours returns nil' do 
         t = Time.new_from_gtfs ("00:01")
         assert_nil t

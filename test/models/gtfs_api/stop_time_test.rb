@@ -65,11 +65,42 @@ module GtfsApi
       assert s.invalid?
     end
     
-    test 'arrival time is required' do
+    test 'is valid with arrival_time and departure time both nil' do
+      s = StopTimeTest.fill_valid_stop_time
+      s.arrival_time = nil
+      s.departure_time = nil
+      assert s.valid?
+    end
+    
+    test 'arrival_time is optional only if departure_time not set' do
       s = StopTimeTest.fill_valid_stop_time
       s.arrival_time = nil
       assert s.invalid?
+      assert (s.errors.added? :arrival_time, :set_both_times)
     end
+    
+    test 'departure_time is optional only if arrival_time not set' do
+      s = StopTimeTest.fill_valid_stop_time
+      s.departure_time = nil
+      assert s.invalid?
+      assert (s.errors.added? :departure_time, :set_both_times)
+    end
+    
+    test 'is valid if departure_time and arrival_time are equal' do
+      s = StopTimeTest.fill_valid_stop_time
+      s.arrival_time = '10:20:30'
+      s.departure_time = '10:20:30'
+      assert s.valid?
+    end
+    
+    test 'departure time must be after to arrival time' do
+      s = StopTimeTest.fill_valid_stop_time
+      s.arrival_time = '10:20:30'
+      s.departure_time = '9:20:30'
+      assert s.invalid?
+      assert (s.errors.added? :departure_time, :must_be_after_arrival_time)
+    end
+    
     
     test 'valid gtfs spec arrival_time format is accepted' do
       # gtfs arrival time
@@ -78,42 +109,44 @@ module GtfsApi
       assert s.valid?, s.errors.to_a.to_s
       s.arrival_time = "09:55:33" #with 0
       assert s.valid?, s.errors.to_a.to_s
-      assert_equal s.arrival_time, Time.new(0,1,1,9,55,33,'+00:00')
+      assert_equal Time.new(0,1,1,9,55,33,'+00:00'), s.arrival_time
       s.arrival_time = "00:00:01" #extreme 
       assert s.valid?, s.errors.to_a.to_s
-      assert_equal s.arrival_time, Time.new(0000,01,01,00,00,01,'+00:00') # 0000-01-01 00:00:01
+      assert_equal Time.new(0000,01,01,00,00,01,'+00:00'), s.arrival_time # 0000-01-01 00:00:01
       #assign a Time directly
       s.arrival_time = Time.new(000,01,01,00,00,01,'+00:00')
       assert s.valid?
-      assert s.arrival_time, Time.new(000,01,01,00,00,01,'+00:00')
+      assert Time.new(000,01,01,00,00,01,'+00:00'), s.arrival_time
     end
     
-    test 'arrival_time with values greater than 24h is properly stored' do
+    test 'arrival_time and departure times with values greater than 24h is properly stored' do
       s = StopTimeTest.fill_valid_stop_time
-      s.arrival_time = "29:55:55" # 1d + 5h 55m 55s
+      s.arrival_time = "29:55:55"
+      s.departure_time = "29:55:55" # 1d + 5h 55m 55s
       assert s.valid?, s.errors.to_a.to_s
-      assert_equal s.arrival_time, Time.new(0000,01,02,5,55,55,'+00:00') # 0000-01-02 5:55:55 +0000
+      assert_equal Time.new(0000,01,02,5,55,55,'+00:00'), s.arrival_time # 0000-01-02 5:55:55 +0000
+      assert_equal Time.new(0000,01,02,5,55,55,'+00:00'), s.departure_time # 0000-01-02 5:55:55 +0000
     end
     
     test 'invalid arrival_time' do 
       s = StopTimeTest.fill_valid_stop_time
       s.arrival_time = "00:01"
-      assert s.invalid?, s.errors.to_a.to_s
-      s2 = StopTimeTest.fill_valid_stop_time
-      assert s2.valid?
-      s2.arrival_time = "00:00:99" 
-      assert s2.invalid?, 'seconds set to 99 is not invalid!'
-      s3 = StopTimeTest.fill_valid_stop_time
-      s3.arrival_time = "00:99:00" 
-      assert s3.invalid?, 'seconds minutes set to 99 is not invalid!'
+      assert (s.errors.added? :arrival_time, :invalid), "invalid error was not added"
+      assert s.invalid?, "00:01 gave a valid arrival time" 
     end
     
-    test 'departure_time is required' do
-       s = StopTimeTest.fill_valid_stop_time
-       s.departure_time = nil
-       assert s.invalid?
+    test 'invalid arrival_time with seconds larger than 59' do 
+      s = StopTimeTest.fill_valid_stop_time
+      s.arrival_time = "00:00:99"
+      assert s.invalid?, 'seconds set to 99 is not invalid!'
     end
     
+    test "invalid arrival time with minutes larger than 59" do
+      s = StopTimeTest.fill_valid_stop_time
+      s.arrival_time = "00:99:00" 
+      assert s.invalid?, 'seconds minutes set to 99 is not invalid!'
+    end
+        
     test 'valid gtfs spec departure_time format works fine' do
       # we are skipping some tests because should be the same that with arrival_time
       s = StopTimeTest.fill_valid_stop_time
@@ -121,14 +154,7 @@ module GtfsApi
       assert s.valid?, s.errors.to_a.to_s
       assert_equal s.arrival_time, Time.new(0,1,1,9,55,33,'+00:00')
     end
-    
-    test 'departure_time with values greater than 24h is properly stored' do
-      s = StopTimeTest.fill_valid_stop_time
-      s.arrival_time = "29:55:55" # 1d + 5h 55m 55s
-      assert s.valid?, s.errors.to_a.to_s
-      assert_equal s.arrival_time, Time.new(0000,01,02,5,55,55,'+00:00') # 0000-01-02 5:55:55 +0000
-    end
-    
+        
     test 'stop_sequence is required' do
       s = StopTimeTest.fill_valid_stop_time
       s.stop_sequence = nil
@@ -199,6 +225,11 @@ module GtfsApi
       s2 = StopTimeTest.fill_valid_stop_time
       s2.drop_off_type = 4 
       assert s2.invalid?
+    end
+    test 'dist_traveled is optional' do 
+      s = StopTimeTest.fill_valid_stop_time
+      s.dist_traveled = nil
+      assert s.valid?
     end
     
     test 'dist_traveled cannot to be negative' do
