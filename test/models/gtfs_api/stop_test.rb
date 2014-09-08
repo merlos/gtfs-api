@@ -90,9 +90,9 @@ module GtfsApi
       assert s.invalid?
     end
     
-    test "location_type range and type is integer" do
+    test "location_type upper limit is 2" do
       s = StopTest.fill_valid_stop
-      s.location_type = 1.1
+      s.location_type = 3
       assert s.invalid?    
     end
     
