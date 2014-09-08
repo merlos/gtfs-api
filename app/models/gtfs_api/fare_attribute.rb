@@ -21,7 +21,7 @@ module GtfsApi
       greater_than_or_equal_to: 0, less_than_or_equal_to: 1}
       
     validates :transfers, numericality: {only_integer: true, 
-      greater_than_or_equal_to: 0, less_than_or_equal_to: 2}, 
+      greater_than_or_equal_to: 0, less_than_or_equal_to: 5}, 
       allow_nil: true
         
     validates :transfer_duration,numericality: {only_integer: true, 
@@ -59,11 +59,19 @@ module GtfsApi
     ONCE = 1
     TWICE = 2
     UNLIMITED = nil
+    #extension
+    THREE_TIMES = 3
+    FOUR_TIMES = 4
+    FIVE_TIMES = 5
     
     Transfers = {
       :no => NO,
       :once => ONCE,
       :twice => TWICE,
+      # extension
+      :three_times => THREE_TIMES,
+      :four_times => FOUR_TIMES,
+      :five_times => FIVE_TIMES,
       :unlimited => UNLIMITED
     }
     

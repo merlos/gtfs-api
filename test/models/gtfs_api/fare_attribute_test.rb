@@ -97,22 +97,41 @@ module GtfsApi
     end
     
     test "transfers range" do
-     f = FareAttributeTest.fill_valid_fare_attribute
-     f.transfers = nil
-     assert f.valid?
-     f.transfers = 0
-     assert f.valid?
-     f.transfers = 2
-     assert f.valid?
-     f.transfers = 3
-     assert f.invalid?
-   end
+      f = FareAttributeTest.fill_valid_fare_attribute
+      f.transfers = nil
+      assert f.valid?
+      f.transfers = 0
+      assert f.valid?
+      f.transfers = 1
+      assert f.valid?
+      f.transfers = 2
+      assert f.valid?
+      f.transfers = 3
+      assert f.valid?
+      f.transfers = 4
+      assert f.valid?
+      f.transfers = 5
+      assert f.valid?
+    end
+    
+    test 'transfer has to be integer' do
+      f = FareAttributeTest.fill_valid_fare_attribute
+      f.transfers = 1.2
+      assert f.invalid?
+    end
+    
+    test 'transfer cannot be negative' do
+      f = FareAttributeTest.fill_valid_fare_attribute
+      f.transfers = -1
+      assert f.invalid?
+    end
    
    test "uniqueness of _fare_id" do
      f = FareAttributeTest.fill_valid_fare_attribute
      f.save!
      f2 = FareAttributeTest.fill_valid_fare_attribute
      f2.io_id = f.io_id
+     assert f2.invalid?
      assert_raises ( ActiveRecord::RecordInvalid) {f2.save!}
      f3 = FareAttributeTest.fill_valid_fare_attribute
      f3.io_id="newValidId"

@@ -78,9 +78,10 @@ GtfsApi supports the following:
   1. column agency_id in fare_attributes.txt (for multi-agency support)
   2. additional route types (https://support.google.com/transitpartners/answer/3520902)
   3. column vehicle_type in stops.txt
-  
+  4. set location_type = 2 in stops.txt where 2 indicates an entrance. Note that: In this case stop_id must also specify parent_station. (partially supported __TODO_Validate_parent_station___)
+  5.- on fare_attributes.txt, the field transfers accepts the range 0 to 5. In GTFS Spec is defined from [0..2]
 Not supported yet:
-  1.- set location_type = 2 in stops.txt where 2 indicates an entrance. Note that: In this case stop_id must also specify parent_station.
+  
   2.- optional column field platform_code in stops.txt
   3.- translations.txt
   4.- route-to-route and trip-to-trip transfers additional values
