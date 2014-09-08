@@ -51,6 +51,12 @@ module GtfsApi
     MIN_TRANSFER_TIME_REQUIRED = 2
     TRANSFER_NOT_POSSIBLE = 3
     
+    TransferTypes = {
+      recommended: 0,
+      timed: 1,
+      min_transfer_time_required: 2,
+      not_possible: 3
+    }
     
     
   end

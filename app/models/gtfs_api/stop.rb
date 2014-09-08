@@ -68,6 +68,7 @@ module GtfsApi
       station: 1,
       entrance: 2
     }
+    
     VehicleTypes = GtfsApi::Route::RouteTypes
      
     private 
