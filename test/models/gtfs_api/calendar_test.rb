@@ -9,7 +9,7 @@ module GtfsApi
     
     def self.fill_valid_calendar
       return Calendar.new(
-      io_id: 'unique',
+      io_id: 'service_id_' + Time.new.to_f.to_s,
       monday: 1,
       tuesday: 1,
       wednesday: 1,
@@ -23,14 +23,14 @@ module GtfsApi
     
     def self.valid_gtfs_feed_calendar 
       {
-        service_id: Time.new.to_f.to_s,
-        monday: 1,
-        tuesday: 1,
-        wednesday: 1,
-        thursday: 1,
-        friday: 1,
-        saturday: 1,
-        sunday: 1,
+        service_id: 'service_id_' + Time.new.to_f.to_s,
+        monday: "1",
+        tuesday: "1",
+        wednesday: "1",
+        thursday: "1",
+        friday: "1",
+        saturday: "1",
+        sunday: "1",
         start_date: '2014-07-22',
         end_date: '2014-07-23'
       }
@@ -50,23 +50,41 @@ module GtfsApi
       end
     end
     
-    test 'range of values of days' do 
+    test 'upper range of week days' do 
       week.each do |d|
         c = CalendarTest.fill_valid_calendar
         c[d]= 2
         assert c.invalid?
-        
-        c.errors.clear
+      end
+    end
+    
+    test 'available is a valid value of week days' do
+      week.each do |d| 
+        c = CalendarTest.fill_valid_calendar
         c[d]=Calendar::AVAILABLE
         assert c.valid?, c.errors.to_a
-        
+      end
+    end
+    
+    test 'week days have to be integers' do
+      week.each do |d|
+        c = CalendarTest.fill_valid_calendar
         c[d]=0.5
         assert c.invalid?
-        
-        c.errors.clear
+      end
+    end
+    
+    test 'not available is a valid value of week days' do
+      week.each do |d|
+        c = CalendarTest.fill_valid_calendar
         c[d]=Calendar::NOT_AVAILABLE
         assert c.valid?, c.errors.to_a
-        
+      end  
+    end
+    
+    test 'week day has to be positive' do
+      week.each do |d|
+        c = CalendarTest.fill_valid_calendar
         c[d]=-1
         assert c.invalid?
       end
@@ -85,8 +103,21 @@ module GtfsApi
     end
     
     # ASSOCIATIONS
-    
-    
+    test 'calendar has many trips' do
+      c = CalendarTest.fill_valid_calendar
+      assert_equal 0, c.trips.count
+      c.save!
+      #assign this calendar to two trips
+      t1 = TripTest.fill_valid_trip
+      t1.service_id = c.io_id
+      t1.save!
+      
+      t2 = TripTest.fill_valid_trip
+      t2.service_id = c.io_id
+      t2.save!
+      # test that now the calendar has two trips linked
+      assert_equal 2, c.trips.count  
+    end
     
     # GTFSABLE IMPORT/EXPORT
     
@@ -96,13 +127,18 @@ module GtfsApi
       exceptions = [:start_date, :end_date] #exceptions, in test
       #--- common part
       feed_row = test_class.send('valid_gtfs_feed_' + model_class.to_s.split("::").last.underscore)
+      #puts feed_row
       model = model_class.new_from_gtfs(feed_row)
-      assert model.valid?
+      assert model.valid?, model.errors.to_a.to_s
+    
       model_class.gtfs_cols.each do |model_attr, feed_col|
         next if exceptions.include? (model_attr)
-        assert_equal model.send(model_attr), feed_row[feed_col], "Testing " + model_attr.to_s + " vs " + feed_col.to_s
+        model_value = model.send(model_attr)
+        model_value = model_value.to_s if model_value.is_a? Numeric
+        model_value = model_value.to_gtfs if model_value.is_a? Time
+        assert_equal feed_row[feed_col], model_value, "Testing " + model_attr.to_s + " vs " + feed_col.to_s
       end
-      #------
+       #------
     end
     
     test "a Calendar model can be exported into a gtfs row" do
@@ -112,9 +148,13 @@ module GtfsApi
       #------ Common_part
       model = test_class.send('fill_valid_' + model_class.to_s.split("::").last.underscore)
       feed_row = model.to_gtfs
+      #puts feed_row
       model_class.gtfs_cols.each do |model_attr, feed_col|
         next if exceptions.include? (model_attr)
-        assert_equal model.send(model_attr), feed_row[feed_col], "Testing " + model_attr.to_s + " vs " + feed_col.to_s
+        feed_value = feed_row[feed_col]
+        feed_value = feed_value.to_f if model.send(model_attr).is_a? Numeric
+        feed_value = Time.new_from_gtfs(feed_value) if model.send(model_attr).is_a? Time
+        assert_equal model.send(model_attr), feed_value, "Testing " + model_attr.to_s + " vs " + feed_col.to_s
       end
     end
     

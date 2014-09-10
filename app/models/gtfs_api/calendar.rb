@@ -27,7 +27,7 @@ module GtfsApi
     validates :end_date, presence: true
     
     # ASSOCIATIONS  
-    has_many :trips, foreign_key: 'service_id'
+    has_many :trips, foreign_key: 'service_id', primary_key: 'io_id'
   
     # CONSTANTS
     AVAILABLE = 1
@@ -38,10 +38,8 @@ module GtfsApi
       :no => NOT_AVAILABLE
     }    
   
-    def after_rehash_to_gtfs(gtfs_row)
-      gtfs_row[:start_date] = self.start_date.to_gtfs
-      gtfs_row[:end_date] = self.end_date.to_gtfs
-      return gtfs_row
-    end
+    Week = [:monday, :tuesday, :wednesday, :thursday, :friday, :saturday, :sunday]
+    WeekDays = [:monday, :tuesday, :wednesday, :thursday, :friday]
+    Weekend = [:saturday, :sunday]
   end
 end
