@@ -54,44 +54,52 @@ module GtfsApi
      assert f.invalid?
     end
 
-    test "headway_secs range" do
+    test "headway_secs has to be positive" do
      f = FrequencyTest.fill_valid_frequency
      f.headway_secs = -1
      assert f.invalid?
-     
-     f.headway_secs = 1
-     f.errors.clear
-     assert f.valid?, f.errors.to_a
-     f.headway_secs = 1.1 #has to be integer
+   end
+   
+   test 'headway_secs has to be integer' do
+     f = FrequencyTest.fill_valid_frequency
+     f.headway_secs = 1.1
      assert f.invalid?
     end
     
     test "exact_times can be nil" do
       f = FrequencyTest.fill_valid_frequency
-      f.exact_times = nil # has to be integer
+      f.exact_times = nil 
       assert f.valid?
     end
     
-    test "exact_times range" do
-      
+    test "exact_times has to be integer" do
       f = FrequencyTest.fill_valid_frequency
-      f.exact_times = 0.5 # has to be integer
+      f.exact_times = 0.5 
       assert f.invalid?
-      
-      f.errors.clear
+    end
+    
+    test "exact_time not_exact value is valid" do  
+      f = FrequencyTest.fill_valid_frequency
       f.exact_times = Frequency::NOT_EXACT   
       assert f.valid?, f.errors.to_a
+    end
     
+    test "exact_times cannot be negative" do
+      f = FrequencyTest.fill_valid_frequency
       f.exact_times = -1 
       assert f.invalid?
+    end
        
-      f.errors.clear      
+    test "exact_times exact is a valid value" do
+      f = FrequencyTest.fill_valid_frequency
       f.exact_times = Frequency::EXACT
       assert f.valid?, f.errors.to_a
-      
+    end
+    
+    test "eact_times greater than 1 is not valid" do  
+      f = FrequencyTest.fill_valid_frequency
       f.exact_times = 2
       assert f.invalid? 
-      
     end
     
     test "virtual attribute trip_io_id sets and gets trip" do
@@ -114,7 +122,7 @@ module GtfsApi
        assert f.invalid?
     end
     
-   # GTFS 
+   # IMPORT/EXPORT
    
    test "frequency row can be imported into a Frequency model" do
       model_class = Frequency
