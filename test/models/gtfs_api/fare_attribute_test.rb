@@ -55,13 +55,15 @@ module GtfsApi
     end
      
     
-    test "currency_type length is exactly 3" do
+    test "currency_type length cannot greater than 3" do
       f = FareAttributeTest.fill_valid_fare_attribute
       f.currency_type = "EURO"
       assert f.invalid?
-      
-      f2 = FareAttributeTest.fill_valid_fare_attribute
-      f2.currency_type = "EU"
+    end
+    
+    test "currency_type length cannot be less than 3" do
+      f = FareAttributeTest.fill_valid_fare_attribute
+      f.currency_type = "EU"
       assert f.invalid? 
     end
     
@@ -84,22 +86,46 @@ module GtfsApi
       assert f.invalid?
     end
     
-    test "payment_method range" do
+    test "payment_method has to be positive" do
       f = FareAttributeTest.fill_valid_fare_attribute
-      #valid
+      f.payment_method = -1
+      assert f.invalid?
+    end
+    
+    test "payment_method can be 0 or 1" do
+      f = FareAttributeTest.fill_valid_fare_attribute
       f.payment_method = 0
       assert f.valid?
       f.payment_method= 1
       assert f.valid?
-      #invalid
+    end
+    
+    test "payment_method cannot be larger than 1" do
+      f = FareAttributeTest.fill_valid_fare_attribute
       f.payment_method = 2
       assert f.invalid?
     end
     
-    test "transfers range" do
+    test 'transfer has to be integer' do
+      f = FareAttributeTest.fill_valid_fare_attribute
+      f.transfers = 1.2
+      assert f.invalid?
+    end
+    
+    test 'transfer cannot be negative' do
+      f = FareAttributeTest.fill_valid_fare_attribute
+      f.transfers = -1
+      assert f.invalid?
+    end
+ 
+    test 'transfers is optional' do
       f = FareAttributeTest.fill_valid_fare_attribute
       f.transfers = nil
       assert f.valid?
+    end
+    
+    test "transfers range from 0 to 5 are valid" do
+      f = FareAttributeTest.fill_valid_fare_attribute
       f.transfers = 0
       assert f.valid?
       f.transfers = 1
@@ -114,19 +140,13 @@ module GtfsApi
       assert f.valid?
     end
     
-    test 'transfer has to be integer' do
+    test "transfer_range greater than 5 is invalid" do
       f = FareAttributeTest.fill_valid_fare_attribute
-      f.transfers = 1.2
+      f.transfers = 6
       assert f.invalid?
     end
-    
-    test 'transfer cannot be negative' do
-      f = FareAttributeTest.fill_valid_fare_attribute
-      f.transfers = -1
-      assert f.invalid?
-    end
-   
-   test "uniqueness of _fare_id" do
+      
+   test "uniqueness of fare_id" do
      f = FareAttributeTest.fill_valid_fare_attribute
      f.save!
      f2 = FareAttributeTest.fill_valid_fare_attribute

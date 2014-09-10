@@ -172,6 +172,7 @@ module GtfsApi
           feed_value = Time.new_from_gtfs(feed_value) if model.send(model_attr).is_a? Time
           assert_equal model.send(model_attr), feed_value, "Testing " + model_attr.to_s + " vs " + feed_col.to_s
         end
+        #-------------
       end 
     
      
