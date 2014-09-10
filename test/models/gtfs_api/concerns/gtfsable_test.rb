@@ -206,8 +206,11 @@ module GtfsApi::Concerns::Models::Concerns
       end
     end
     
-    
+    ##
+    # These tests make the concern dependent on models of gtfsapi
     # TESTS WITH REAL MODELS
+    ##
+    # 
     # this test assumes there is a Route model that does not have
     # the attribute not_attribute
     test "new_from_gtfs does not launc attribute not found when an attributed does not exist" do
