@@ -11,6 +11,9 @@ module GtfsApi
     validates :date, presence: true
     validates :exception_type, presence: true, numericality: {only_integer: true, greater_than_or_equal_to: 1, less_than_or_equal_to: 2}
     
+    # ASSOCIATIONS  
+    has_many :trips, foreign_key: 'service_id', primary_key: 'io_id'
+    
     # CONSTANTS
     #exception_types
     SERVICE_ADDED = 1
@@ -21,14 +24,5 @@ module GtfsApi
       :service_removed => SERVICE_REMOVED
     }
     
-    # GTFSABLE 
-    
-    def after_rehash_to_gtfs(gtfs_row)
-      gtfs_row[:date] = self.date.to_gtfs
-      return gtfs_row
-    end
-    
-    
-    has_many :trips, foreign_key: 'service_id', primary_key: 'io_id'
   end
 end

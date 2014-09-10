@@ -36,23 +36,24 @@ module GtfsApi
       assert c.invalid?
     end
     
-    test 'exception type range' do
+    test 'valid exception types' do
       c = CalendarDateTest.fill_valid_calendar_date
       c.exception_type = CalendarDate::ExceptionTypes[:service_added]
       assert c.valid?, c.errors.to_a
       c.exception_type = CalendarDate::ExceptionTypes[:service_removed]
       assert c.valid?, c.errors.to_a
-      
-      #test out of range
+    end
+    
+    test 'exception_type has to be greater than 0' do
+      c = CalendarDateTest.fill_valid_calendar_date
       c.exception_type = 0
       assert c.invalid?
+    end
       
-      c.errors.clear
-      c.exception_type= CalendarDate::ExceptionTypes[:service_added]
-      assert c.valid?, c.errors.to_a
+    test 'exception_type has to be smaller than 3' do
+      c = CalendarDateTest.fill_valid_calendar_date
       c.exception_type = 3
       assert c.invalid?
-      
     end
     
     # ASSOCIATIONS
