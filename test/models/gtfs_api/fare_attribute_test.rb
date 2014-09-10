@@ -162,12 +162,16 @@ module GtfsApi
    # ASSOCIATIONS
    #
    
-   # requires fixtures:
-   # - fare_attribute with io_id = '_fare_one'
-   # - on fare_rules table, ONLY ONE fare_rule linking to _fare_one
    test "fare_attribute has_many fare_rules" do
-     f = FareAttribute.find_by_io_id('_fare_one')
-     assert (f.fare_rules.count == 1)
+     f = FareAttributeTest.fill_valid_fare_attribute
+     f.save!
+     fr1 = FareRuleTest.fill_valid_fare_rule
+     fr1.fare = f
+     fr1.save!
+     fr2 = FareRuleTest.fill_valid_fare_rule
+     fr2.fare = f
+     fr2.save!
+     assert_equal 2, f.fare_rules.count
    end
    
    

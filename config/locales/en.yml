@@ -28,10 +28,11 @@ en:
             departure_time:
               set_both_times: "is set. Then arrival time must be set."
               :must_be_after_arrival_time: "must be after arrival time"
+              
         gtfs_api/fare_rule:
           attributes:
-            fare:
-              blank_or_not_found: "can't be blank or the value provided does not exist"
+            fare_id: 
+              blank_or_not_found: "can't be blank or the value provided does not exist" 
             route:
               not_found: " was not found. Set an existing one"
             origin_id: 

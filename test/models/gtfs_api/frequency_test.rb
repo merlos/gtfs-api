@@ -4,7 +4,7 @@ module GtfsApi
   class FrequencyTest < ActiveSupport::TestCase
     
     def self.fill_valid_frequency
-      trip = Trip.find_by_io_id('_trip_one') 
+      trip = TripTest.fill_valid_trip
       return Frequency.new(
       trip: trip,
       start_time: "14:00:21", 

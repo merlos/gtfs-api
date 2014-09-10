@@ -88,14 +88,14 @@ ActiveRecord::Schema.define(version: 20140713165440) do
   add_index "gtfs_api_fare_rules", ["route_id"], name: "index_gtfs_api_fare_rules_on_route_id"
 
   create_table "gtfs_api_feed_infos", force: true do |t|
-    t.string   "publisher_name"
-    t.string   "publisher_url"
-    t.string   "lang",           limit: 2
+    t.string   "publisher_name", limit: 128
+    t.string   "publisher_url",  limit: 128
+    t.string   "lang",           limit: 30
     t.date     "start_date"
     t.date     "end_date"
-    t.string   "version"
+    t.string   "version",        limit: 24
     t.string   "io_id"
-    t.integer  "data_version"
+    t.integer  "data_version",               default: 1
     t.datetime "created_at"
     t.datetime "updated_at"
   end

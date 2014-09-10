@@ -177,10 +177,15 @@ module GtfsApi
      # requires fixtures with:
      #  - fare_rule that belongs_to a fare_attribute with io_id '_fare_one'
      test 'fare_rule belongs_to fare_attribute' do
-       fare_attribute = FareAttribute.find_by_io_id('_fare_one')
-       f = FareRule.where(fare: fare_attribute).first
-       #check if we can access to the record
-       assert (f.fare.io_id=='_fare_one')
+       f = FareRuleTest.fill_valid_fare_rule
+       fa = FareAttributeTest.fill_valid_fare_attribute
+       fa.save!
+       f.fare = fa
+       f.save!
+       
+       f2 = FareRule.find(f.id)
+       f2.fare.io_id
+       assert_equal fa.io_id, f2.fare.io_id
      end
      
      

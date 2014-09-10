@@ -4,9 +4,10 @@ module GtfsApi
   class TransferTest < ActiveSupport::TestCase
     
     def self.fill_valid_transfer
-      from = Stop.find_by_io_id('_stop_one')
-      to = Stop.find_by_io_id('_stop_two')
-       
+      from = StopTest.fill_valid_stop
+      to = StopTest.fill_valid_stop
+      from.save!
+      to.save! 
       return Transfer.new( 
         from_stop:from,
         to_stop:to,
@@ -15,8 +16,10 @@ module GtfsApi
     end
     
     def self.valid_gtfs_feed_transfer 
-      from = Stop.find_by_io_id('_stop_one')
-      to = Stop.find_by_io_id('_stop_two')
+      from = StopTest.fill_valid_stop
+      to = StopTest.fill_valid_stop
+      from.save!
+      to.save! 
       {
         from_stop_id: from.io_id,
         to_stop_id: to.io_id,

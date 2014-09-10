@@ -36,42 +36,57 @@ module GtfsApi
       assert s.invalid?
     end 
     
-    test 'pt lat and lon presence required' do
+    test 'pt lat presence required' do
       s = ShapeTest.fill_valid_shape
       s.pt_lat = nil
       assert s.invalid?
+    end
+    
+    test 'pt lon presence required' do
       s = ShapeTest.fill_valid_shape
       s.pt_lon = nil
       assert s.invalid? 
     end
-    
-    test 'pt lat and lon range' do
+   
+    test 'pt lat lower range min is -90' do
       s = ShapeTest.fill_valid_shape
+      s.pt_lat = -89.9999
+      assert s.valid?
       s.pt_lat = -90.1
       assert s.invalid?
+    end
+    
+    test 'pt lat upper range max is 90' do
       s = ShapeTest.fill_valid_shape
+      s.pt_lat = 89.99
+      assert s.valid?
       s.pt_lat = 90.1
       assert s.invalid?
-
+    end
+    
+    test "pt lon lower range min is -180" do
       s = ShapeTest.fill_valid_shape
+      s.pt_lon = -179.99
+      assert s.valid?
       s.pt_lon = -180.1
       assert s.invalid?
+    end
+    
+    test "pt_long upper range max is 180" do
       s = ShapeTest.fill_valid_shape
+      s.pt_lon = 179.99
+      assert s.valid?
       s.pt_lon = 180.1
       assert s.invalid?
     end
     
-    test 'pt sequence presence' do
+    test 'pt sequence presence is required' do
       s = ShapeTest.fill_valid_shape
       s.pt_sequence = nil
       assert s.invalid?
     end
     
-    test 'pt seq has to be a positive integer' do
-      s = ShapeTest.fill_valid_shape
-      s.pt_sequence = 1.1
-      assert s.invalid?
-      
+    test "pt sequence has to be positive" do
       s = ShapeTest.fill_valid_shape
       s.pt_sequence = 0
       assert s.valid?
@@ -79,7 +94,13 @@ module GtfsApi
       s.pt_sequence = -1
       assert s.invalid?
     end
-     
+  
+    test 'pt seq has to be an integer' do
+      s = ShapeTest.fill_valid_shape
+      s.pt_sequence = 1.1
+      assert s.invalid?
+    end
+    
     test 'dist_traveled is optional' do
       s = ShapeTest.fill_valid_shape
       s.dist_traveled = nil
