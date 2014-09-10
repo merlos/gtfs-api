@@ -103,45 +103,73 @@ module GtfsApi
       assert r.valid?
     end
     
-    test "some url invalid formats" do
+    test "http and https are valid url formats" do
       r = RouteTest.fill_valid_route
       r.url = "http://www.foofoofoo.es/blow"
       assert r.valid?, r.errors.to_a.to_s
       r.url = "https://barbarbar.es/drunk"
       assert r.valid?, r.errors.to_a.to_s
+    end
+    
+    test "ftp addresses are an invalid url format" do
+      r = RouteTest.fill_valid_route
       r.url = "ftp://www.fetepe.es"
       assert r.invalid?
-      r2 = RouteTest.fill_valid_route
-      r2.url = "/rururutatata/cacadevaca"
-      assert r2.invalid?
+    end
+    
+    test 'absolute url is invalid format' do
+      r = RouteTest.fill_valid_route
+      r.url = "/rururutatata/cacadevaca"
+      assert r.invalid?
     end  
         
-    test "route color can be nil and length" do
+    test "color attribute is optional" do
       r = RouteTest.fill_valid_route
       r.color = nil
       assert r.valid?
-      r.color = "1234567" # valid range is [0..F]
+    end
+    
+    test "color length cannot be less than 6" do
+      r = RouteTest.fill_valid_route
+      r.color = "12345"
+      assert r.invalid?
+    end
+      
+    test "color legth cannot be larger than 6" do
+      r = RouteTest.fill_valid_route
+      r.color = "1234567"
       assert r.invalid?
     end
     
-    test "route text color nil and length" do
+    test "color has to be an hex value" do
+      r = RouteTest.fill_valid_route
+      r.color = "GGGGGG"
+      assert r.invalid?
+    end
+    
+    test "text_color is optional" do
       r = RouteTest.fill_valid_route
       r.color = nil
       assert r.valid?
-      
-      r.color = "1234" # valid range is [0..F]
-      assert r.invalid?
-      
-      r.errors.clear
-      r.color="ZZZZZZ"
-      assert r.invalid?
-      
-      r.errors.clear
-      r.color="123456"
-      assert r.valid?
-    
     end
-      
+    test "text_color length cannot be less than 6" do  
+      r = RouteTest.fill_valid_route
+      r.color = "12345" 
+      assert r.invalid?
+    end
+    
+    test "text_color length cannot be greater than 6" do
+      r = RouteTest.fill_valid_route
+      r.color="1234567"
+      assert r.invalid?
+    end
+    
+    test "text_color character have to be in hex string" do  
+      r = RouteTest.fill_valid_route
+      r.color="GGGGGG"
+      assert r.invalid?
+    end
+        
     # database stuff
     test "uniqueness of route" do
       r = RouteTest.fill_valid_route
