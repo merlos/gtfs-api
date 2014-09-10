@@ -3,7 +3,8 @@ require 'test_helper'
 module GtfsApi
   class AgencyTest < ActiveSupport::TestCase
     
-    fixtures :all
+    #fixtures :all #Load fixtures.
+    
     #call this method to create a valid agency. Change values to invalidate
     def self.fill_valid_agency     
       Agency.new(
@@ -124,7 +125,6 @@ module GtfsApi
     end
      
     test "agency has_many routes" do
-      #defined in fixtures
       a = AgencyTest.fill_valid_agency;
       a.save!
       
