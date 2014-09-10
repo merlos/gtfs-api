@@ -29,7 +29,9 @@ module GtfsApi
     #associations
     has_many :routes
     has_many :fare_attributes
-   
+    belongs_to :feed, class_name: 'FeedInfo'
+
+    
     private 
     
     # 

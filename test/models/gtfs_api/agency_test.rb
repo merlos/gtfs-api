@@ -142,7 +142,7 @@ module GtfsApi
     end
    
     test "agency has many fare_attributes" do
-      a = AgencyTest.fill_valid_agency;
+      a = AgencyTest.fill_valid_agency
       a.save!
       # link 2 fare attributes
       fa1 = FareAttributeTest.fill_valid_fare_attribute
@@ -153,6 +153,17 @@ module GtfsApi
       fa2.save!
       assert_equal 2, a.fare_attributes.count
     end
+    
+    test "agency belongs to feed" do
+      f = FeedInfoTest.fill_valid_model
+      f.save!
+      a = AgencyTest.fill_valid_agency
+      a.feed = f
+      a.save!
+      a2 = Agency.find(a.id)
+      assert_equal f.io_id, a2.feed.io_id
+    end
+    
     #
     # GTFSABLE Test
     #

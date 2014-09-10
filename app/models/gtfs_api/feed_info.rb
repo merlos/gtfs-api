@@ -18,5 +18,7 @@ module GtfsApi
     validates :publisher_url, presence: true, :'gtfs_api/validators/url'=>true
     
     #TODO validate lang against BCP-47
+    
+    has_many :agencies, foreign_key: 'feed_id'
   end
 end
