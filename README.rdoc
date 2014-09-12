@@ -27,9 +27,9 @@ Then run
 $ bundle install
 ```
 
-Perform the migrations 
+Copy the migrations and migrate the database 
 ```
-rake app:gtfs_api:install:migrations 
+rake gtfs:migrate 
 ```
 Edit your routes.rb, and add this line
 ```

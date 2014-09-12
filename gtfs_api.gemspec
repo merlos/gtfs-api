@@ -20,6 +20,7 @@ Gem::Specification.new do |s|
   s.add_dependency "rails", "~> 4.1.4"
   s.add_dependency "iso639-validator", '~> 0.0.2'
   s.add_dependency "iso4217-validator", '~> 0.0.2'
+  s.add_dependency 'jbuilder', "~>2.1.3"
   #s.add_dependency "gtfs-reader"
   
   s.add_development_dependency "sqlite3"

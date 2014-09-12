@@ -2,7 +2,18 @@ require 'gtfs_api/io/importer'
 require 'gtfs_api/io/exporter'
 
 namespace :gtfs do
-
+  desc 'Copy migrations from gtfs_api to application and perform the migration (db:migrate)'
+  task :migrate => :environment do |t, args|
+    # this task is a shortcut of
+    copy_migrations = 'gtfs_api:install:migrations'
+    migrate = 'db:migrate'
+    #app prefix is required if called from engine during development
+    copy_migrations.prepend('app:') if t.to_s.split(':').include? ('app')
+    migrate.prepend('app:') if t.to_s.split(':').include? ('app')
+    Rake::Task[copy_migrations].invoke  
+    Rake::Task[migrate].invoke
+  end
+  
   #
   # IMPORT 
   #

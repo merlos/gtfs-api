@@ -8,3 +8,6 @@ test/dummy/tmp/
 test/dummy/.sass-cache
 doc/
 .yardoc/
+Gemfile.lock
+schema.rb
+test/dummy/db/migrate/*gtfs_api.rb

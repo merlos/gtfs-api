@@ -33,6 +33,7 @@ module GtfsApi
               #before { |etag| puts "Processing source with tag #{etag}..." }
               feed_definition &GtfsApi::Io::FeedDefinitionBlock
               handlers do
+                feed_info { |row| Importer.import_one_row_of(GtfsApi::FeedInfo, row)}
                 agency {|row| 
                   Importer.import_one_row_of(GtfsApi::Agency,row)
                   if row[:agency_id].nil?

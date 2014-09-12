@@ -1,3 +1,5 @@
+require 'jbuilder'
+
 require "gtfs_api/engine"
 
 require "gtfs_api/io/time"

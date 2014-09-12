@@ -1,4 +1,4 @@
 Rails.application.routes.draw do
 
-  mount GtfsApi::Engine => "/gtfs_api"
+  mount GtfsApi::Engine => "/gtfs"
 end
