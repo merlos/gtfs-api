@@ -6,7 +6,9 @@ module GtfsApi
     #fixtures :all #Load fixtures.
     
     #call this method to create a valid agency. Change values to invalidate
-    def self.fill_valid_agency     
+    def self.fill_valid_agency
+      feed = FeedInfoTest.fill_valid_model
+      feed.save!     
       Agency.new(
         io_id: 'AgencyID' + Time.new.to_f.to_s,
         name: 'Agency Name',
@@ -14,13 +16,16 @@ module GtfsApi
         timezone: 'Madrid/Spain',
         lang: 'es',
         phone: '+34 600 100 200',
-        fare_url: 'http://www.agency-fare-url.es')
+        fare_url: 'http://www.agency-fare-url.es',
+        feed: feed)
     end
     
     # @return[Hash] Fills a hash with the data of an agency. The keys are the names
     #  of the cols of agency.txt file. The id of the agecy is unique.
     def self.valid_gtfs_feed_agency
       unique = Time.new.to_f.to_s
+      feed = FeedInfoTest.fill_valid_model
+      feed.save!
       {
         agency_name: 'gtfs agency name ' + unique,
         agency_id: 'gtfs-agency-' + unique,
@@ -28,7 +33,8 @@ module GtfsApi
         agency_timezone: 'Madrid/Spain',
         agency_lang: 'es',
         agency_phone: '+34 555 3434',
-        agency_fare_url: 'http://www.agency-fare-url.es'
+        agency_fare_url: 'http://www.agency-fare-url.es',
+        feed_id: feed.io_id
       }
     end
     
@@ -110,7 +116,13 @@ module GtfsApi
       assert_not a.valid?, 'agency_lang > 2' + a.errors.to_a.to_s  
     end
   
-
+    test "feed is optional" do
+      a = AgencyTest.fill_valid_agency
+      a.feed = nil
+      assert a.valid?
+    end
+    
+    
     # DATABASE AND ASSOCIATIONS
     
     test "agency io_id uniqueness" do
@@ -164,6 +176,22 @@ module GtfsApi
       assert_equal f.io_id, a2.feed.io_id
     end
     
+    # VIRTUAL ATTRIBUTES
+    
+    test "feed_io_id getter returns feed.io_id" do
+      a = AgencyTest.fill_valid_agency
+      assert_equal a.feed.io_id, a.feed_io_id
+    end
+    
+    test "feed_io_id setter updates the Agency.feed" do
+      a = AgencyTest.fill_valid_agency
+      f = FeedInfoTest.fill_valid_model
+      f.save!
+      assert_not_equal f.io_id, a.feed.io_id
+      a.feed_io_id = f.io_id
+      assert_equal f.io_id, a.feed.io_id
+    end
+    
     #
     # GTFSABLE Test
     #
@@ -172,9 +200,8 @@ module GtfsApi
       a = Agency.new_from_gtfs(agency_row)
       assert a.valid?, a.errors.to_a.to_s
       #also check the values are the expected
-      Agency.gtfs_cols.each do |k_api,k_feed|
-        assert_equal agency_row[k_feed], a[k_api]
-        #puts k_api.to_s + " " + a[k_api]
+      Agency.gtfs_cols.each do |model_attr,gtfs_col|
+        assert_equal agency_row[gtfs_col], a.send(model_attr),  "expected feed column: #{model_attr}  model attribute: #{gtfs_col}"
       end
     end
     
@@ -182,7 +209,8 @@ module GtfsApi
       a = AgencyTest.fill_valid_agency
       agency_row = a.to_gtfs
       Agency.gtfs_cols.each do |model_attr, gtfs_col|
-       assert_equal a[model_attr], agency_row[gtfs_col]
+       assert_equal a.send(model_attr), agency_row[gtfs_col], "model_attr(expected) #{model_attr} gtfs_col: #{gtfs_col}"
+        #puts k_api.to_s + " " + a[k_api]
       end
     end
     

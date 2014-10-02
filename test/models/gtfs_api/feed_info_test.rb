@@ -15,10 +15,9 @@ module GtfsApi
         start_date: '2014-06-20',
         end_date: '2015-06-20',
         version: 'V1.0',
-        
         #gtfs api extension
         io_id: "feed_id" + Time.new.to_f.to_s,
-        data_version: 10,
+        name: "feed name" 
         })
     end
     def self.valid_gtfs_feed_feed_info
@@ -30,7 +29,7 @@ module GtfsApi
         end_date: '2015-06-20',
         version: "V1.0",
         feed_id: 'feed_id' + Time.new.to_f.to_s,
-        data_version: 10
+        name: 'feed name'
       }
     end
     

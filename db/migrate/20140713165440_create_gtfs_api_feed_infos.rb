@@ -8,10 +8,12 @@ class CreateGtfsApiFeedInfos < ActiveRecord::Migration
       t.date    :end_date
       t.string  :version, limit: 24
       
+      t.timestamps      
+      
       #GtfsApi Extensions
-      t.string  :io_id
-      t.integer :data_version, default: 1 #version control for incremental updates    
-      t.timestamps
+      t.string  :io_id, limit: 48
+      t.string :name, limit: 128
+      
     end
     add_index :gtfs_api_feed_infos, :io_id
   end

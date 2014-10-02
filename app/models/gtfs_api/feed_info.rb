@@ -8,8 +8,10 @@ module GtfsApi
     set_gtfs_col :start_date, :feed_start_date
     set_gtfs_col :end_date, :feed_end_date
     set_gtfs_col :version, :feed_version
+    
     #GtfsApi only
     set_gtfs_col :io_id, :feed_id
+    set_gtfs_col :name
     
     
     #Validations

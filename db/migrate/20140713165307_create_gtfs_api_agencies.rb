@@ -9,7 +9,7 @@ class CreateGtfsApiAgencies < ActiveRecord::Migration
       t.string :phone, limit: 24
       t.string :fare_url
 
-      #Non normative
+      #Non normative 
       t.belongs_to :feed
       
       t.timestamps
