@@ -1,6 +1,6 @@
 module GtfsApi
   class StopTime < ActiveRecord::Base
-    include GtfsApi::Concerns::Models::Concerns::Gtfsable
+    include GtfsApi::Io::Models::Concerns::Gtfsable
     #gtfs feed columns definitions
     set_gtfs_col :trip_io_id, :trip_id
     set_gtfs_col :arrival_time
@@ -14,7 +14,6 @@ module GtfsApi
     
     # VALIDATIONS
     validates :trip, presence: {message: :blank_or_not_found}
-
     #TODO validate that the 
     #presence of arrival_time and departure_time is only required on the first and last stop
     validate :arrival_time_and_departure_time_both_or_none_set
@@ -25,7 +24,8 @@ module GtfsApi
     validates :dist_traveled, numericality: {greater_than_or_equal_to: 0}, allow_nil: true
     validates :pickup_type, numericality: {only_integer: true,  greater_than_or_equal_to: 0, less_than_or_equal_to: 3}, allow_nil: true
     validates :drop_off_type, numericality: {only_integer: true, greater_than_or_equal_to: 0, less_than_or_equal_to: 3}, allow_nil: true
-    
+    validates :feed, presence: true
+      
     def arrival_time_and_departure_time_both_or_none_set
       return if (arrival_time.nil? && departure_time.nil?)
       if arrival_time.nil?
@@ -86,6 +86,7 @@ module GtfsApi
     # ASSOCIATIONS
     belongs_to :stop
     belongs_to :trip 
+    belongs_to :feed  
     
     # CONSTANTS
   

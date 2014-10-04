@@ -12,6 +12,7 @@ class CreateGtfsApiRoutes < ActiveRecord::Migration
       t.string :color, limit: 8 # it is an RGB value, but with length 8, supports ARGB
       t.string :text_color, limit: 8 
 
+      t.belongs_to :feed, null: false, index: true
       t.timestamps
     end
     add_index :gtfs_api_routes, :io_id

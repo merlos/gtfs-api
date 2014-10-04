@@ -7,6 +7,7 @@ class CreateGtfsApiShapes < ActiveRecord::Migration
       t.integer :pt_sequence, presence: true, numericability: {only_integer: true, greater_than_or_equal_to: 0}
       t.decimal :dist_traveled, numericability: {greater_than_or_equal_to: 0}
   
+      t.belongs_to :feed, null: false, index: true
       t.timestamps
     end
     add_index :gtfs_api_shapes, :io_id

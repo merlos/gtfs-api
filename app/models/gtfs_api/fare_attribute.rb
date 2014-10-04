@@ -2,7 +2,7 @@ module GtfsApi
   class FareAttribute < ActiveRecord::Base
     include Iso4217::Validator
     
-    include GtfsApi::Concerns::Models::Concerns::Gtfsable
+    include GtfsApi::Io::Models::Concerns::Gtfsable
     set_gtfs_col :io_id, :fare_id
     set_gtfs_col :agency_io_id, :agency_id
     set_gtfs_col :price
@@ -27,10 +27,12 @@ module GtfsApi
     validates :transfer_duration,numericality: {only_integer: true, 
       greater_than_or_equal_to: 0}, allow_nil: true
       # time in seconds
+    validates :feed, presence: true
     
     # Associations
     has_many :fare_rules, foreign_key:'fare_id'
     belongs_to :agency
+    belongs_to :feed    
     
     # Virtual Attributes 
     attr_accessor :agency_io_id 

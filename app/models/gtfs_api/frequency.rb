@@ -1,7 +1,7 @@
 module GtfsApi
   class Frequency < ActiveRecord::Base
     
-    include GtfsApi::Concerns::Models::Concerns::Gtfsable
+    include GtfsApi::Io::Models::Concerns::Gtfsable
     set_gtfs_col :trip_io_id, :trip_id
     set_gtfs_col :start_time
     set_gtfs_col :end_time
@@ -16,9 +16,11 @@ module GtfsApi
       greater_than_or_equal_to: 0}
     validates :exact_times, numericality: {only_integer:true,
       greater_than_or_equal_to: 0, less_than_or_equal_to: 1}, allow_nil: true
+    validates :feed, presence: true
     
     # ASSOCIATIONS 
     belongs_to :trip
+    belongs_to :feed  
     
     # VIRTUAL ATTRIBUTES
     attr_accessor :trip_io_id

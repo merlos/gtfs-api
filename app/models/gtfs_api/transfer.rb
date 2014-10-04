@@ -1,6 +1,6 @@
 module GtfsApi
   class Transfer < ActiveRecord::Base
-    include GtfsApi::Concerns::Models::Concerns::Gtfsable
+    include GtfsApi::Io::Models::Concerns::Gtfsable
     #gtfs feed columns definitions
     set_gtfs_col :from_stop_io_id, :from_stop_id
     set_gtfs_col :to_stop_io_id, :to_stop_id
@@ -14,10 +14,12 @@ module GtfsApi
        greater_than_or_equal_to: 0, less_than_or_equal_to:3}
     validates :min_transfer_time, numericality: {only_integer: true, 
       greater_than_or_equal_to: 0}, allow_nil: true
+    validates :feed, presence: true
     
     # Associations
     belongs_to :from_stop, class_name: 'Stop'
     belongs_to :to_stop, class_name: 'Stop'
+    belongs_to :feed  
     
     # Virtual Attributes
     attr_accessor :from_stop_io_id

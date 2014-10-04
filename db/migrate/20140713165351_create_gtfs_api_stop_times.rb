@@ -11,6 +11,7 @@ class CreateGtfsApiStopTimes < ActiveRecord::Migration
       t.integer :drop_off_type, default: 0 #Regularly scheduled drop off
       t.decimal :dist_traveled
 
+      t.belongs_to :feed, null: false, index: true
       t.timestamps
     end
     add_index :gtfs_api_stop_times, :trip_id

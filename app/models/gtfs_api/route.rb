@@ -1,7 +1,7 @@
 module GtfsApi
   class Route < ActiveRecord::Base
     
-    include GtfsApi::Concerns::Models::Concerns::Gtfsable
+    include GtfsApi::Io::Models::Concerns::Gtfsable
     #gtfs feed columns definitions
     set_gtfs_col :io_id, :route_id
     set_gtfs_col :short_name, :route_short_name
@@ -15,8 +15,6 @@ module GtfsApi
     set_gtfs_col :agency_io_id, :agency_id
     
     validates :io_id, uniqueness: true, presence:true
-    #validates :short_name
-    #validates :long_name
     validates :route_type, presence: true, numericality: { only_integer: true, 
       greater_than_or_equal_to: 0, less_than_or_equal_to:1702 }
     validates :url, :'gtfs_api/validators/url' => true, allow_nil: true 
@@ -24,10 +22,13 @@ module GtfsApi
     validates :text_color, format: { with: /\A[a-f0-9]{6}\z/i }, allow_nil: true
     validate :either_short_name_or_long_name_present
     validate :valid_route_type
+    validates :feed, presence: true
+    
     # asociations
     belongs_to :agency
     has_many :trips
     has_one :fare, class: "FareRules"
+    belongs_to :feed  
     
     # Virtual Attributes 
     attr_accessor :agency_io_id 

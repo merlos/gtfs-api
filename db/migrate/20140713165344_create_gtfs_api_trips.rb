@@ -16,6 +16,7 @@ class CreateGtfsApiTrips < ActiveRecord::Migration
       t.integer :wheelchair_accesible, default: 0
       t.integer :bikes_allowed, default: 0
 
+      t.belongs_to :feed, null: false, index: true
       t.timestamps
     end
     add_index :gtfs_api_trips, :io_id

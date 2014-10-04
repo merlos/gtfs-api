@@ -1,7 +1,7 @@
 module GtfsApi
   class Trip < ActiveRecord::Base
     
-    include GtfsApi::Concerns::Models::Concerns::Gtfsable
+    include GtfsApi::Io::Models::Concerns::Gtfsable
     set_gtfs_col :route_io_id, :route_id
     set_gtfs_col :service_id
     set_gtfs_col :io_id, :trip_id
@@ -37,8 +37,10 @@ module GtfsApi
     validates :bikes_allowed, allow_nil: true, numericality: {only_integer: true, greater_than_or_equal_to: 0, less_than_or_equal_to: 2}  
     validate :shape_id_exists_if_set
     validate :service_id_exists_if_set
+    validates :feed, presence: true
     
-        
+    # ASSOCIATIONS
+    belongs_to :feed  
     # TODO review associations to calendar, calendar_dates and shapes
     
     # Virtual Attributes 

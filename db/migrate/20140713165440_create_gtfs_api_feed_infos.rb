@@ -8,7 +8,7 @@ class CreateGtfsApiFeedInfos < ActiveRecord::Migration
       t.date    :end_date
       t.string  :version, limit: 24
       
-      t.belongs_to :feed
+      t.belongs_to :feed, null: false, index: true
       t.timestamps      
       
     end

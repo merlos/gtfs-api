@@ -7,6 +7,7 @@ class CreateGtfsApiFareRules < ActiveRecord::Migration
       t.string :destination_id # => stops->zone_id
       t.string :contains_id # => stops->zone_id
       
+      t.belongs_to :feed, null: false, index: true
       t.timestamps
     end
     add_index :gtfs_api_fare_rules, :fare_id

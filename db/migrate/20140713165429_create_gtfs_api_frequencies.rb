@@ -7,6 +7,7 @@ class CreateGtfsApiFrequencies < ActiveRecord::Migration
       t.integer :headway_secs
       t.integer :exact_times
 
+      t.belongs_to :feed, null: false, index: true
       t.timestamps
     end
     add_index :gtfs_api_frequencies, :trip_id

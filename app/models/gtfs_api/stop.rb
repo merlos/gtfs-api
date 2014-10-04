@@ -1,7 +1,7 @@
 module GtfsApi  
   class Stop < ActiveRecord::Base
     
-    include GtfsApi::Concerns::Models::Concerns::Gtfsable
+    include GtfsApi::Io::Models::Concerns::Gtfsable
     #gtfs feed columns definitions
     set_gtfs_col :io_id, :stop_id
     set_gtfs_col :code, :stop_code
@@ -32,7 +32,7 @@ module GtfsApi
     validates :vehicle_type, allow_nil: true, numericality: { only_integer: true, 
       greater_than_or_equal_to: 0, less_than_or_equal_to:1702 }
     validate :valid_vehicle_type
-    
+    validates :feed, presence: true
     # TODO
     # Validate timezone
     
@@ -54,6 +54,7 @@ module GtfsApi
     # to get transfers
     has_many :transfers_from, foreign_key: 'to_stop_id', class_name: 'Transfers'
     has_many :transfers_to, foreign_key: 'to_stop_id', class_name: 'Transfers'
+    belongs_to :feed  
     
     # CONSTANTS 
     # Values for location_type

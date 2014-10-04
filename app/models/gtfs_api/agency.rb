@@ -2,7 +2,7 @@
 module GtfsApi
   class Agency < ActiveRecord::Base
     include Iso639::Validator
-    include GtfsApi::Concerns::Models::Concerns::Gtfsable
+    include GtfsApi::Io::Models::Concerns::Gtfsable
     set_gtfs_file :agency
     set_gtfs_col :io_id, :agency_id
     set_gtfs_col :name, :agency_name
@@ -12,12 +12,13 @@ module GtfsApi
     set_gtfs_col :phone, :agency_phone
     set_gtfs_col :fare_url, :agency_fare_url
           
-    validates :io_id, uniqueness: true, allow_nil:true
-    validates :name, presence: true
-    validates :url, presence: true, :'gtfs_api/validators/url' => true 
-    validates :timezone, presence: true
-    validates :lang, iso639Code: true, length: { is: 2 },  allow_nil: true
-    validates :fare_url, allow_nil: true, :'gtfs_api/validators/url'=> true 
+    validates :io_id,     allow_nil:true, uniqueness: true
+    validates :name,      presence: true
+    validates :url,       presence: true, :'gtfs_api/validators/url' => true 
+    validates :timezone,  presence: true
+    validates :lang,      allow_nil: true, iso639Code: true, length: { is: 2 }
+    validates :fare_url,  allow_nil: true, :'gtfs_api/validators/url'=> true 
+    validates :feed,      presence: true
     # TODO validate timezone
     
     #def after_save

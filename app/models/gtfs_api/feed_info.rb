@@ -1,6 +1,6 @@
 module GtfsApi
   class FeedInfo < ActiveRecord::Base
-    include GtfsApi::Concerns::Models::Concerns::Gtfsable
+    include GtfsApi::Io::Models::Concerns::Gtfsable
     set_gtfs_file :feed_info
     set_gtfs_col :publisher_name, :feed_publisher_name
     set_gtfs_col :publisher_url, :feed_publisher_url
@@ -18,9 +18,11 @@ module GtfsApi
     validates :publisher_name, presence: true
     validates :lang, presence: true
     validates :publisher_url, presence: true, :'gtfs_api/validators/url'=>true
-    
+    validates :feed, presence: true
     #TODO validate lang against BCP-47
     
-    has_many :agencies, foreign_key: 'feed_id'
+    #Associations
+    belongs_to :feed  
+      
   end
 end

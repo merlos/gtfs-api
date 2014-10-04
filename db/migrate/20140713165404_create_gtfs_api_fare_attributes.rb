@@ -8,6 +8,8 @@ class CreateGtfsApiFareAttributes < ActiveRecord::Migration
       t.integer :payment_method
       t.integer :transfers
       t.integer :transfer_duration
+      
+      t.belongs_to :feed, null: false, index: true
       t.timestamps
     end
     add_index :gtfs_api_fare_attributes, :io_id

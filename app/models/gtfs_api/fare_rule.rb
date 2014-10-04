@@ -1,7 +1,7 @@
 module GtfsApi
   class FareRule < ActiveRecord::Base
     
-    include GtfsApi::Concerns::Models::Concerns::Gtfsable
+    include GtfsApi::Io::Models::Concerns::Gtfsable
     set_gtfs_col :fare_io_id, :fare_id
     set_gtfs_col :route_io_id, :route_id
     set_gtfs_col :origin_id
@@ -13,10 +13,12 @@ module GtfsApi
     validate :origin_id_exists_if_set
     validate :destination_id_exists_if_set
     validate :contains_id_exists_if_set
+    validates :feed, presence: true
     
     # ASSOCIATIONS
     belongs_to :fare, foreign_key: 'fare_id', class_name: 'FareAttribute'
     belongs_to :route
+    belongs_to :feed    
     
     # TODO see which association  has more sense based on these examples
     # https://code.google.com/p/googletransitdatafeed/wiki/FareExamples
