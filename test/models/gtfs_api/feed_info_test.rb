@@ -14,10 +14,7 @@ module GtfsApi
         lang: 'es',
         start_date: '2014-06-20',
         end_date: '2015-06-20',
-        version: 'V1.0',
-        #gtfs api extension
-        io_id: "feed_id" + Time.new.to_f.to_s,
-        name: "feed name" 
+        version: 'V1.0'
         })
     end
     def self.valid_gtfs_feed_feed_info
@@ -27,9 +24,7 @@ module GtfsApi
         lang: 'es',
         start_date: '2014-06-20',
         end_date: '2015-06-20',
-        version: "V1.0",
-        feed_id: 'feed_id' + Time.new.to_f.to_s,
-        name: 'feed name'
+        version: "V1.0"
       }
     end
     
@@ -76,34 +71,6 @@ module GtfsApi
       assert fi.valid? 
     end
     
-    test 'io_id is optional' do
-      fi = FeedInfoTest.fill_valid_model
-      fi.io_id = nil
-      assert fi.valid? 
-    end
-    
-    test 'data_version is optional' do
-      fi = FeedInfoTest.fill_valid_model
-      fi.io_id = nil
-      assert fi.valid?
-    end
-    
-    #ASSOCIATIONS
-    
-    test 'feed has many agencies' do
-      fi = FeedInfoTest.fill_valid_model
-      fi.save!
-      
-      a1 = AgencyTest.fill_valid_agency
-      a1.feed = fi
-      a1.save!
-      
-      a2 = AgencyTest.fill_valid_agency
-      a2.feed = fi
-      a2.save!
-      # feed has two agencies linked to it
-      assert_equal 2, fi.agencies.count
-    end
     
     # IMPORT /EXPORT
     

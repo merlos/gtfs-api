@@ -7,7 +7,7 @@ module GtfsApi
     
     #call this method to create a valid agency. Change values to invalidate
     def self.fill_valid_agency
-      feed = FeedInfoTest.fill_valid_model
+      feed = FeedTest.fill_valid_model
       feed.save!     
       Agency.new(
         io_id: 'AgencyID' + Time.new.to_f.to_s,
@@ -24,7 +24,7 @@ module GtfsApi
     #  of the cols of agency.txt file. The id of the agecy is unique.
     def self.valid_gtfs_feed_agency
       unique = Time.new.to_f.to_s
-      feed = FeedInfoTest.fill_valid_model
+      feed = FeedTest.fill_valid_model
       feed.save!
       {
         agency_name: 'gtfs agency name ' + unique,
@@ -33,8 +33,7 @@ module GtfsApi
         agency_timezone: 'Madrid/Spain',
         agency_lang: 'es',
         agency_phone: '+34 555 3434',
-        agency_fare_url: 'http://www.agency-fare-url.es',
-        feed_id: feed.io_id
+        agency_fare_url: 'http://www.agency-fare-url.es'
       }
     end
     
@@ -54,16 +53,13 @@ module GtfsApi
       assert a.valid? 
     end
     
-    #TODO Why in the second assert a2 is not nil? in theory there is a limit:48 in the migration...
-    test "agency io_id is too long" do
+    test "agency io_id long" do
       a = AgencyTest.fill_valid_agency
       a.io_id = (0...10024).map { ('a'..'z').to_a[rand(26)] }.join
       assert a.valid?
       a.save!
       a2 = Agency.find_by_io_id(a.io_id)
-      #puts a2.io_id
       assert_not a2.nil?
-      
     end
     
     test "agency name presence " do 
@@ -167,29 +163,13 @@ module GtfsApi
     end
     
     test "agency belongs to feed" do
-      f = FeedInfoTest.fill_valid_model
+      f = FeedTest.fill_valid_model
       f.save!
       a = AgencyTest.fill_valid_agency
       a.feed = f
       a.save!
       a2 = Agency.find(a.id)
-      assert_equal f.io_id, a2.feed.io_id
-    end
-    
-    # VIRTUAL ATTRIBUTES
-    
-    test "feed_io_id getter returns feed.io_id" do
-      a = AgencyTest.fill_valid_agency
-      assert_equal a.feed.io_id, a.feed_io_id
-    end
-    
-    test "feed_io_id setter updates the Agency.feed" do
-      a = AgencyTest.fill_valid_agency
-      f = FeedInfoTest.fill_valid_model
-      f.save!
-      assert_not_equal f.io_id, a.feed.io_id
-      a.feed_io_id = f.io_id
-      assert_equal f.io_id, a.feed.io_id
+      assert_equal f.id, a2.feed.id
     end
     
     #

@@ -11,8 +11,6 @@ module GtfsApi
     set_gtfs_col :lang, :agency_lang
     set_gtfs_col :phone, :agency_phone
     set_gtfs_col :fare_url, :agency_fare_url
-    #non normative
-    set_gtfs_col :feed_io_id, :feed_id
           
     validates :io_id, uniqueness: true, allow_nil:true
     validates :name, presence: true
@@ -31,21 +29,7 @@ module GtfsApi
     #associations
     has_many :routes
     has_many :fare_attributes
-    belongs_to :feed, class_name: 'FeedInfo'
-
-    # Virtual Attributes 
-    attr_accessor :feed_io_id 
-    
-    #gets the feed.io_id
-    def feed_io_id
-      feed.present? ? feed.io_id : nil
-    end
-    
-    # associates the agency to the feed 
-    def feed_io_id=(val)
-      self.feed = FeedInfo.find_by(io_id: val)
-    end
-    
+    belongs_to :feed    
     
     private 
     
