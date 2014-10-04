@@ -6,17 +6,21 @@ module GtfsApi
     #   assert true
     # end
     
-    def self.fill_valid_shape 
+    def self.fill_valid_model
+      feed = FeedTest.fill_valid_model
+      feed.save!
+   
       return Shape.new(
       io_id: 'unique',
       pt_lat: '30.1',
       pt_lon: '30.2',
       pt_sequence: 1,
-      dist_traveled: 3.3  
+      dist_traveled: 3.3,
+      feed: feed 
       )
     end
     
-    def self.valid_gtfs_feed_shape
+    def self.valid_gtfs_feed_row
       return { 
       shape_id: 'unique',
       shape_pt_lat: '30.1',
@@ -25,98 +29,89 @@ module GtfsApi
       shape_dist_traveled: '3.3'
       }
     end
+    
+    def setup 
+      @model = ShapeTest.fill_valid_model
+    end
+    
     test 'valid shape' do
-      s = ShapeTest.fill_valid_shape
-      assert s.valid? 
+      assert @model.valid? 
     end
     
     test 'io_id presence required' do
-      s = ShapeTest.fill_valid_shape
-      s.io_id = nil
-      assert s.invalid?
+      @model.io_id = nil
+      assert @model.invalid?
     end 
     
     test 'pt lat presence required' do
-      s = ShapeTest.fill_valid_shape
-      s.pt_lat = nil
-      assert s.invalid?
+      @model.pt_lat = nil
+      assert @model.invalid?
     end
     
     test 'pt lon presence required' do
-      s = ShapeTest.fill_valid_shape
-      s.pt_lon = nil
-      assert s.invalid? 
+      @model.pt_lon = nil
+      assert @model.invalid? 
     end
    
     test 'pt lat lower range min is -90' do
-      s = ShapeTest.fill_valid_shape
-      s.pt_lat = -89.9999
-      assert s.valid?
-      s.pt_lat = -90.1
-      assert s.invalid?
+      @model.pt_lat = -89.9999
+      assert @model.valid?
+      @model.pt_lat = -90.1
+      assert @model.invalid?
     end
     
     test 'pt lat upper range max is 90' do
-      s = ShapeTest.fill_valid_shape
-      s.pt_lat = 89.99
-      assert s.valid?
-      s.pt_lat = 90.1
-      assert s.invalid?
+      @model.pt_lat = 89.99
+      assert @model.valid?
+      @model.pt_lat = 90.1
+      assert @model.invalid?
     end
     
     test "pt lon lower range min is -180" do
-      s = ShapeTest.fill_valid_shape
-      s.pt_lon = -179.99
-      assert s.valid?
-      s.pt_lon = -180.1
-      assert s.invalid?
+      @model.pt_lon = -179.99
+      assert @model.valid?
+      @model.pt_lon = -180.1
+      assert @model.invalid?
     end
     
     test "pt_long upper range max is 180" do
-      s = ShapeTest.fill_valid_shape
-      s.pt_lon = 179.99
-      assert s.valid?
-      s.pt_lon = 180.1
-      assert s.invalid?
+      @model.pt_lon = 179.99
+      assert @model.valid?
+      @model.pt_lon = 180.1
+      assert @model.invalid?
     end
     
     test 'pt sequence presence is required' do
-      s = ShapeTest.fill_valid_shape
-      s.pt_sequence = nil
-      assert s.invalid?
+      @model.pt_sequence = nil
+      assert @model.invalid?
     end
     
     test "pt sequence has to be positive" do
-      s = ShapeTest.fill_valid_shape
-      s.pt_sequence = 0
-      assert s.valid?
+      @model.pt_sequence = 0
+      assert @model.valid?
       
-      s.pt_sequence = -1
-      assert s.invalid?
+      @model.pt_sequence = -1
+      assert @model.invalid?
     end
   
     test 'pt seq has to be an integer' do
-      s = ShapeTest.fill_valid_shape
-      s.pt_sequence = 1.1
-      assert s.invalid?
+      @model.pt_sequence = 1.1
+      assert @model.invalid?
     end
     
     test 'dist_traveled is optional' do
-      s = ShapeTest.fill_valid_shape
-      s.dist_traveled = nil
-      assert s.valid?
+      @model.dist_traveled = nil
+      assert @model.valid?
     end
     
     test 'dist_traveled has to be positive' do
-      s = ShapeTest.fill_valid_shape
-      s.dist_traveled = -1.0
-      assert s.invalid?
+      @model.dist_traveled = -1.0
+      assert @model.invalid?
     end
     
     test 'dist_traveled has to be a number' do
-      s = ShapeTest.fill_valid_shape
-      s.dist_traveled = "holitas"
-      assert s.invalid?
+      @model.dist_traveled = "holitas"
+      assert @model.invalid?
     end
      
     # ASSOCIATIONS
@@ -129,7 +124,7 @@ module GtfsApi
        test_class = ShapeTest
        exceptions = [] #exceptions, in test
        #--- common part
-       feed_row = test_class.send('valid_gtfs_feed_' + model_class.to_s.split("::").last.underscore)
+       feed_row = test_class.valid_gtfs_feed_row
        #puts feed_row
        model = model_class.new_from_gtfs(feed_row)
        assert model.valid?
@@ -147,7 +142,7 @@ module GtfsApi
        test_class = ShapeTest
        exceptions = []
        #------ Common_part
-       model = test_class.send('fill_valid_' + model_class.to_s.split("::").last.underscore)
+       model = test_class.fill_valid_model
        feed_row = model.to_gtfs
        #puts feed_row
        model_class.gtfs_cols.each do |model_attr, feed_col|

@@ -3,21 +3,25 @@ require 'test_helper'
 module GtfsApi
   class TransferTest < ActiveSupport::TestCase
     
-    def self.fill_valid_transfer
-      from = StopTest.fill_valid_stop
-      to = StopTest.fill_valid_stop
+    def self.fill_valid_model
+      from = StopTest.fill_valid_model
+      to = StopTest.fill_valid_model
       from.save!
       to.save! 
+      feed = FeedTest.fill_valid_model
+      feed.save!
+   
       return Transfer.new( 
         from_stop:from,
         to_stop:to,
         transfer_type: Transfer::MIN_TRANSFER_TIME_REQUIRED,
-        min_transfer_time: 3600)
+        min_transfer_time: 3600,
+        feed: feed)
     end
     
-    def self.valid_gtfs_feed_transfer 
-      from = StopTest.fill_valid_stop
-      to = StopTest.fill_valid_stop
+    def self.valid_gtfs_feed_row
+      from = StopTest.fill_valid_model
+      to = StopTest.fill_valid_model
       from.save!
       to.save! 
       {
@@ -28,113 +32,104 @@ module GtfsApi
       }
     end
     
+    def setup 
+      @model = TransferTest.fill_valid_model
+    end
+    
      test "valid transfer" do
-       t= TransferTest.fill_valid_transfer
-       assert t.valid?, t.errors.to_a
+       assert @model.valid?, @model.errors.to_a
      end
      
-     test "presence of from_stop and to_stop" do
-       t = TransferTest.fill_valid_transfer
-       t.from_stop = nil
-       assert t.invalid?
-       
-       t = TransferTest.fill_valid_transfer
-       t.to_stop = nil
-       assert t.invalid?
+     test "required presence of from_stop" do
+       @model.from_stop = nil
+       assert @model.invalid?
+     end
+     
+     test "required presence of to_stop " do
+       @model.to_stop = nil
+       assert @model.invalid?
      end
      
      test "valid transfer_type range" do
        # valid range is integer 0->3
-       t = TransferTest.fill_valid_transfer
-       t.transfer_type = 0
-       assert t.valid?, t.errors.to_a
+       @model.transfer_type = 0
+       assert @model.valid?, @model.errors.to_a
        
-       t.transfer_type = 3
-       assert t.valid?, t.errors.to_a
+       @model.transfer_type = 3
+       assert @model.valid?, @model.errors.to_a
      end
      
      test 'invalid transfer_type range' do
-       t = TransferTest.fill_valid_transfer
        
-       assert t.valid?
-       t.transfer_type = -100
-       assert t.invalid?
+       assert @model.valid?
+       @model.transfer_type = -100
+       assert @model.invalid?
               
-       t1 = TransferTest.fill_valid_transfer
+       t1 = TransferTest.fill_valid_model
        t1.transfer_type = 4
        assert t1.invalid?
        
-       t2 = TransferTest.fill_valid_transfer
+       t2 = TransferTest.fill_valid_model
        t2.transfer_type = 1.1
        assert t2.invalid?
        
-       t3 = TransferTest.fill_valid_transfer
+       t3 = TransferTest.fill_valid_model
        t3.transfer_type = nil
        assert t3.invalid?
      end
      
      test 'min_transfer_time is optional' do
-      t = TransferTest.fill_valid_transfer
-      t.min_transfer_time = nil
-      assert t.valid?
+      @model.min_transfer_time = nil
+      assert @model.valid?
      end
      
      test 'min_transfer_time has to be a number' do
-       t = TransferTest.fill_valid_transfer
-       t.min_transfer_time = "hola"
-       assert t.invalid?
+       @model.min_transfer_time = "hola"
+       assert @model.invalid?
      end 
      
      test 'min_transfer_time has to be greater than 0' do
-       t = TransferTest.fill_valid_transfer
-       t.min_transfer_time = -1
-       assert t.invalid?
+       @model.min_transfer_time = -1
+       assert @model.invalid?
      end
      
      test 'min_transfer_time has to be greater an integer' do
-       t = TransferTest.fill_valid_transfer
-       t.min_transfer_time = 1.1
-       assert t.invalid?
+       @model.min_transfer_time = 1.1
+       assert @model.invalid?
      end
      
-     
-     
      test 'from_stop_io_id cannot set nil' do
-       t = TransferTest.fill_valid_transfer
-       t.from_stop_io_id = nil
-       assert t.invalid?
+       @model.from_stop_io_id = nil
+       assert @model.invalid?
      end
       
      test 'to_stop_io_id cannot set nil' do
-       t = TransferTest.fill_valid_transfer
-       t.to_stop_io_id = nil
-       assert t.invalid?
+       @model.to_stop_io_id = nil
+       assert @model.invalid?
      end
     
      test 'from_stop_io_id gets and sets from_stop' do
-       t = TransferTest.fill_valid_transfer
-       assert t.from_stop.present?
-       assert_equal t.from_stop.io_id, t.from_stop_io_id
-       t.from_stop = nil
-       assert_equal t.from_stop_io_id, nil
-       s = StopTest.fill_valid_stop
+       assert @model.from_stop.present?
+       assert_equal @model.from_stop.io_id, @model.from_stop_io_id
+       @model.from_stop = nil
+       assert_equal @model.from_stop_io_id, nil
+       s = StopTest.fill_valid_model
        assert s.valid?
        s.save!
-       t.from_stop_io_id = s.io_id
-       assert_equal t.from_stop.io_id, t.from_stop_io_id
+       @model.from_stop_io_id = s.io_id
+       assert_equal @model.from_stop.io_id, @model.from_stop_io_id
      end
      
      test 'to_stop_io_id gets and sets to_stop' do
-       t = TransferTest.fill_valid_transfer
-       assert t.to_stop.present?
-       assert_equal t.to_stop.io_id, t.to_stop_io_id
-       t.to_stop = nil
-       assert_equal t.to_stop_io_id, nil
-       s = StopTest.fill_valid_stop
+       assert @model.to_stop.present?
+       assert_equal @model.to_stop.io_id, @model.to_stop_io_id
+       @model.to_stop = nil
+       assert_equal @model.to_stop_io_id, nil
+       s = StopTest.fill_valid_model
        assert s.valid?
        s.save!
-       t.to_stop_io_id = s.io_id
-       assert_equal t.to_stop.io_id, t.to_stop_io_id
+       @model.to_stop_io_id = s.io_id
+       assert_equal @model.to_stop.io_id, @model.to_stop_io_id
      end
      
      
@@ -145,7 +140,7 @@ module GtfsApi
         test_class = TransferTest
         exceptions = [] #exceptions, in test
         #--- common part
-        feed_row = test_class.send('valid_gtfs_feed_' + model_class.to_s.split("::").last.underscore)
+        feed_row = test_class.valid_gtfs_feed_row
         #puts feed_row
         model = model_class.new_from_gtfs(feed_row)
         assert model.valid?, model.errors.to_a.to_s
@@ -165,7 +160,7 @@ module GtfsApi
         test_class = TransferTest
         exceptions = []
         #------ Common_part
-        model = test_class.send('fill_valid_' + model_class.to_s.split("::").last.underscore)
+        model = test_class.fill_valid_model
         feed_row = model.to_gtfs
         #puts feed_row
         model_class.gtfs_cols.each do |model_attr, feed_col|

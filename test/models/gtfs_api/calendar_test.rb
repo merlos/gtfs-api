@@ -7,7 +7,9 @@ module GtfsApi
     # end
     week = ['monday', 'tuesday', 'wednesday','thursday', 'friday', 'saturday', 'sunday']
     
-    def self.fill_valid_calendar
+    def self.fill_valid_model
+      feed = FeedTest.fill_valid_model
+      feed.save!
       return Calendar.new(
       io_id: 'service_id_' + Time.new.to_f.to_s,
       monday: 1,
@@ -18,10 +20,11 @@ module GtfsApi
       saturday: 1,
       sunday: 1,
       start_date: '2014-07-22',
-      end_date: '2014-07-23')
+      end_date: '2014-07-23',
+      feed: feed)
     end
     
-    def self.valid_gtfs_feed_calendar 
+    def self.valid_gtfs_feed_row
       {
         service_id: 'service_id_' + Time.new.to_f.to_s,
         monday: "1",
@@ -36,15 +39,18 @@ module GtfsApi
       }
     end
     
+    def setup 
+      @model = CalendarTest.fill_valid_model
+    end
+    
     test 'valid calendar' do
-      c = CalendarTest.fill_valid_calendar
-      assert c.valid?, c.errors.to_a
+      assert @model.valid?, @model.errors.to_a
     end
     
     
     test 'presence of days is required' do
       week.each do |d|
-        c = CalendarTest.fill_valid_calendar
+        c = CalendarTest.fill_valid_model
         c[d]= nil
         assert c.invalid?
       end
@@ -52,7 +58,7 @@ module GtfsApi
     
     test 'upper range of week days' do 
       week.each do |d|
-        c = CalendarTest.fill_valid_calendar
+        c = CalendarTest.fill_valid_model
         c[d]= 2
         assert c.invalid?
       end
@@ -60,7 +66,7 @@ module GtfsApi
     
     test 'available is a valid value of week days' do
       week.each do |d| 
-        c = CalendarTest.fill_valid_calendar
+        c = CalendarTest.fill_valid_model
         c[d]=Calendar::AVAILABLE
         assert c.valid?, c.errors.to_a
       end
@@ -68,7 +74,7 @@ module GtfsApi
     
     test 'week days have to be integers' do
       week.each do |d|
-        c = CalendarTest.fill_valid_calendar
+        c = CalendarTest.fill_valid_model
         c[d]=0.5
         assert c.invalid?
       end
@@ -76,7 +82,7 @@ module GtfsApi
     
     test 'not available is a valid value of week days' do
       week.each do |d|
-        c = CalendarTest.fill_valid_calendar
+        c = CalendarTest.fill_valid_model
         c[d]=Calendar::NOT_AVAILABLE
         assert c.valid?, c.errors.to_a
       end  
@@ -84,39 +90,36 @@ module GtfsApi
     
     test 'week day has to be positive' do
       week.each do |d|
-        c = CalendarTest.fill_valid_calendar
+        c = CalendarTest.fill_valid_model
         c[d]=-1
         assert c.invalid?
       end
     end
     
     test 'start_date presence required' do
-      c = CalendarTest.fill_valid_calendar
-      c.start_date = nil
-      assert c.invalid?
+      @model.start_date = nil
+      assert @model.invalid?
     end  
      
     test 'end_date presence required' do
-      c = CalendarTest.fill_valid_calendar
-      c.end_date = nil
-      assert c.invalid?
+      @model.end_date = nil
+      assert @model.invalid?
     end
     
     # ASSOCIATIONS
     test 'calendar has many trips' do
-      c = CalendarTest.fill_valid_calendar
-      assert_equal 0, c.trips.count
-      c.save!
+      assert_equal 0, @model.trips.count
+      @model.save!
       #assign this calendar to two trips
-      t1 = TripTest.fill_valid_trip
-      t1.service_id = c.io_id
+      t1 = TripTest.fill_valid_model
+      t1.service_id = @model.io_id
       t1.save!
       
-      t2 = TripTest.fill_valid_trip
-      t2.service_id = c.io_id
+      t2 = TripTest.fill_valid_model
+      t2.service_id = @model.io_id
       t2.save!
       # test that now the calendar has two trips linked
-      assert_equal 2, c.trips.count  
+      assert_equal 2, @model.trips.count  
     end
     
     # GTFSABLE IMPORT/EXPORT
@@ -126,7 +129,7 @@ module GtfsApi
       test_class = CalendarTest
       exceptions = [:start_date, :end_date] #exceptions, in test
       #--- common part
-      feed_row = test_class.send('valid_gtfs_feed_' + model_class.to_s.split("::").last.underscore)
+      feed_row = test_class.valid_gtfs_feed_row
       #puts feed_row
       model = model_class.new_from_gtfs(feed_row)
       assert model.valid?, model.errors.to_a.to_s
@@ -146,7 +149,7 @@ module GtfsApi
       test_class = CalendarTest
       exceptions = [:start_date, :end_date]
       #------ Common_part
-      model = test_class.send('fill_valid_' + model_class.to_s.split("::").last.underscore)
+      model = test_class.fill_valid_model
       feed_row = model.to_gtfs
       #puts feed_row
       model_class.gtfs_cols.each do |model_attr, feed_col|
@@ -160,14 +163,14 @@ module GtfsApi
     
     # Test the exceptions
     test "exceptions start_date and end_date when importing a Calendar model" do
-      row = CalendarTest.valid_gtfs_feed_calendar
+      row = CalendarTest.valid_gtfs_feed_row
       model = Calendar.new_from_gtfs(row)
       assert_equal row[:start_date], model.start_date.to_gtfs
       assert_equal row[:end_date], model.end_date.to_gtfs
     end
     
     test "exceptions start_date and end_date when exporting a Calendar model" do
-      model = CalendarTest.fill_valid_calendar
+      model = CalendarTest.fill_valid_model
       row = model.to_gtfs
       assert_equal model.start_date.to_gtfs, row[:start_date]
       assert_equal model.end_date.to_gtfs, row[:end_date]

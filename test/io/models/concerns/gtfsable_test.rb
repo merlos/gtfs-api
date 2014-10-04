@@ -6,12 +6,12 @@ module GtfsApi::Concerns::Models::Concerns
   
   # empty col assignment
   class GtfsableTestEmptyMapping
-    include GtfsApi::Concerns::Models::Concerns::Gtfsable
+    include GtfsApi::Io::Models::Concerns::Gtfsable
   end
   
   # mapping
   class GtfsableTestMapping
-  include GtfsApi::Concerns::Models::Concerns::Gtfsable
+  include GtfsApi::Io::Models::Concerns::Gtfsable
     #gtfs feed columns definitions
     set_gtfs_file :forced_name
     set_gtfs_col :default_map
@@ -45,7 +45,7 @@ module GtfsApi::Concerns::Models::Concerns
   
   # after rehash
   class GtfsableTestAfterRehash
-    include GtfsApi::Concerns::Models::Concerns::Gtfsable
+    include GtfsApi::Io::Models::Concerns::Gtfsable
      set_gtfs_col :io_id
     #setters and getters of attributtes
     def io_id=(val) 
@@ -65,7 +65,7 @@ module GtfsApi::Concerns::Models::Concerns
   # time and date setters
   class GtfsTimeSetterTest
     include ActiveRecord::Validations
-    include GtfsApi::Concerns::Models::Concerns::Gtfsable
+    include GtfsApi::Io::Models::Concerns::Gtfsable
     #gtfs feed columns definitions
     set_gtfs_col :sample_time
     set_gtfs_col :sample_date

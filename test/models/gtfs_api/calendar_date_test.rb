@@ -3,15 +3,18 @@ require 'test_helper'
 module GtfsApi
   class CalendarDateTest < ActiveSupport::TestCase
     
-    def self.fill_valid_calendar_date 
+    def self.fill_valid_model 
+      feed = FeedTest.fill_valid_model
+      feed.save!     
       return CalendarDate.new(
         io_id: Time.new.to_f.to_s,
         date: '2014-06-10',
-        exception_type: CalendarDate::ExceptionTypes[:service_added]
+        exception_type: CalendarDate::ExceptionTypes[:service_added],
+        feed: feed
         )
     end
     
-    def self.valid_gtfs_feed_calendar_date 
+    def self.valid_gtfs_feed_row 
       {
         service_id: Time.new.to_f.to_s,
         date: '2014-06-10',
@@ -19,59 +22,61 @@ module GtfsApi
       }
     end
     
+    def setup 
+      @model = CalendarDateTest.fill_valid_model
+    end
+    
     test "valid calendar date" do
-      c = CalendarDateTest.fill_valid_calendar_date
-      assert c.valid?, c.errors.to_a
+      assert @model.valid?, @model.errors.to_a
     end
     
     test 'io_id required' do 
-      c = CalendarDateTest.fill_valid_calendar_date
-      c.io_id = nil
-      assert c.invalid?
+      @model.io_id = nil
+      assert @model.invalid?
     end
     
     test 'date required' do
-      c = CalendarDateTest.fill_valid_calendar_date
-      c.date = nil
-      assert c.invalid?
+      @model.date = nil
+      assert @model.invalid?
     end
     
     test 'valid exception types' do
-      c = CalendarDateTest.fill_valid_calendar_date
-      c.exception_type = CalendarDate::ExceptionTypes[:service_added]
-      assert c.valid?, c.errors.to_a
-      c.exception_type = CalendarDate::ExceptionTypes[:service_removed]
-      assert c.valid?, c.errors.to_a
+      @model.exception_type = CalendarDate::ExceptionTypes[:service_added]
+      assert @model.valid?, @model.errors.to_a
+      @model.exception_type = CalendarDate::ExceptionTypes[:service_removed]
+      assert @model.valid?, @model.errors.to_a
     end
     
     test 'exception_type has to be greater than 0' do
-      c = CalendarDateTest.fill_valid_calendar_date
-      c.exception_type = 0
-      assert c.invalid?
+      @model.exception_type = 0
+      assert @model.invalid?
     end
       
     test 'exception_type has to be smaller than 3' do
-      c = CalendarDateTest.fill_valid_calendar_date
-      c.exception_type = 3
-      assert c.invalid?
+      @model.exception_type = 3
+      assert @model.invalid?
+    end
+    
+    test "feed is required" do
+      @model.feed = nil
+      assert @model.invalid?
     end
     
     # ASSOCIATIONS
     
     test 'has many trips' do
-      c = CalendarDateTest.fill_valid_calendar_date
-      c.save!
-      t = TripTest.fill_valid_trip
-      t.service_id = c.io_id
+      @model.save!
+      t = TripTest.fill_valid_model
+      t.service_id = @model.io_id
       assert t.valid?
       t.save!
-      t2 = TripTest.fill_valid_trip
-      t2.service_id = c.io_id
+      t2 = TripTest.fill_valid_model
+      t2.service_id = @model.io_id
       assert t2.valid?
       t2.save!
-      assert_equal c.trips.size, Trip.where(service_id: c.io_id).count
-      c.trips.each do |trip|
-        assert_equal trip.service_id, c.io_id
+      assert_equal @model.trips.size, Trip.where(service_id: @model.io_id).count
+      @model.trips.each do |trip|
+        assert_equal trip.service_id, @model.io_id
       end
     end
     
@@ -82,7 +87,7 @@ module GtfsApi
       test_class = CalendarDateTest
       exceptions = [:date] #exceptions to avoid test
       #--- common part
-      feed_row = test_class.send('valid_gtfs_feed_' + model_class.to_s.split("::").last.underscore)
+      feed_row = test_class.valid_gtfs_feed_row
       model = model_class.new_from_gtfs(feed_row)
       assert model.valid?
       model_class.gtfs_cols.each do |model_attr, feed_col|
@@ -97,7 +102,7 @@ module GtfsApi
       test_class = CalendarDateTest
       exceptions = [:date]
       #------ Common_part
-      model = test_class.send('fill_valid_' + model_class.to_s.split("::").last.underscore)
+      model = test_class.fill_valid_model
       feed_row = model.to_gtfs
       model_class.gtfs_cols.each do |model_attr, feed_col|
         next if exceptions.include? (model_attr)
@@ -107,15 +112,14 @@ module GtfsApi
     
     #test the exception
     test 'date attribute import from gtfs row' do
-      row = CalendarDateTest.valid_gtfs_feed_calendar_date
+      row = CalendarDateTest.valid_gtfs_feed_row
       model = CalendarDate.new_from_gtfs(row)
       assert_equal row[:date], model.date.to_gtfs
     end
     
     test 'date attribute export to gtfs_row' do
-      model = CalendarDateTest.fill_valid_calendar_date
-      row = model.to_gtfs
-      assert_equal model.date.to_gtfs, row[:date]
+      row = @model.to_gtfs
+      assert_equal @model.date.to_gtfs, row[:date]
     end
     
   
