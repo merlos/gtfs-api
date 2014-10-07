@@ -77,7 +77,10 @@ module GtfsApi
     
           module ClassMethods
       
-            @@gtfs_feed_class = 'feed'
+            #
+            # attribute that holds the feed association
+            #
+            @@gtfs_feed_attr = :feed
       
             # Hash with the relations between gtfs_api => gtfs_feed column names ordered by classes
             # 
@@ -197,10 +200,11 @@ module GtfsApi
               return model_attr_values
             end 
       
-            def new_from_gtfs(csv_row)
-              self.new(self.rehash_from_gtfs(csv_row)) 
+            def new_from_gtfs(csv_row, feed = nil)
+              obj = self.new(self.rehash_from_gtfs(csv_row)) 
+              obj.send( "#{@@gtfs_feed_attr}=", feed)  if feed != nil
+              return obj
             end 
-      
         
           end #ClassMethods  
         end

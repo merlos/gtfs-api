@@ -168,7 +168,9 @@ module GtfsApi
     #
     test 'gtfs agency file row can be imported into a valid model' do
       agency_row = AgencyTest.valid_gtfs_feed_row
-      agency = Agency.new_from_gtfs(agency_row)
+      feed = FeedTest.fill_valid_model
+      feed.save!
+      agency = Agency.new_from_gtfs(agency_row, feed)
       assert agency.valid?, agency.errors.to_a.to_s
       #also check the values are the expected
       Agency.gtfs_cols.each do |model_attr,gtfs_col|

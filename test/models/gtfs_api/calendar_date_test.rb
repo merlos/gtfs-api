@@ -88,7 +88,9 @@ module GtfsApi
       exceptions = [:date] #exceptions to avoid test
       #--- common part
       feed_row = test_class.valid_gtfs_feed_row
-      model = model_class.new_from_gtfs(feed_row)
+      feed = FeedTest.fill_valid_model
+      feed.save!
+      model = model_class.new_from_gtfs(feed_row, feed)
       assert model.valid?
       model_class.gtfs_cols.each do |model_attr, feed_col|
         next if exceptions.include? (model_attr)
@@ -113,7 +115,9 @@ module GtfsApi
     #test the exception
     test 'date attribute import from gtfs row' do
       row = CalendarDateTest.valid_gtfs_feed_row
-      model = CalendarDate.new_from_gtfs(row)
+      feed = FeedTest.fill_valid_model
+      feed.save!
+      model = CalendarDate.new_from_gtfs(row, feed)
       assert_equal row[:date], model.date.to_gtfs
     end
     

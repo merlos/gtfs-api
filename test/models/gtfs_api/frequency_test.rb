@@ -124,7 +124,9 @@ module GtfsApi
       #--- common part
       feed_row = test_class.valid_gtfs_feed_row
       #puts feed_row
-      model = model_class.new_from_gtfs(feed_row)
+      feed = FeedTest.fill_valid_model
+      feed.save!
+      model = model_class.new_from_gtfs(feed_row, feed)
       assert model.valid?, model.errors.to_a.to_s
       
       model_class.gtfs_cols.each do |model_attr, feed_col|

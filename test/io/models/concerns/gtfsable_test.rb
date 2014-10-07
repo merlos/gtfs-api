@@ -1,6 +1,6 @@
 require 'test_helper'
 
-module GtfsApi::Concerns::Models::Concerns
+module GtfsApi::Io::Models::Concerns
   
   # SUPPORT CLASSES
   

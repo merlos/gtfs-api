@@ -251,7 +251,9 @@ module GtfsApi
        feed_row = StopTimeTest.valid_gtfs_feed_row
        #puts StopTime.gtfs_cols
        #puts feed_row
-       model = StopTime.new_from_gtfs(feed_row)
+       feed = FeedTest.fill_valid_model
+       feed.save!
+       model = StopTime.new_from_gtfs(feed_row,feed)
        assert model.valid?
        StopTime.gtfs_cols.each do |model_attr, feed_col|
          # arrival time and departure time return a Time obj =! gtfs input, so we convert them
