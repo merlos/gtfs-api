@@ -18,8 +18,8 @@ module GtfsApi
     has_many :frequencies
     
     has_many :shapes, foreign_key: 'io_id', primary_key: 'shape_id'
-    has_many :calendars, foreign_key: 'io_id', primary_key: 'service_id'
-    has_many :calendar_dates, foreign_key: 'io_id', primary_key: 'service_id'
+    has_many :calendars, foreign_key: 'service_id', primary_key: 'service_id'
+    has_many :calendar_dates, foreign_key: 'service_id', primary_key: 'service_id'
     
     
     #has_and_belongs_to_many :shapes, join_table: 'gtfs_api_trips', foreign_key: 'io_id', association_foreign_key: 'service_id'
@@ -95,8 +95,8 @@ module GtfsApi
     # Validates that service_id exists if set
     def service_id_exists_if_set
       if service_id.present?
-        if Calendar.find_by(io_id: service_id).nil?
-          errors.add(:service_id,:not_found) if CalendarDate.find_by(io_id: service_id).nil?
+        if Calendar.find_by(service_id: service_id).nil?
+          errors.add(:service_id,:not_found) if CalendarDate.find_by(service_id: service_id).nil?
         end
       end
     end

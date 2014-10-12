@@ -28,7 +28,7 @@ module GtfsApi
       return Trip.new(
        io_id: 'trip' + uniquer,
        route: r,
-       service_id: c.io_id,
+       service_id: c.service_id,
        headsign: 'headsign',
        short_name: 'short_name',
        direction_id: 1,
@@ -172,18 +172,18 @@ module GtfsApi
     end
     
     test 'calendar association returns calendars' do
-      cal1 = Calendar.where(io_id: @model.service_id)
+      cal1 = Calendar.where(service_id: @model.service_id)
       assert_equal @model.calendars.size, cal1.count
       @model.calendars.each do |cal|
-        assert_equal @model.service_id, cal.io_id
+        assert_equal @model.service_id, cal.service_id
       end
     end
     
     test 'calendar_dates association is correctly defined' do
-      cal1 = CalendarDate.where(io_id: @model.service_id)
+      cal1 = CalendarDate.where(service_id: @model.service_id)
       assert_equal @model.calendar_dates.size, cal1.count
       @model.calendar_dates.each do |cal|
-        assert_equal @model.service_id, cal.io_id
+        assert_equal @model.service_id, cal.service_id
       end 
     end
     

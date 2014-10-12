@@ -3,7 +3,7 @@ module GtfsApi
     
     include GtfsApi::Io::Models::Concerns::Gtfsable
     set_gtfs_file :calendar
-    set_gtfs_col :io_id, :service_id
+    set_gtfs_col :service_id
     set_gtfs_col :monday
     set_gtfs_col :tuesday
     set_gtfs_col :wednesday
@@ -15,7 +15,7 @@ module GtfsApi
     set_gtfs_col :end_date
     
     # Validations
-    validates :io_id, uniqueness: true, presence:true #service_id
+    validates :service_id, uniqueness: true, presence:true #service_id
     validates :monday, presence: true, numericality: {only_integer: true, greater_than_or_equal_to: 0, less_than_or_equal_to: 1}
     validates :tuesday, presence: true, numericality: {only_integer: true, greater_than_or_equal_to: 0, less_than_or_equal_to: 1}
     validates :wednesday, presence: true, numericality: {only_integer: true, greater_than_or_equal_to: 0, less_than_or_equal_to: 1}
@@ -28,7 +28,7 @@ module GtfsApi
     validates :feed, presence: true
     
     # ASSOCIATIONS  
-    has_many :trips, foreign_key: 'service_id', primary_key: 'io_id'
+    has_many :trips, foreign_key: 'service_id', primary_key: 'service_id'
     belongs_to :feed  
       
     # CONSTANTS

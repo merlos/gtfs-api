@@ -7,7 +7,7 @@ module GtfsApi
       feed = FeedTest.fill_valid_model
       feed.save!     
       return CalendarDate.new(
-        io_id: Time.new.to_f.to_s,
+        service_id: Time.new.to_f.to_s,
         date: '2014-06-10',
         exception_type: CalendarDate::ExceptionTypes[:service_added],
         feed: feed
@@ -30,8 +30,8 @@ module GtfsApi
       assert @model.valid?, @model.errors.to_a
     end
     
-    test 'io_id required' do 
-      @model.io_id = nil
+    test 'service_id required' do 
+      @model.service_id = nil
       assert @model.invalid?
     end
     
@@ -67,16 +67,16 @@ module GtfsApi
     test 'has many trips' do
       @model.save!
       t = TripTest.fill_valid_model
-      t.service_id = @model.io_id
+      t.service_id = @model.service_id
       assert t.valid?
       t.save!
       t2 = TripTest.fill_valid_model
-      t2.service_id = @model.io_id
+      t2.service_id = @model.service_id
       assert t2.valid?
       t2.save!
-      assert_equal @model.trips.size, Trip.where(service_id: @model.io_id).count
+      assert_equal @model.trips.size, Trip.where(service_id: @model.service_id).count
       @model.trips.each do |trip|
-        assert_equal trip.service_id, @model.io_id
+        assert_equal trip.service_id, @model.service_id
       end
     end
     

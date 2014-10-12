@@ -237,12 +237,13 @@ module GtfsApi::Io::Models::Concerns
       assert c[:route_type] == :route_type 
     end
     
-    # CalendarDate is gsvable
-    # set_csv_col 
+    # FareAttribute model is gsvable
+    # and that sets the col:
+    # set_gtfs_col :io_id, :fare_id 
     # default io_id to is overriden
     test "that set_csv_col io_id is overriden setting a second argument" do
-      gtfs_cols =  GtfsApi::CalendarDate.gtfs_cols
-      assert gtfs_cols[:io_id] == :service_id
+      gtfs_cols =  GtfsApi::FareAttribute.gtfs_cols
+      assert gtfs_cols[:io_id] == :fare_id
     end
     
   
