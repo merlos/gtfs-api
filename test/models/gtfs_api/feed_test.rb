@@ -5,8 +5,9 @@ module GtfsApi
  
     def self.fill_valid_model 
       Feed.new( {
+        io_id: "feed_io" + Time.new.to_f.to_s,
         name: "feed name " + Time.new.to_f.to_s,
-        url: "http://gihub.com/merlos/gtfs_api",
+        source_url: "http://gihub.com/merlos/gtfs_api",
         prefix: "hola " + Time.new.to_f.to_s
         })
     end
@@ -19,6 +20,29 @@ module GtfsApi
       assert @model.valid?
     end
     
+    test "io_id is required" do
+      @model.io_id = nil
+      assert @model.invalid?
+    end
+    
+    test "https is a valid source_url" do 
+      @model.source_url = "https://www.github.com/merlos/gtfs_api"
+      assert @model.valid?
+    end
+    
+    test "source_url invalid format" do 
+      @model.source_url = "ftp://www.google.es" 
+      assert @model.invalid? 
+    end
+    
+    test "io_id uniqueness is required" do
+      @model.io_id = "feed_io_id"
+      @model.save!
+      model2 = FeedTest.fill_valid_model
+      model2.io_id = "feed_io_id"
+      assert model2.invalid?
+    end
+      
     test "prefix uniqueness is required" do
       @model.save!
       model2 = FeedTest.fill_valid_model

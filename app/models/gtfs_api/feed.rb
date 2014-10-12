@@ -2,7 +2,9 @@ module GtfsApi
   class Feed < ActiveRecord::Base
     
     #VALIDATIONS
+    validates :io_id, presence: true, uniqueness: true
     validates :prefix, uniqueness: true
+    validates :source_url, :'gtfs_api/validators/url' => true, allow_nil: true 
     
     # ASSOCIATIONS
     has_many :agencies

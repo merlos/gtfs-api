@@ -20,13 +20,6 @@ module GtfsApi
     belongs_to :route
     belongs_to :feed    
     
-    # TODO see which association  has more sense based on these examples
-    # https://code.google.com/p/googletransitdatafeed/wiki/FareExamples
-    #
-    #belongs_to :origin, foreign_key: 'zone_id', class_name: 'Stop'
-    #belongs_to :destination, foreign_key: 'zone_id', class_name: 'Stop'
-    #belongs_to :contains, foreign_key: 'zone_id', class_name: 'Stop'
-    
     has_many :origins, 
       foreign_key: 'zone_id', 
       class_name: 'Stop', 
