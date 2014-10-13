@@ -1,7 +1,7 @@
 class CreateGtfsApiCalendars < ActiveRecord::Migration
   def change
     create_table :gtfs_api_calendars do |t|
-      t.string :service_id 
+      t.belongs_to :service
       t.integer :monday
       t.integer :tuesday
       t.integer :wednesday

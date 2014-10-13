@@ -12,29 +12,28 @@ module GtfsApi
     set_gtfs_col :transfer_duration
     
     
-    #valdations
+    # VALIDATIONS
     validates :io_id, uniqueness: true, presence:true
     validates :price, presence: true
-    
     validates :currency_type, presence: true, length: {is: 3}, iso4217Code: true
     validates :payment_method, presence: true, numericality: {only_integer: true, 
-      greater_than_or_equal_to: 0, less_than_or_equal_to: 1}
-      
+      greater_than_or_equal_to: 0, less_than_or_equal_to: 1} 
     validates :transfers, numericality: {only_integer: true, 
       greater_than_or_equal_to: 0, less_than_or_equal_to: 5}, 
-      allow_nil: true
-        
+      allow_nil: true  
     validates :transfer_duration,numericality: {only_integer: true, 
-      greater_than_or_equal_to: 0}, allow_nil: true
-      # time in seconds
+      greater_than_or_equal_to: 0}, allow_nil: true # time in seconds
     validates :feed, presence: true
     
-    # Associations
-    has_many :fare_rules, foreign_key:'fare_id'
+    
+    # ASSOCIATIONS
     belongs_to :agency
     belongs_to :feed    
     
-    # Virtual Attributes 
+    has_many :fare_rules, foreign_key:'fare_id'
+    
+    
+    # VIRTUAL ATTRIBUTES
     attr_accessor :agency_io_id 
     
     #gets the agency.io_id (useful for import/export)
@@ -47,10 +46,12 @@ module GtfsApi
       self.agency = Agency.find_by(io_id: val)
     end
     
+    
+    # CONSTANTS 
+    
     #payment_method
     ON_BOARD = 0
     BEFORE_BOARDING = 1
-    
     Payment = {
       :on_board => ON_BOARD,
       :before_boarding => BEFORE_BOARDING

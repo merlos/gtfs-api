@@ -6,17 +6,21 @@ module GtfsApi
     def self.fill_valid_model 
       feed = FeedTest.fill_valid_model
       feed.save!     
+      service = ServiceTest.fill_valid_model
+      service.save!
       return CalendarDate.new(
-        service_id: Time.new.to_f.to_s,
+        service: service,
         date: '2014-06-10',
         exception_type: CalendarDate::ExceptionTypes[:service_added],
         feed: feed
         )
     end
     
-    def self.valid_gtfs_feed_row 
+    def self.valid_gtfs_feed_row
+      service = ServiceTest.fill_valid_model
+      service.save! 
       {
-        service_id: Time.new.to_f.to_s,
+        service_id: service.io_id,
         date: '2014-06-10',
         exception_type: CalendarDate::SERVICE_ADDED
       }

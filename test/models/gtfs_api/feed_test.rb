@@ -124,5 +124,9 @@ module GtfsApi
       validate_association("Trip")
     end
 
+    test "Service is associated to feed" do
+      validate_association("Service")
+    end
+
   end
 end

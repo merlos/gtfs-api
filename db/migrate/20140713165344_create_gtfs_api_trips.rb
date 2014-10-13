@@ -4,7 +4,7 @@ class CreateGtfsApiTrips < ActiveRecord::Migration
       t.string :io_id
       t.belongs_to :route
       
-      t.string :service_id
+      t.belongs_to :service
       t.string :headsign
       t.string :short_name
       

@@ -1,7 +1,7 @@
 class CreateGtfsApiCalendarDates < ActiveRecord::Migration
   def change
     create_table :gtfs_api_calendar_dates do |t|
-      t.string :service_id #service_id
+      t.belongs_to :service
       t.date :date
       t.integer :exception_type
       

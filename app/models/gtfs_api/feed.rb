@@ -6,6 +6,7 @@ module GtfsApi
     validates :prefix, uniqueness: true
     validates :source_url, :'gtfs_api/validators/url' => true, allow_nil: true 
     
+    
     # ASSOCIATIONS
     has_many :agencies
     has_many :calendar_dates
@@ -20,6 +21,7 @@ module GtfsApi
     has_many :stops
     has_many :transfers
     has_many :trips
+    has_many :services
   end
   
 end

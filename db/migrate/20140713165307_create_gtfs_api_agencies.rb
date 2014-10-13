@@ -1,7 +1,7 @@
 class CreateGtfsApiAgencies < ActiveRecord::Migration
   def change
     create_table :gtfs_api_agencies do |t|
-      t.string :io_id, limit: 48
+      t.string :io_id, limit: 128
       t.string :name
       t.string :url
       t.string :timezone, limit: 64

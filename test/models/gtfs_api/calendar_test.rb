@@ -10,8 +10,9 @@ module GtfsApi
     def self.fill_valid_model
       feed = FeedTest.fill_valid_model
       feed.save!
+      service = ServiceTest.fill_valid_model
       return Calendar.new(
-      service_id: 'service_id_' + Time.new.to_f.to_s,
+      service: service,
       monday: 1,
       tuesday: 1,
       wednesday: 1,
@@ -25,8 +26,10 @@ module GtfsApi
     end
     
     def self.valid_gtfs_feed_row
+      service = ServiceTest.fill_valid_model
+      service.save!
       {
-        service_id: 'service_id_' + Time.new.to_f.to_s,
+        service_id: service.io_id,
         monday: "1",
         tuesday: "1",
         wednesday: "1",
@@ -112,11 +115,11 @@ module GtfsApi
       @model.save!
       #assign this calendar to two trips
       t1 = TripTest.fill_valid_model
-      t1.service_id = @model.service_id
+      t1.service = @model.service
       t1.save!
       
       t2 = TripTest.fill_valid_model
-      t2.service_id = @model.service_id
+      t2.service = @model.service
       t2.save!
       # test that now the calendar has two trips linked
       assert_equal 2, @model.trips.count  
