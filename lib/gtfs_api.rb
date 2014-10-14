@@ -11,4 +11,6 @@ require 'iso4217/validator'
 
 module GtfsApi
     
+  UNIQUE_IO_ID = "{**GTFSAPI_UNIQUE_IO_ID**}"
+    
 end

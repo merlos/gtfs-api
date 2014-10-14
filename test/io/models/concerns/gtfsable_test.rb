@@ -3,6 +3,8 @@ require 'test_helper'
 module GtfsApi::Io::Models::Concerns
   
   # SUPPORT CLASSES
+  # These calsses emulate a model more or less..
+  # TODO something more accurate
   
   # empty col assignment
   class GtfsableTestEmptyMapping
@@ -11,7 +13,7 @@ module GtfsApi::Io::Models::Concerns
   
   # mapping
   class GtfsableTestMapping
-  include GtfsApi::Io::Models::Concerns::Gtfsable
+    include GtfsApi::Io::Models::Concerns::Gtfsable
     #gtfs feed columns definitions
     set_gtfs_file :forced_name
     set_gtfs_col :default_map
@@ -244,6 +246,17 @@ module GtfsApi::Io::Models::Concerns
     test "that set_csv_col io_id is overriden setting a second argument" do
       gtfs_cols =  GtfsApi::FareAttribute.gtfs_cols
       assert gtfs_cols[:io_id] == :fare_id
+    end
+    
+    test "that by default after new, the var new_from_gtfs_called is false" do
+      c = GtfsableTestMapping.new
+      assert_equal false, c.new_from_gtfs_called
+    end
+    
+    test "that new_from_gtfs sets new_from_gtfs_called" do
+      gtfs_feed_row = {default_map: 'value1', gtfs_feed: 'value2'}
+      c = GtfsableTestMapping.new_from_gtfs(gtfs_feed_row)
+      assert_equal true, c.new_from_gtfs_called      
     end
     
   

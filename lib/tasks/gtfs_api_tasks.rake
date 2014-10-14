@@ -1,6 +1,7 @@
 require 'gtfs_api/io/importer'
 require 'gtfs_api/io/exporter'
 
+
 namespace :gtfs do
   desc 'Copy migrations from gtfs_api to application and perform the migration (db:migrate)'
   task :migrate => :environment do |t, args|
@@ -31,6 +32,46 @@ namespace :gtfs do
     
   end
   
+  #
+  # import mapping
+  #
+  desc "GTFS import information. Displays the map between models and columns, models and GTFS feed files."
+  task :import_info => :environment do |t, args|
+    # Force load of the models, if not they are not show, as gtfsable methods are calle
+    # after loading the files.
+    # TODO how to do this more elegantly?
+    GtfsableModels = [ 
+      GtfsApi::FeedInfo,
+      GtfsApi::Agency,
+      GtfsApi::Route,
+      GtfsApi::Calendar,
+      GtfsApi::CalendarDate,
+      GtfsApi::Shape,
+      GtfsApi::Trip,
+      GtfsApi::Stop,
+      GtfsApi::StopTime,
+      GtfsApi::Frequency,
+      GtfsApi::FareAttribute,
+      GtfsApi::Transfer,
+      GtfsApi::FareRule
+    ]
+    
+    GtfsApi::Agency.gtfs_cols_raw.each do |cols_map|
+      puts 
+      puts "\t#{cols_map[0]}"
+      puts "\tmodel\t\t\t\t\tfeed"
+      puts "\t-----\t\t\t\t\t----"
+      cols_map[1].each do |hola| 
+        puts "\t#{hola[0]}" + "<=> \t#{hola[1]}".indent(30 - hola[0].length)
+      end
+      puts "\t--------------------------------------------"
+    end
+    puts "\n\n\tFiles linked to models"
+    puts "\t-----------------------------------"
+    GtfsableModels.each do |model|
+       puts "\t#{model.to_s}" + "<=> \t#{model.gtfs_file}".indent(40 - model.to_s.length)
+     end
+  end
   #
   # EXPORT 
   #

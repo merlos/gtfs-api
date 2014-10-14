@@ -2,6 +2,7 @@ module GtfsApi
   class Calendar < ActiveRecord::Base
     
     include GtfsApi::Io::Models::Concerns::Gtfsable
+      
     set_gtfs_file :calendar
     set_gtfs_col :service_io_id, :service_id
     set_gtfs_col :monday
@@ -27,6 +28,7 @@ module GtfsApi
     validates :start_date, presence: true
     validates :end_date, presence: true
     validates :feed, presence: true
+      
     
     
     # ASSOCIATIONS  
@@ -37,15 +39,31 @@ module GtfsApi
     
     #VIRTUAL ATTRIBUTES
     attr_accessor :service_io_id
+    attr_accessor :create_service_on_save
     
     def service_io_id
-      service.present? ? service.io_id : nil
+      self.service.present? ? self.service.io_id : nil
     end
     
+    #
+    # searches for a service with io_id and assigns it to service
+    # Initializes the variable @_service_io_id
+    #
     def service_io_id=(val)
-      self.service = Service.find_by!(io_id: val)
+      @_service_io_id = val
+      self.service = Service.find_by(io_id: val)
     end
-      
+  
+    
+    before_validation(on: :create) do
+      # if it was imported (ie: new_from_gtfs was caled) and the service associated does not exist
+      # (service_io_id returns nill), then create the service.
+      self.create_service_on_save = true if self.new_from_gtfs_called 
+      if @_service_io_id.present? && self.service == nil
+        self.service = Service.create({io_id: @_service_io_id, feed: self.feed}) if self.create_service_on_save
+      end
+    end
+    
     # CONSTANTS
     AVAILABLE = 1
     NOT_AVAILABLE = 0
@@ -58,5 +76,6 @@ module GtfsApi
     Week = [:monday, :tuesday, :wednesday, :thursday, :friday, :saturday, :sunday]
     WeekDays = [:monday, :tuesday, :wednesday, :thursday, :friday]
     Weekend = [:saturday, :sunday]
+    
   end
 end

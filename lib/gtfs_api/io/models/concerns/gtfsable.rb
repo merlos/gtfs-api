@@ -12,7 +12,20 @@ module GtfsApi
       module Concerns
         module Gtfsable
           extend ActiveSupport::Concern
-    
+          #
+          # this variable is true if new_from_gtfs() is called
+          # You can use it within model callbacks
+          #
+          @new_from_gtfs_called
+          
+          def new_from_gtfs_called
+            @new_from_gtfs_called ||= false
+          end
+          
+          def new_from_gtfs_called=(val) 
+            @new_from_gtfs_called= val == true ? true : false
+          end
+          
           #
           # returns a hash with the cols of the row of the corresponding file.
           # It assigns to each key (column of the file) the value of the mapped
@@ -47,7 +60,6 @@ module GtfsApi
             return gtfs_feed_row
           end
     
-    
           #
           # GTFS Spec allows times > 24h, but rails does not. this is a parser
           # It is stored a time object with that has as 00:00:00 => '0000-01-01 00:00 +00:00(UTC)'
@@ -71,12 +83,11 @@ module GtfsApi
               return
             end
             write_attribute(attribute_sym, val)
-      
           end
-    
-    
+                    
+          
           module ClassMethods
-      
+          
             #
             # attribute that holds the feed association
             #
@@ -170,7 +181,15 @@ module GtfsApi
             def gtfs_filename
               return self.gtfs_file.to_s + '.txt'
             end
-      
+            
+            #
+            # @return [array] list of associations between classes and filenames  
+            #
+            def gtfs_files
+              return @@gtfs_files
+            end
+            
+          
             # map of gtfs_feed_col => gtfs_api_col
             def gtfs_attr
               @@gtfs_cols[self].invert unless @@gtfs_cols[self].nil?
@@ -199,13 +218,60 @@ module GtfsApi
               end
               return model_attr_values
             end 
-      
+            
+            # To create a new gtfsable object. It will assign to each gtfs_col defined
+            # for this class to the model attributes.
+            #
+            # 
+            # One way to keep track of the gtfs objects that belong to a feed is by 
+            # having a belongs_to reference to another model.
+            #
+            # 
+            # Example:
+            #
+            #   class Agency < ActiveRecord::Base
+            #     ...
+            #     set_gtfs_col :agency_id
+            #     belongs_to feed
+            #     ...
+            #   end
+            #
+            #   class Feed < ActiveRecord::Base
+            #     has_many :agencies
+            #     has_many :routes
+            #     ...
+            #   end
+            #
+            #   feed = Feed.find(1)
+            #   csv_row = {agency_id: 'agency_id'}
+            #   a = Agency.new_from_gtfs(csv_row, feed)
+            #   puts a.agency_id 
+            #   # => agency_id
+            #   puts a.feed_id
+            #
+            # @param csv_row row with gtfs_cols of the feed
+            # @param feed feed object that will be asigned.
+            # 
+            # It will set the variable @created_from_gtfs to true in the object instance.
+            # Useful to use with active record callbacks, for example, if you need to do 
+            # something before saving only if it an imported object
+            # in the model http://api.rubyonrails.org/classes/ActiveRecord/Callbacks.html 
+            #
             def new_from_gtfs(csv_row, feed = nil)
               obj = self.new(self.rehash_from_gtfs(csv_row)) 
+              obj.new_from_gtfs_called = true
               obj.send( "#{@@gtfs_feed_attr}=", feed)  if feed != nil
               return obj
             end 
+            
+            
         
+            def self.extended(base) 
+              #force set the default file
+              @@gtfs_files[self] = self.to_s.split("::").last.underscore.pluralize.to_sym
+            end
+           
+            
           end #ClassMethods  
         end
       end

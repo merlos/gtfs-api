@@ -165,7 +165,7 @@ module GtfsApi
       end
     end
     
-    # Test the exceptions
+    # Test the exceptions while importing 
     test "exceptions start_date and end_date when importing a Calendar model" do
       row = CalendarTest.valid_gtfs_feed_row
       model = Calendar.new_from_gtfs(row)
@@ -179,6 +179,46 @@ module GtfsApi
       assert_equal model.start_date.to_gtfs, row[:start_date]
       assert_equal model.end_date.to_gtfs, row[:end_date]
     end
+    
+    #
+    # Auto Create service tests 
+    #
+    test "by default a non existing service is not auto created" do
+      @model.service_io_id = "service_not_exists"
+      assert_equal nil, @model.service 
+      assert @model.invalid?
+      @model.errors.clear
+      assert_equal false, @model.save
+    end
+    
+    test "create_service_on_save true, then  service is created" do
+      @model.service_io_id = "service_not_exists"
+      assert_equal nil, @model.service
+      @model.create_service_on_save = true
+      assert_equal true, @model.save
+      s = Service.find_by(io_id: "service_not_exists")
+      assert_equal s.io_id, @model.service.io_id
+    end
+    
+    test "that if service_io_id was never called auto create does not work" do
+      @model.service = nil
+      @model.create_service_on_save = true
+      assert_equal false, @model.save, "model was saved but service_io_id was never called"
+      s = Service.find_by(io_id: "service_not_exists")
+      assert_equal nil, s
+    end 
+    
+    test "service is created if it does not exist and calendar was created using new_from_gtfs" do
+      row = CalendarTest.valid_gtfs_feed_row
+      row[:service_id] = "this_service_does_not_exist"
+      model = Calendar.new_from_gtfs(row)
+      # as the service does not exist it was not assigned
+      assert_equal nil, model.service
+      # but the hook before_validation fills it
+      assert true, model.save
+      assert_equal row[:service_id], model.service.io_id
+    end
+    
     
   end
 end

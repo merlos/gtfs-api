@@ -3,6 +3,23 @@ require 'gtfs_api/io/feed_definition'
 
 module GtfsApi
   module Io
+    class Importer
+     
+      #
+      #
+      #
+      def import_from_zip(feed_file, options={})  
+      end  
+    
+      def import_from_text_files(feed_path,options={})
+      end
+    
+      def unzip_feed
+      end
+    
+      def process_file(feed_file, gtfsable_class)
+      end
+    end
     #
     # Imports a zip file / url into a GtfsApi datbase 
     #
@@ -14,7 +31,7 @@ module GtfsApi
     #  # you can use the prefix
     #  GtfsApi::Importer.import('http://www.agency.com/gtfs_feed.zip', 'agency_').
     #
-    class Importer 
+    class ImporterGtfsReader 
       #
       # imports a gtfs feed zip into the local database
       #

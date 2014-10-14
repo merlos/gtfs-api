@@ -2,6 +2,7 @@ module GtfsApi
   class Route < ActiveRecord::Base
     
     include GtfsApi::Io::Models::Concerns::Gtfsable
+    
     #gtfs feed columns definitions
     set_gtfs_col :io_id, :route_id
     set_gtfs_col :short_name, :route_short_name
