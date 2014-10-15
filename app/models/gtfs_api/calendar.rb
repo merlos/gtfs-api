@@ -58,7 +58,7 @@ module GtfsApi
     before_validation(on: :create) do
       # if it was imported (ie: new_from_gtfs was caled) and the service associated does not exist
       # (service_io_id returns nill), then create the service.
-      self.create_service_on_save = true if self.new_from_gtfs_called 
+      self.create_service_on_save = true if self.from_gtfs_called 
       if @_service_io_id.present? && self.service == nil
         self.service = Service.create({io_id: @_service_io_id, feed: self.feed}) if self.create_service_on_save
       end

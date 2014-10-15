@@ -16,14 +16,14 @@ module GtfsApi
           # this variable is true if new_from_gtfs() is called
           # You can use it within model callbacks
           #
-          @new_from_gtfs_called
+          @from_gtfs_called
           
-          def new_from_gtfs_called
-            @new_from_gtfs_called ||= false
+          def from_gtfs_called
+            @from_gtfs_called ||= false
           end
           
-          def new_from_gtfs_called=(val) 
-            @new_from_gtfs_called= val == true ? true : false
+          def from_gtfs_called=(val) 
+            @from_gtfs_called= val == true ? true : false
           end
           
           #
@@ -33,7 +33,7 @@ module GtfsApi
           #
           # To see how to map each column to an attribute @see set_gtfs_col
           #
-          # It calls the hook after_rehash_to_gtfs_feed (gtfs_feed_row) which allows the
+          # It calls the hook after_to_gtfs_feed (gtfs_feed_row) which allows the
           # model to override the default assignation if necessary 
           #
           # returns empty hash if there is no mapping
@@ -47,19 +47,25 @@ module GtfsApi
               col_value = col_value.to_gtfs if (col_value.is_a?(Date) || col_value.is_a?(Time))
               gtfs_feed_row[feed_col] = col_value
             end
-            self.after_rehash_to_gtfs(gtfs_feed_row)
+            self.after_to_gtfs(gtfs_feed_row)
           end
     
-          # overwrite if required
+          # Hook. overwrite if required
           # it receives an standard mapping of the model attributes to gtfs feed columns
           # this method should be overridden if the default value of an attribute needs
           # to be processed. For example, a time or a date may be reformatted.
           #
           # it shall return the final gtfs_feed_row
-          def after_rehash_to_gtfs (gtfs_feed_row)
+          def after_to_gtfs (gtfs_feed_row)
             return gtfs_feed_row
           end
-    
+          
+          #
+          # Hook. This method is called after *_from_gtfs is called
+          #
+          # overwrite if required
+          def after_from_gtfs(model_attr_hash)
+          end
           #
           # GTFS Spec allows times > 24h, but rails does not. this is a parser
           # It is stored a time object with that has as 00:00:00 => '0000-01-01 00:00 +00:00(UTC)'
@@ -219,6 +225,7 @@ module GtfsApi
               return model_attr_values
             end 
             
+            
             # To create a new gtfsable object. It will assign to each gtfs_col defined
             # for this class to the model attributes.
             #
@@ -252,20 +259,21 @@ module GtfsApi
             # @param csv_row row with gtfs_cols of the feed
             # @param feed feed object that will be asigned.
             # 
-            # It will set the variable @created_from_gtfs to true in the object instance.
+            # It will set the variable @from_gtfs_called to true in the object instance.
             # Useful to use with active record callbacks, for example, if you need to do 
             # something before saving only if it an imported object
             # in the model http://api.rubyonrails.org/classes/ActiveRecord/Callbacks.html 
             #
-            def new_from_gtfs(csv_row, feed = nil)
-              obj = self.new(self.rehash_from_gtfs(csv_row)) 
-              obj.new_from_gtfs_called = true
+            def new_from_gtfs(gtfs_feed_row, feed = nil)
+              model_attr_hash = self.rehash_from_gtfs(gtfs_feed_row)
+              obj = self.new(model_attr_hash) 
+              obj.from_gtfs_called = true
               obj.send( "#{@@gtfs_feed_attr}=", feed)  if feed != nil
+              obj.after_from_gtfs(model_attr_hash)
               return obj
             end 
             
             
-        
             def self.extended(base) 
               #force set the default file
               @@gtfs_files[self] = self.to_s.split("::").last.underscore.pluralize.to_sym

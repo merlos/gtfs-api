@@ -48,19 +48,48 @@ module GtfsApi::Io::Models::Concerns
   # after rehash
   class GtfsableTestAfterRehash
     include GtfsApi::Io::Models::Concerns::Gtfsable
-     set_gtfs_col :io_id
+    set_gtfs_col :io_id
+    set_gtfs_col :after_from_gtfs_attr, :after_from_feed
+     
+    def initialize 
+      @attributes = {}
+    end
+     
+    def initialize(hash = {})
+      @attributes = {}
+      hash.each do |key, val|
+        @attributes[key] = val
+      end
+    end
+     
     #setters and getters of attributtes
     def io_id=(val) 
-      @io_id = val 
+      @attributes[:io_id] = val 
     end
+    
     def io_id 
       @io_id 
     end
+    
+    def after_from_gtfs_attr=(val) 
+      @attributes[:after_from_gtfs_attr] = val 
+    end
+    
+    def after_from_gtfs_attr 
+      @attributes[:after_from_gtfs_attr]
+    end
+  
+    
     # overrides the value of io_id when exporting to gtfs
-    def after_rehash_to_gtfs(gtfs_feed_row)
+    def after_to_gtfs(gtfs_feed_row)
       gtfs_feed_row[:io_id] = "after_rehash_was_called"
       return gtfs_feed_row
     end
+    
+    def after_from_gtfs(model_attr_hash)
+      self.after_from_gtfs_attr = "after_from_gtfs_was_called"
+    end
+  
     
   end
   
@@ -153,11 +182,21 @@ module GtfsApi::Io::Models::Concerns
       assert_equal 'hola', gtfs_feed_hash[:default_map]
     end
     
-    test "to_gtfs calls after_rehash_to_gtfs" do
+    test "to_gtfs calls after_to_gtfs" do
       c = GtfsableTestAfterRehash.new
       c.io_id = "hola"
       gtfs = c.to_gtfs
       assert_equal "after_rehash_was_called", gtfs[:io_id]
+    end
+    
+    
+    test "new_from_gtfs calls after_from_gtfs" do
+      gtfs_feed_row = {io_id: 'io_id', 
+        after_from_feed: "after_from_feed"
+      }
+      c = GtfsableTestAfterRehash.new_from_gtfs(gtfs_feed_row)
+      #check the implementation of before_from_gtfs
+      assert "after_from_gtfs_was_called", c.after_from_gtfs_attr 
     end
     
     test "gtfs_col_for_attr returns the name of the col" do
@@ -250,13 +289,13 @@ module GtfsApi::Io::Models::Concerns
     
     test "that by default after new, the var new_from_gtfs_called is false" do
       c = GtfsableTestMapping.new
-      assert_equal false, c.new_from_gtfs_called
+      assert_equal false, c.from_gtfs_called
     end
     
     test "that new_from_gtfs sets new_from_gtfs_called" do
       gtfs_feed_row = {default_map: 'value1', gtfs_feed: 'value2'}
       c = GtfsableTestMapping.new_from_gtfs(gtfs_feed_row)
-      assert_equal true, c.new_from_gtfs_called      
+      assert_equal true, c.from_gtfs_called      
     end
     
   
