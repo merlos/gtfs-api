@@ -10,7 +10,7 @@ module GtfsApi
       service.save!
       return CalendarDate.new(
         service: service,
-        date: '2014-06-10',
+        date: '20140610',
         exception_type: CalendarDate::ExceptionTypes[:service_added],
         feed: feed
         )
@@ -21,7 +21,7 @@ module GtfsApi
       service.save! 
       {
         service_id: service.io_id,
-        date: '2014-06-10',
+        date: '20140610',
         exception_type: CalendarDate::SERVICE_ADDED
       }
     end

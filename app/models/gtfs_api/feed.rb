@@ -3,8 +3,8 @@ module GtfsApi
     
     #VALIDATIONS
     validates :io_id, presence: true, uniqueness: true
-    validates :prefix, uniqueness: true
-    validates :source_url, :'gtfs_api/validators/url' => true, allow_nil: true 
+    validates :prefix, uniqueness: true, allow_nil: true
+    
     
     
     # ASSOCIATIONS

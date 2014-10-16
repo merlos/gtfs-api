@@ -20,8 +20,8 @@ module GtfsApi
       friday: 1,
       saturday: 1,
       sunday: 1,
-      start_date: '2014-07-22',
-      end_date: '2014-07-23',
+      start_date: '20140722',
+      end_date: '20140723',
       feed: feed)
     end
     
@@ -37,8 +37,8 @@ module GtfsApi
         friday: "1",
         saturday: "1",
         sunday: "1",
-        start_date: '2014-07-22',
-        end_date: '2014-07-23'
+        start_date: '20140722',
+        end_date: '20140723'
       }
     end
     

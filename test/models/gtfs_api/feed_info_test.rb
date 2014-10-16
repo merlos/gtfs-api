@@ -12,8 +12,8 @@ module GtfsApi
         publisher_name: "THE publisher",
         publisher_url: "http://gihub.com/merlos/gtfs_api",
         lang: 'es',
-        start_date: '2014-06-20',
-        end_date: '2015-06-20',
+        start_date: '20140620',
+        end_date: '20150620',
         version: 'V1.0',
         feed: feed
         })
@@ -23,8 +23,8 @@ module GtfsApi
         feed_publisher_name: "Di publiser",
         feed_publisher_url: "http://github.com/merlos/gtfs_api",
         lang: 'es',
-        start_date: '2014-06-20',
-        end_date: '2015-06-20',
+        start_date: '20140620',
+        end_date: '20150620',
         version: "V1.0"
       }
     end

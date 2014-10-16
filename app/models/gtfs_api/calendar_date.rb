@@ -25,7 +25,7 @@ module GtfsApi
     end
     
     def service_io_id=(val)
-      self.service = Service.find_by!(io_id: val)
+      self.service = Service.find_by(io_id: val)
     end
     
     # CONSTANTS

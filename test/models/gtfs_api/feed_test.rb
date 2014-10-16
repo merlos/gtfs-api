@@ -30,9 +30,9 @@ module GtfsApi
       assert @model.valid?
     end
     
-    test "source_url invalid format" do 
+    test "another valid format" do 
       @model.source_url = "ftp://www.google.es" 
-      assert @model.invalid? 
+      assert @model.valid? 
     end
     
     test "io_id uniqueness is required" do

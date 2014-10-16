@@ -220,7 +220,7 @@ module GtfsApi::Io::Models::Concerns
       t = GtfsTimeSetterTest.new
       t.sample_date = Date.new(2014,06,20)
       gtfs_row = t.to_gtfs #io_id is like any other field in this fake model
-      assert_equal '2014-06-20', gtfs_row[:sample_date]
+      assert_equal '20140620', gtfs_row[:sample_date]
     end
     
     test "to_gtfs returns times in the gtfs format" do
