@@ -1,8 +1,11 @@
 require 'gtfs_api/io/importer'
 require 'gtfs_api/io/exporter'
 
-
 namespace :gtfs do
+  
+  #
+  # MIGRATE
+  #
   desc 'Copy migrations from gtfs_api to application and perform the migration (db:migrate)'
   task :migrate => :environment do |t, args|
     # this task is a shortcut of
@@ -15,10 +18,11 @@ namespace :gtfs do
     Rake::Task[migrate].invoke
   end
   
+  
   #
   # IMPORT 
   #
-  desc "import zip feed file/url into gtfs_api database. default zip_file db/gtfs/feed.zip. Default prefix: none. Use prefix = auto to autogenerate random string "
+  desc "import zip feed file/url into gtfs_api database. default zip_file db/gtfs/feed.zip. Default prefix: none. Use prefix = auto to autogenerate random string"
   task :import, [:zip_file, :prefix] => :environment do |t, args|
     args.with_defaults(
       zip_file: Rails.root.join('db','gtfs','feed.zip').to_s, 
@@ -32,11 +36,12 @@ namespace :gtfs do
     
   end
   
+  
   #
-  # import mapping
+  # MAPPING
   #
-  desc "GTFS import information. Displays the map between models and columns, models and GTFS feed files."
-  task :import_info => :environment do |t, args|
+  desc "Displays the map between models and file columns, as well as models and feed files"
+  task :model_map => :environment do |t, args|
     # Force load of the models, if not they are not show, as gtfsable methods are calle
     # after loading the files.
     # TODO how to do this more elegantly?
@@ -72,6 +77,8 @@ namespace :gtfs do
        puts "\t#{model.to_s}" + "<=> \t#{model.gtfs_file}".indent(40 - model.to_s.length)
      end
   end
+  
+  
   #
   # EXPORT 
   #
