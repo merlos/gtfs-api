@@ -30,7 +30,6 @@ module GtfsApi
     validates :feed, presence: true
       
     
-    
     # ASSOCIATIONS  
     belongs_to :service
     belongs_to :feed  
@@ -48,13 +47,11 @@ module GtfsApi
     #
     # searches for a service with io_id and assigns it to service
     # Initializes the variable @_service_io_id
-    #
     def service_io_id=(val)
       @_service_io_id = val
       self.service = Service.find_by(io_id: val)
     end
-  
-    
+     
     before_validation(on: :create) do
       # if it was imported (ie: new_from_gtfs was caled) and the service associated does not exist
       # (service_io_id returns nill), then create the service.
@@ -63,19 +60,19 @@ module GtfsApi
         self.service = Service.create({io_id: @_service_io_id, feed: self.feed}) if self.create_service_on_save
       end
     end
+ 
     
     # CONSTANTS
     AVAILABLE = 1
     NOT_AVAILABLE = 0
-    
+       
     Available = {
       :yes => AVAILABLE,
       :no => NOT_AVAILABLE
-    }    
-  
+    }
+          
     Week = [:monday, :tuesday, :wednesday, :thursday, :friday, :saturday, :sunday]
     WeekDays = [:monday, :tuesday, :wednesday, :thursday, :friday]
-    Weekend = [:saturday, :sunday]
-    
+    Weekend = [:saturday, :sunday]   
   end
 end

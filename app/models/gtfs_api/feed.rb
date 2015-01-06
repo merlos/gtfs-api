@@ -6,7 +6,6 @@ module GtfsApi
     validates :prefix, uniqueness: true, allow_nil: true
     
     
-    
     # ASSOCIATIONS
     has_many :agencies
     has_many :calendar_dates
@@ -23,5 +22,4 @@ module GtfsApi
     has_many :trips
     has_many :services
   end
-  
 end

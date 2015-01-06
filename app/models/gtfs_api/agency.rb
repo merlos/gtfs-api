@@ -11,7 +11,9 @@ module GtfsApi
     set_gtfs_col :lang, :agency_lang
     set_gtfs_col :phone, :agency_phone
     set_gtfs_col :fare_url, :agency_fare_url
-          
+       
+       
+    # VALIDATIONS    
     validates :io_id,     allow_nil:true, uniqueness: true
     validates :name,      presence: true
     validates :url,       presence: true, :'gtfs_api/validators/url' => true 
@@ -27,7 +29,8 @@ module GtfsApi
     #    save!
     #  end
   
-    #associations
+  
+    # ASSOCIATIONS
     has_many :routes
     has_many :fare_attributes
     belongs_to :feed    
@@ -47,6 +50,7 @@ module GtfsApi
     #  agency.io_id
     #   #=> 100_MTOA
     # 
+    # TODO test
     def auto_io_id
       io_id = self.id + "_" + name.split(/\s+/).map(&:first).join.upcase
     end

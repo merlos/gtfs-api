@@ -2,7 +2,6 @@ module GtfsApi
   class Route < ActiveRecord::Base
     
     include GtfsApi::Io::Models::Concerns::Gtfsable
-    
     #gtfs feed columns definitions
     set_gtfs_col :io_id, :route_id
     set_gtfs_col :short_name, :route_short_name
@@ -15,6 +14,8 @@ module GtfsApi
     #NO NORMATIVE (extension)
     set_gtfs_col :agency_io_id, :agency_id
     
+    
+    #VALIDATIONS
     validates :io_id, uniqueness: true, presence:true
     validates :route_type, presence: true, numericality: { only_integer: true, 
       greater_than_or_equal_to: 0, less_than_or_equal_to:1702 }
@@ -25,13 +26,15 @@ module GtfsApi
     validate :valid_route_type
     validates :feed, presence: true
     
-    # asociations
+    
+    # ASSOCIATIONS
     belongs_to :agency
     has_many :trips
     has_one :fare, class: "FareRules"
     belongs_to :feed  
     
-    # Virtual Attributes 
+    
+    # VIRTUAL ATTRIBUTES
     attr_accessor :agency_io_id 
     
     #gets the agency.io_id (useful for import/export)
@@ -43,6 +46,9 @@ module GtfsApi
     def agency_io_id=(val)
       self.agency = Agency.find_by(io_id: val)
     end
+    
+    
+    # CONSTANTS
     
     # ROUTE TYPES
     # https://developers.google.com/transit/gtfs/reference#routes_fields
@@ -220,8 +226,8 @@ module GtfsApi
       cable_car_hvt: 1701,	#Cable Car	Yes
       horse_dranw_carriage: 1702	#Horse-drawn Carriage	Yes
     }
+
     
-    # VALIDATIONS
     private
     
     def valid_route_type
@@ -232,7 +238,6 @@ module GtfsApi
       return if short_name.present? || long_name.present?
       errors.add(:short_name, :short_and_long_name_blank)
       errors.add(:long_name, :short_and_long_name_blank)
-    end
-    
+    end   
   end
 end

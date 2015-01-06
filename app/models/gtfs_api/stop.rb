@@ -19,7 +19,7 @@ module GtfsApi
     set_gtfs_col :vehicle_type
      
     
-    #validations
+    #VALIDATIONS
     validates :io_id, uniqueness: true, presence: true
     validates :name, presence: true
     validates :lat, presence: true, numericality: { greater_than: -90.000000, less_than: 90.000000}
@@ -35,6 +35,7 @@ module GtfsApi
     validates :feed, presence: true
     # TODO
     # Validate timezone
+    
     
     # ASSOCIATIONS
     belongs_to :parent_station, foreign_key: 'parent_station_id', class_name: 'Stop'
@@ -55,6 +56,7 @@ module GtfsApi
     has_many :transfers_from, foreign_key: 'to_stop_id', class_name: 'Transfers'
     has_many :transfers_to, foreign_key: 'to_stop_id', class_name: 'Transfers'
     belongs_to :feed  
+    
     
     # CONSTANTS 
     # Values for location_type

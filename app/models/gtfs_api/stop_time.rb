@@ -12,6 +12,7 @@ module GtfsApi
     set_gtfs_col :drop_off_type
     set_gtfs_col :dist_traveled, :shape_dist_traveled
     
+    
     # VALIDATIONS
     validates :trip, presence: {message: :blank_or_not_found}
     #TODO validate that the 
@@ -42,6 +43,8 @@ module GtfsApi
       return if (arrival_time.nil? || departure_time.nil?)
       errors.add(:departure_time, :must_be_after_arrival_time) if (arrival_time > departure_time)
     end
+    
+    
     # VIRTUAL ATTRIBUTES
     attr_accessor :stop_io_id
     attr_accessor :trip_io_id 
@@ -81,15 +84,14 @@ module GtfsApi
       gtfs_time_setter(:departure_time, val)
     end
     
-
     
     # ASSOCIATIONS
     belongs_to :stop
     belongs_to :trip 
     belongs_to :feed  
+  
     
     # CONSTANTS
-  
     PickupTypes = {
       :regular => 0,
       :no => 1,
@@ -107,10 +109,7 @@ module GtfsApi
     REGULAR= 0 #default
     NO = 1
     PHONE_AGENCY = 2
-    COORDINATE_WITH_DRIVER = 3
-    
-
-    
+    COORDINATE_WITH_DRIVER = 3 
     
   end
 end

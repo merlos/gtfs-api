@@ -76,7 +76,6 @@ module GtfsApi
       :four_times => FOUR_TIMES,
       :five_times => FIVE_TIMES,
       :unlimited => UNLIMITED
-    }
-    
+    }    
   end
 end

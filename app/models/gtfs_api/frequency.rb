@@ -8,6 +8,7 @@ module GtfsApi
     set_gtfs_col :headway_secs
     set_gtfs_col :exact_times
     
+    
     # VALIDATIONS
     validates :trip, presence: {message: :blank_or_not_found}
     validates :start_time, presence: true
@@ -18,9 +19,11 @@ module GtfsApi
       greater_than_or_equal_to: 0, less_than_or_equal_to: 1}, allow_nil: true
     validates :feed, presence: true
     
+    
     # ASSOCIATIONS 
     belongs_to :trip
     belongs_to :feed  
+    
     
     # VIRTUAL ATTRIBUTES
     attr_accessor :trip_io_id
@@ -41,8 +44,8 @@ module GtfsApi
       gtfs_time_setter(:end_time, val)
     end
     
-    # CONSTANTS
     
+    # CONSTANTS
     # exact_times
     NOT_EXACT = 0
     EXACT = 1
@@ -51,6 +54,5 @@ module GtfsApi
       :not_exact => 0,
       :exact => 1
     }
-    
   end
 end

@@ -26,6 +26,7 @@ module GtfsApi
     has_many :calendars, foreign_key: 'service_id', primary_key: 'service_id'
     has_many :calendar_dates, foreign_key: 'service_id', primary_key: 'service_id'    
     
+    
     # VALIDATIONS 
     validates :io_id, uniqueness: true
     validates :route, presence: true
@@ -92,7 +93,6 @@ module GtfsApi
       if shape_id.present?
         errors.add(:shape_id, :not_found) if Shape.find_by(io_id: shape_id).nil?
       end
-    end
-    
+    end 
   end
 end

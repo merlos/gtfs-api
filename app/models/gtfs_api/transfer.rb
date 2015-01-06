@@ -7,7 +7,8 @@ module GtfsApi
     set_gtfs_col :transfer_type
     set_gtfs_col :min_transfer_time
     
-    # Validations
+    
+    # VALIDATIONS
     validates :from_stop, presence: {message: :blank_or_not_found}
     validates :to_stop, presence: {message: :blank_or_not_found}
     validates :transfer_type, presence: true, numericality:  {only_integer: true,
@@ -16,12 +17,14 @@ module GtfsApi
       greater_than_or_equal_to: 0}, allow_nil: true
     validates :feed, presence: true
     
-    # Associations
+    
+    # ASSOCIATIONS
     belongs_to :from_stop, class_name: 'Stop'
     belongs_to :to_stop, class_name: 'Stop'
     belongs_to :feed  
     
-    # Virtual Attributes
+    
+    # VIRTUAL ATTRIBUTES
     attr_accessor :from_stop_io_id
     attr_accessor :to_stop_io_id
     
@@ -46,7 +49,9 @@ module GtfsApi
     def to_stop_io_id=(val)    
       self.to_stop = Stop.find_by(io_id: val)    
     end    
-    # Constants
+    
+    
+    # CONSTANTS
     #transfer_types
     RECOMMENDED_TRANSFER = 0 #default
     TIMED_TRANSFER = 1
@@ -58,8 +63,6 @@ module GtfsApi
       timed: 1,
       min_transfer_time_required: 2,
       not_possible: 3
-    }
-    
-    
+    } 
   end
 end
