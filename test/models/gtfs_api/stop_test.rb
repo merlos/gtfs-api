@@ -50,11 +50,11 @@ module GtfsApi
       @model = StopTest.fill_valid_model
     end
     
-    test "valid stop" do
+    test "valid stop is valid" do
       assert @model.valid?
     end
     
-    test "stop io_id presence" do
+    test "stop io_id presence is mandatory" do
       @model.io_id = nil
       assert @model.invalid?
     end
@@ -64,21 +64,38 @@ module GtfsApi
       assert @model.invalid?
     end
     
-    test "stop lat and long presence and ranges" do
+    test "stop lat presence is required" do
       @model.lat = nil
       assert @model.invalid?
-      
+    end
+    
+    test "stop lon presence is required" do
+      @model.lon = nil
+      assert @model.invalid?
+    end
+    
+    test "lat range is between 90 and -90" do
+      @model.lat = 89.99
+      assert @model.valid?
+      @model.lat = -89.99
+      assert @model.valid? 
+      @model.lat = 90.1
+      assert @model.invalid?
       s2 = StopTest.fill_valid_model
-      s2.lon = nil
+      s2.lat = -90.1
       assert s2.invalid?
-      
-      s3 = StopTest.fill_valid_model
-      s3.lat = 91.0
-      assert s3.invalid?
-      
-      s4 = StopTest.fill_valid_model
-      s4.lon = -181.0
-      assert s4.invalid?
+    end
+    
+    test "lon range is between 180 y -180" do
+      @model.lon = 179.99
+      assert @model.valid?
+      @model.lon = -179.99
+      assert @model.valid? 
+      @model.lon = 180.1
+      assert @model.invalid?
+      s2 = StopTest.fill_valid_model
+      s2.lon = -180.1
+      assert s2.invalid?
     end
     
     test "url format" do 
@@ -221,7 +238,5 @@ module GtfsApi
      test "a Stop model that belongs to a station can be exported" do
        
      end
-    
-    
   end # class
 end # module
