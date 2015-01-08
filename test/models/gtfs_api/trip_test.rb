@@ -42,7 +42,7 @@ module GtfsApi
        service: service,
        headsign: 'headsign',
        short_name: 'short_name',
-       direction_id: 1,
+       direction: 1,
        block_id: 'block_id',
        shape_id: shape1.io_id,
        wheelchair_accesible: Trip::YES,
@@ -57,7 +57,7 @@ module GtfsApi
         service_id: t.service.io_id,
         trip_headsign: 'trip headsign',
         trip_short_name: 'trip short name',
-        direction_id: '0',
+        direction: '0',
         block_id: 'block_id',
         shape_id: t.shape_id,
         wheelchair_accesible: '0',
@@ -93,23 +93,23 @@ module GtfsApi
       assert @model.invalid?
     end
     
-    test 'direction_id is optional' do
-      @model.direction_id = nil
+    test 'direction is optional' do
+      @model.direction = nil
       assert @model.valid?
     end
     
-    test 'direction_id valid range' do
-      @model.direction_id = Trip::Direction[:outbound_travel]
+    test 'direction valid range' do
+      @model.direction = Trip::Direction[:outbound_travel]
       assert @model.valid?, @model.errors.to_a.to_s
-      @model.direction_id = Trip::INBOUND_TRAVEL
+      @model.direction = Trip::INBOUND_TRAVEL
       assert @model.valid?
     end
     
-    test 'direction_id invalid ranges' do
-      @model.direction_id = -1 
+    test 'direction invalid ranges' do
+      @model.direction = -1 
       assert @model.invalid?
       t2 = TripTest.fill_valid_model
-      t2.direction_id = 2
+      t2.direction = 2
       assert @model.invalid?
     end
     

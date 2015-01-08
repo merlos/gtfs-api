@@ -7,7 +7,7 @@ module GtfsApi
     set_gtfs_col :io_id, :trip_id
     set_gtfs_col :headsign, :trip_headsign
     set_gtfs_col :short_name, :trip_short_name
-    set_gtfs_col :direction_id
+    set_gtfs_col :direction, :direction_id
     set_gtfs_col :block_id
     set_gtfs_col :shape_id
     set_gtfs_col :wheelchair_accesible
@@ -31,7 +31,7 @@ module GtfsApi
     validates :io_id, uniqueness: true
     validates :route, presence: true
     validates :service, presence: true
-    validates :direction_id, allow_nil: true, numericality: {only_integer: true, greater_than_or_equal_to: 0, less_than_or_equal_to: 1}
+    validates :direction, allow_nil: true, numericality: {only_integer: true, greater_than_or_equal_to: 0, less_than_or_equal_to: 1}
     validates :wheelchair_accesible, allow_nil: true, numericality: {only_integer: true, greater_than_or_equal_to: 0, less_than_or_equal_to: 2}  
     validates :bikes_allowed, allow_nil: true, numericality: {only_integer: true, greater_than_or_equal_to: 0, less_than_or_equal_to: 2}  
     validate :shape_id_exists_if_set
