@@ -1,0 +1,19 @@
+trip_id,arrival_time,departure_time,stop_id,stop_sequence,stop_headsign,pickup_type,drop_off_type,shape_dist_traveled,timepoint
+alb-mar-i,00:00:00,00:00:05,albrook,1,Albrook,0,0,0,0
+alb-mar-i,00:05:00,00:05:05,policia-r,2,Policía Nacional,0,0,100,0
+alb-mar-i,00:10:00,00:10:05,abastos-r,3,Abastos,0,0,200,0
+alb-mar-i,00:15:00,00:15:05,maranon,4,Marañón,0,0,300,0
+alb-mar-r,00:00:00,00:00:05,maranon,1,Marañón,0,0,0,0
+alb-mar-r,00:10:00,00:10:05,abastos-r,2,Abastos,0,0,100,0
+alb-mar-r,00:25:00,00:25:05,policia-r,3,Policía Nacional,0,0,200,0
+alb-mar-r,00:30:00,00:30:05,albrook,4,Albrook,0,0,300,0
+linea1-i,00:00:00,00:00:05,albrook-metro,1,Albrook,0,0,0,0
+linea1-i,00:05:00,00:05:05,5-de-mayo,2,5 de Mayo,0,0,100,0
+linea1-i,00:10:00,00:10:05,loteria,3,Lotería,0,0,200,0
+linea1-i,00:15:00,00:15:05,santo-tomas,4,Santo Tomás,0,0,300,0
+linea1-i,00:20:00,00:20:05,iglesia-del-carmen,5,Iglesia del Carmen,0,0,400,0
+linea1-r,00:00:00,00:00:05,iglesia-del-carmen,1,Iglesia del Carmen,0,0,0,0
+linea1-r,00:05:00,00:05:05,santo-tomas,2,Santo Tomás,0,0,100,0
+linea1-r,00:10:00,00:10:05,loteria,3,Lotería,0,0,200,0
+linea1-r,00:15:00,00:15:05,5-de-mayo,4,5 de Mayo,0,0,300,0
+linea1-r,00:20:00,00:20:05,albrook-metro,5,Albrook,0,0,400,0

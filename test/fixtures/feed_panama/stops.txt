@@ -1,0 +1,10 @@
+stop_id,stop_code,stop_name,stop_desc,stop_lat,stop_lon,zone_id,stop_url,location_type,parent_station,stop_timezone,wheelchair_boarding,vehicle_type
+albrook,1,Albrook,Gran estación,8.974218,-79.551637,zone1,http://www.panatrans.org/albrook,1,,,0,100
+policia-r,2,Policía Nacional,Policía nacional R,8.96563,-79.549224,zone1,http://www.panatrans-org/policia,0,,,0,100
+abastos-r,3,Abastos,Abastos R,8.965701,-79.546619,zone1,http://www.panatrans.org/abastos-r,0,,,0,100
+maranon,4,Estacion de Marañon,Zona Rápida Estación de Marañon,8.961659,-79.538676,zone1,http://www.panatrans.org/maranon,1,,,0,100
+albrook-metro,M1,Albrook,Metro Albrook,8.9729782,-79.5452427864075,zone2,http://www.metro.com/albrook,0,,,0,100
+5-de-mayo,M2,5 de Mayo,Metro de 5 de Mayo,8.962210987509623,-79.5398998260498,zone2,http://www.metro.com/5demayo,0,,,0,100
+loteria,M3,Lotería,Metro de Lotería,8.967679437424621,-79.53561902046202,zone2,http://www.metro.com/loteria,1,,,0,100
+santo-tomas,M4,Santo Tomás,Metro de Santo Tomás,8.973094817315886,-79.53260958194733,zone2,http://www.metro.com/santo-tomas,0,,,0,100
+iglesia-del-carmen,M5,Iglesia del Carmen,Metro de Iglesia del Carmen,8.982366,-79.527271,zone2,http://www.metro.com/iglesia-del-carmen.com,0,,,0,100

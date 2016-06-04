@@ -1,2 +1,2 @@
 feed_publisher_name,feed_publisher_url,feed_lang,feed_start_date,feed_end_date,feed_version
-yomes,http://github.com/merlos/gtfs-api,es,20141015,20201231,1
+yomes,http://github.com/merlos/gtfs-api,es,20161015,20221231,1

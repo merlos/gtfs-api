@@ -1,0 +1,3 @@
+agency_id,agency_name,agency_url,agency_timezone,agency_phone,agency_lang,agency_fare_url
+mibus,MiBus,http://www.mibus.com.pa,Europe/Madrid,es,http://www.tarjetametrobus.com/index.php/tarifas
+metro,Metro de Panama,http://www.elmetrodepanama.com,Europe/London,es,http://www.elmetrodepanama.com/tarifa-del-metro/
