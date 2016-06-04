@@ -1,0 +1,7 @@
+route_id,route_short_name,route_long_name,route_desc,route_type,route_url,route_color,route_text_color,agency_id
+route11,route11,route 1 agency 1, route 11 desc,0,http://route11.url,FF0000,FFFFFF,AG1
+route12,route12,route 2 agency 1, route 12 desc,0,http://route12.url,00FF00,FFFFFF,AG1
+route13,route13,route 3 agency 1, route 13 desc,0,http://route13.url,0000FF,FFFFFF,AG1
+route21,route21,route 1 agency 2, route 21 desc,0,http://route21.url,FFFF00,000000,AG2
+route22,route22,route 2 agency 2, route 22 desc,0,http://route22.url,00FFFF,000000,AG2
+route23,route23,route 3 agency 2, route 23 desc,0,http://route23.url,FF00FF,000000,AG2

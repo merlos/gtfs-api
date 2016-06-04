@@ -1,0 +1,3 @@
+agency_id,agency_name,agency_url,agency_timezone,agency_phone,agency_lang,agency_fare_url
+AG1,Agency 1,http://github.com/merlos/gtfs-api,Europe/Madrid,es,http://www.merlos.org
+AG2,Agency 2,http://github.com/merlos/gtfs-api/test/,Europe/London,en,http://englishurl.com

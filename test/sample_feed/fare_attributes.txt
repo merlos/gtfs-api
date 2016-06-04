@@ -1,0 +1,7 @@
+fare_id,agency_id,price,currency_type,payment_method,transfers,transfer_duration
+fare11,AG1,10,EUR,0,0,
+fare12,AG1,15,EUR,1,1,3600
+fare13,AG1,20,EUR,0,,3700
+fare21,AG2,10,USD,0,0,
+fare22,AG2,15,USD,1,1,3600
+fare23,AG2,20,USD,0,,3700

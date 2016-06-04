@@ -1,0 +1,13 @@
+fare_id,route_id,origin_id,destination_id,contains_id
+fare11,route11,zone11,zone12,
+fare12,route11,zone11,zone13,
+fare13,route11,zone12,zone13,
+fare11,route11,zone12,zone11,
+fare12,route11,zone13,zone11,
+fare13,route11,zone13,zone12,
+fare12,route12,,,
+fare13,route13,,,
+fare21,route21,,,zone21
+fare22,route21,,,zone22
+fare23,route22,,,
+fare23,route23,,,

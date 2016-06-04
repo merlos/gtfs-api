@@ -1,11 +1,16 @@
 #!/usr/bin/env ruby
-
+#
+# __TODO__
+# In the future it would be cool to have an executable to handle actions
+# such as import and export. 
+#
+#
 begin
   require 'gtfs_api'
   rescue LoadError
     require 'rubygems'
     require 'gtfs_api'
   end
-      
+
 #more code goes here
 puts "TODO"
