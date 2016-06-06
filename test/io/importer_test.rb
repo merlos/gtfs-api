@@ -8,14 +8,14 @@ module GtfsApi
       end
 
       test 'feed with files_missing' do
-        zip_file = Rails.root.join('../','fixtures','feed_files_missing','gtfs_feed.zip').to_s
+        zip_file = Rails.root.join('../', 'fixtures', 'feeds', 'files_missing', 'gtfs_feed.zip').to_s
         assert_raises (GtfsReader::RequiredFilenamesMissing) {
           GtfsApi::Io::Importer.import zip_file, prefix: nil, verbose: false
         }
       end
 
       test 'feed with error in feed' do
-        zip_file = Rails.root.join('../','fixtures','feed_with_error','gtfs_feed.zip').to_s
+        zip_file = Rails.root.join('../', 'fixtures','feeds', 'with_error', 'gtfs_feed.zip').to_s
           GtfsApi::Io::Importer.import zip_file, prefix: nil, verbose: false
         end
 
@@ -25,7 +25,7 @@ module GtfsApi
         #strIO = StringIO.new
         #std_ori = $stdout
         #$stdout = strIO
-        zip_file = Rails.root.join('../','fixtures','feed_panama','gtfs_feed.zip').to_s
+        zip_file = Rails.root.join('../', 'fixtures', 'feeds', 'panama', 'gtfs_feed.zip').to_s
         GtfsApi::Io::Importer.import zip_file, prefix: nil, verbose: false
         #assert_not $stdout.string.include?('ERROR'), $stdout.string
         #set back standar output
@@ -58,7 +58,7 @@ module GtfsApi
         #strIO = StringIO.new
         #std_ori = $stdout
         #$stdout = strIO
-        zip_file = Rails.root.join('../','fixtures','feed_no_agency_id','gtfs_feed.zip').to_s
+        zip_file = Rails.root.join('../', 'fixtures', 'feeds', 'no_agency_id', 'gtfs_feed.zip').to_s
         GtfsApi::Io::Importer.import zip_file, prefix: nil, verbose: false
         # check everything went ok
         assert Agency.first.io_id
