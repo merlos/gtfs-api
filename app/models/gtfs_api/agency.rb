@@ -23,12 +23,7 @@ module GtfsApi
     validates :feed,      presence: true
     # TODO validate timezone
 
-    #def after_save
-    #  if io_id = nil
-    #    auto_io_id
-    #    save!
-    #  end
-
+    before_save :auto_io_id
 
     # ASSOCIATIONS
     has_many :routes
@@ -37,23 +32,12 @@ module GtfsApi
 
     private
 
-    #
-    # sets the io_id. Use it when a io_id is not provided
-    # it creates an acronym with the first letters
-    # Example:
-    #  ...
-    #  other initializations
-    #  ...
-    #  agency.name = "metropolitan transports of albacete"
-    #  agency.save!
-    #    #=> id = 100
-    #  agency.io_id
-    #   #=> 100_MTOA
-    #
-    # TODO test
     def auto_io_id
-      io_id = self.id + "_" + name.split(/\s+/).map(&:first).join.upcase
-      io_id = feed.prefix + io_id if feed.prefix.present?
+      if io_id == nil then
+        self.io_id = name.split(/\s+/).map(&:first).join.upcase + "_" + Time.new.to_f.to_s  
+        #puts self.io_id
+      end
     end
+
   end
 end

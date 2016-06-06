@@ -62,6 +62,17 @@ module GtfsApi
       assert_not a2.nil?
     end
 
+    test "agency auto io_id" do
+      @a.io_id = nil;
+      assert @a.valid?
+      @a.save!
+
+      @al = Agency.last
+      #puts @al.inspect
+      assert @al.io_id
+
+    end
+
     test "agency name presence " do
       @a.name = nil
       assert_not @a.valid?, 'agency name shall be present; ' + @a.errors.to_a.to_s

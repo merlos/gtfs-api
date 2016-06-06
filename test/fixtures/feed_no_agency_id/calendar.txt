@@ -1,4 +1,1 @@
 service_id,monday,tuesday,wednesday,thursday,friday,saturday,sunday,start_date,end_date
-weekdays,1,1,1,1,1,0,0,20160101,20301231
-weekend,0,0,0,0,0,1,1,20160101,20301231
-everyday,1,1,1,1,1,1,1,20160101,20301231

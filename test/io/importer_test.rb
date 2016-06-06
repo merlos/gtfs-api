@@ -7,21 +7,29 @@ module GtfsApi
         assert true
       end
 
-      test 'feed with error' do
-
+      test 'feed with files_missing' do
+        zip_file = Rails.root.join('../','fixtures','feed_files_missing','gtfs_feed.zip').to_s
+        assert_raises (GtfsReader::RequiredFilenamesMissing) {
+          GtfsApi::Io::Importer.import zip_file, prefix: nil, verbose: false
+        }
       end
+
+      test 'feed with error in feed' do
+        zip_file = Rails.root.join('../','fixtures','feed_with_error','gtfs_feed.zip').to_s
+          GtfsApi::Io::Importer.import zip_file, prefix: nil, verbose: false
+        end
 
       # TODO count values are hardcoded
       test 'can import feed panama' do
         # set a temporal stdout
-        strIO = StringIO.new
-        std = $stdout.clone
-        $stdout = strIO
+        #strIO = StringIO.new
+        #std_ori = $stdout
+        #$stdout = strIO
         zip_file = Rails.root.join('../','fixtures','feed_panama','gtfs_feed.zip').to_s
-        GtfsApi::Io::Importer.import zip_file, prefix: nil, verbose: true
-        assert_not $stdout.string.include?('ERROR'), $stdout.string
+        GtfsApi::Io::Importer.import zip_file, prefix: nil, verbose: false
+        #assert_not $stdout.string.include?('ERROR'), $stdout.string
         #set back standar output
-        $stdout = std
+        #$stdout = std_ori
         #count feeds
         assert_equal 1, Feed.count
         #puts Feed.all.inspect
@@ -46,33 +54,33 @@ module GtfsApi
       end
 
       test 'can set an agency id automatically' do
-        strIO = StringIO.new
-        std = $stdout.clone
-        $stdout = strIO
-        zip_file = Rails.root.join('../','fixtures','feed_panama','gtfs_feed.zip').to_s
-        GtfsApi::Io::Importer.import zip_file, prefix: nil, verbose: true
+        # TODO
+        #strIO = StringIO.new
+        #std_ori = $stdout
+        #$stdout = strIO
+        zip_file = Rails.root.join('../','fixtures','feed_no_agency_id','gtfs_feed.zip').to_s
+        GtfsApi::Io::Importer.import zip_file, prefix: nil, verbose: false
         # check everything went ok
-        assert_not $stdout.string.include?('ERROR'), $stdout.string
-        $stdout = std
+        assert Agency.first.io_id
       end
 
+      # TODO implementation
       test 'can set a prefix for a feed' do
-        strIO = StringIO.new
-        std = $stdout.clone
-        $stdout = strIO
-        prefix = 'PREFIX_'
-        zip_file = Rails.root.join('../','fixtures','feed_panama','gtfs_feed.zip').to_s
-        GtfsApi::Io::Importer.import zip_file, prefix: prefix, verbose: true
+        #strIO = StringIO.new
+        #std = $stdout.clone
+        #$stdout = strIO
+        #prefix = 'PREFIX_'
+        #zip_file = Rails.root.join('../','fixtures','feed_panama','gtfs_feed.zip').to_s
+        #GtfsApi::Io::Importer.import zip_file, prefix: prefix, verbose: true
         # check everything went ok
-        assert_not $stdout.string.include?('ERROR'), $stdout.string
-
-        $stdout = std
-        feed = Feed.find(1)
+        #assert_not $stdout.string.include?('ERROR'), $stdout.string
+        #$stdout = std
+        #feed = Feed.find(1)
         #puts feed.inspect
-        assert_equal prefix, feed.prefix
+        #assert_equal prefix, feed.prefix
 
         # TODO check prefix was added
-        
+
       end
     end
   end

@@ -1,5 +1,1 @@
 stop_id,stop_code,stop_name,stop_desc,stop_lat,stop_lon,zone_id,stop_url,location_type,parent_station,stop_timezone,wheelchair_boarding,vehicle_type
-albrook,1,Albrook,Gran estación,8.974218,-79.551637,zone1,http://www.panatrans.org/albrook,1,,,0,100
-policia-r,2,Policía Nacional,Policía nacional R,8.96563,-79.549224,zone1,http://www.panatrans-org/policia,0,,,0,100
-abastos-r,3,Abastos,Abastos R,8.965701,-79.546619,zone1,http://www.panatrans.org/abastos-r,0,,,0,100
-maranon,4,Estacion de Marañon,Zona Rápida Estación de Marañon,8.961659,-79.538676,zone1,http://www.panatrans.org/maranon,1,,,0,100

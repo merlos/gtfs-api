@@ -92,7 +92,7 @@ several feeds into the same database. But in order to do you should
 care about id clashing (feed one has route "Route1" and feed two has
 route_id "Route1").
 
-__TODO__ __TO_TEST___
+__TODO__
 If you want to include more than one feed without worrying about the
 name clashing, just add the column `feed_id` with a unique value in each
 `feed_info.txt` file of all your feeds.
@@ -100,12 +100,11 @@ name clashing, just add the column `feed_id` with a unique value in each
 GtfsApi importer will add the value of the column `feed_id` as prefix on all the ids of all the files of the feed. For example, in a feed that has feed_id= "CA" and an `agency.txt` has
 `agency_id="CADE"` then the stored value for agency will be `"CA_CADE"`.
 
-__TODO__ __TO_TEST___
-Some feeds may not include the `agency_id`. In those cases `agency_id`
+Some feeds may not include `agency_id` in `agency.txt`. In those cases `agency_id`
 is auto generated during import.
 
 Also, in order to support multiple agencies, `fare_attribute.txt` should
-include the `agency_id`
+include the `agency_id`.
 
 ##Updating a feed
 __TODO__ At this moment you need to clean the database and upload the feed again.
