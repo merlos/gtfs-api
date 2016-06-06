@@ -177,14 +177,6 @@ module GtfsApi
       end
     end
 
-    test 'feed prefix is added to an agency on import' do
-      agency_row = AgencyTest.valid_gtfs_feed_row
-      feed = FeedTest.fill_valid_model 'prefix'
-      feed.save!
-      agency = Agency.new_from_gtfs(agency_row, feed)
-      assert agency.valid?, agency.errors.to_a.to_s
-      assert_equal feed.prefix + agency_row[:agency_id], agency.send(:io_id)
-    end
 
     test "agency model can be exported to gtfs feed row" do
       agency_row = @a.to_gtfs

@@ -5,7 +5,6 @@ module GtfsApi
     set_gtfs_col :service_io_id, :service_id
     set_gtfs_col :date
     set_gtfs_col :exception_type
-    add_feed_prefix_to_attr [:service_io_id]
 
     #VALIDATIONS
     validates :service,         presence: true

@@ -70,11 +70,9 @@ module GtfsApi
         feed = Feed.find(1)
         #puts feed.inspect
         assert_equal prefix, feed.prefix
-        assert_equal prefix + 'mibus', Agency.find(1).io_id
 
-        # TODO check StopTime
-        #puts st1.inspect
-        #assert st1.stop.io_id.includes? (prefix)
+        # TODO check prefix was added
+        
       end
     end
   end

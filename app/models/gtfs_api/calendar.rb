@@ -14,7 +14,6 @@ module GtfsApi
     set_gtfs_col :sunday
     set_gtfs_col :start_date
     set_gtfs_col :end_date
-    add_feed_prefix_to_attr [:service_io_id]
 
 
     # VALIDATIONS

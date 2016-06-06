@@ -6,7 +6,6 @@ module GtfsApi
     set_gtfs_col :to_stop_io_id, :to_stop_id
     set_gtfs_col :transfer_type
     set_gtfs_col :min_transfer_time
-    add_feed_prefix_to_attr [:from_stop_io_id, :to_stop_io_id]
 
 
     # VALIDATIONS

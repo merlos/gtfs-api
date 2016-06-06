@@ -115,49 +115,8 @@ module GtfsApi
             # { "GtfsApi::Agency" => :agency }
             @@gtfs_files = {}
 
-            #
-            # Default attributes to which the feed.prefix will be added.
-            # Default value is returned when set_feed_prefix_to_attr is not set,
-            # Default value returned is [:io_id]
-            #
-            @@default_feed_prefix_attr = [:io_id]
 
-            # An hash with the gtfs_attr array that require to add feed prefix if the feed has a prefix.
-            # { "GtfsApi::Agency" => [:service_id]}
-            #
-            @@feed_prefix_attr = {}
 
-            #
-            # Feeds can have a prefix to avoid io_id clash when loading multiple feeds in the
-            # same database.
-            # This prefix is added to all the io_ids if set in Feed class.
-            #
-            # This function returns the attribute in which the feed prefix will be appened.
-            # The model can set this attr with set_feed_prefix_to_attr
-            # By default it returns default_feed_prefix_attr (io_id)
-            #
-            def feed_prefix_attr
-              if @@feed_prefix_attr[self].nil?
-                @@default_feed_prefix_attr
-              else
-                @@feed_prefix_attr[self]
-              end
-            end
-
-            #
-            # returns the gtfs_feed column symbol for the feed_prefix_attr.
-            # Example: GtfsAgency
-            # feed_prefix_attr is :io_id
-            # :io_id is the gtfs_col :agency_id
-            # For agency this method would return :agency_id
-            #
-            def gtfs_cols_for_feed_prefix_attr
-              r = {}
-              self.feed_prefix_attr.each do |attr|
-                r[attr] = self.gtfs_col_for_attr(attr)
-              end
-              r
-            end
             #
             # Defines a map between GtfsApi model column name and the GTFS column spcecification.
             # Used for import and export
@@ -327,16 +286,6 @@ module GtfsApi
               obj.from_gtfs_called = true
               if feed != nil
                 obj.send( "#{@@gtfs_feed_attr}=", feed)
-                #set the prefix if the
-                #puts feed.inspect
-                #puts ''
-                #puts 'feed prefix: ' + feed.prefix if feed.prefix.present?
-                #puts '** feed_prefix_attr: ' + self.feed_prefix_attr.to_s
-                #puts '** ' + obj.class.to_s
-                #puts @@feed_prefix_attr
-                self.feed_prefix_attr.each do |attr|
-                  obj.send("#{attr}=", feed.prefix + obj[attr].to_s) if feed.prefix.present?
-                end
               end
               obj.after_from_gtfs(model_attr_hash)
               return obj

@@ -252,22 +252,7 @@ module GtfsApi
        #------
      end
 
-     test 'feed prefix is added to a trip on import' do
-       model_class = Trip
-       test_class = TripTest
-       feed_row = test_class.valid_gtfs_feed_row
-       feed = FeedTest.fill_valid_model 'prefix'
-       feed.save!
-       model = model_class.new_from_gtfs(feed_row, feed)
-       assert model.valid?, model.errors.to_a.to_s
-       # check feed_prefix_attr has the io_id with the value
-       prefixed_cols = model_class.gtfs_cols_for_feed_prefix_attr
-       # model_attr value should be the concatenation of  feed.prefix + the default id
-       prefixed_cols.each do |model_attr, feed_col|
-         assert feed.prefix + feed_row[feed_col], model.send(model_attr)
-       end
-      end
-
+  
 
      test 'a Trip model can be exported into a gtfs row' do
        model_class = Trip

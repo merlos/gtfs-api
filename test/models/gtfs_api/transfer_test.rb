@@ -25,11 +25,9 @@ module GtfsApi
       to = StopTest.fill_valid_model feed
       from.save!
       to.save!
-    end
-
       {
-        from_stop_id: from_io_id,
-        to_stop_id: to_io_id,
+        from_stop_id: from.io_id,
+        to_stop_id: to.io_id,
         transfer_type: "0",
         min_transfer_time: "3600"
       }
@@ -161,28 +159,6 @@ module GtfsApi
         end
         #------
       end
-
-      test 'feed prefix are added to transfers cols on import' do
-        model_class = Transfer
-        test_class = TransferTest
-        feed = FeedTest.fill_valid_model 'prefix'
-        feed.save!
-        feed_row = test_class.valid_gtfs_feed_row feed
-
-        model = model_class.new_from_gtfs(feed_row, feed)
-        puts Stop.all.inspect
-        puts feed_row
-        puts model.inspect
-        puts model.from_stop.inspect
-        puts model.to_stop.inspect
-        assert model.valid?, model.errors.to_a.to_s
-        # check feed_prefix_attr has the io_id with the value
-        prefixed_cols = model_class.gtfs_cols_for_feed_prefix_attr
-        # model_attr value should be the concatenation of  feed.prefix + the default id
-        prefixed_cols.each do |model_attr, feed_col|
-          assert feed.prefix + feed_row[feed_col], model.send(model_attr)
-        end
-       end
 
       test "a Transfer model can be exported into a gtfs row" do
         model_class = Transfer

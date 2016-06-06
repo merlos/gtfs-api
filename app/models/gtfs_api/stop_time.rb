@@ -11,7 +11,6 @@ module GtfsApi
     set_gtfs_col :pickup_type
     set_gtfs_col :drop_off_type
     set_gtfs_col :dist_traveled, :shape_dist_traveled
-    add_feed_prefix_to_attr [:trip_io_id, :stop_io_id]
 
     # VALIDATIONS
     validates :trip, presence: {message: :blank_or_not_found}
