@@ -153,8 +153,20 @@ GtfsApi is relies heavily in tests. It uses the standard test suite that comes w
 rake test
 ```
 
+if you see many useless warnings run:
+
+```
+RUBYOPT=-W0 rake test
+```
+
 ### Testing Import/Export
 __TODO__
+
+There is a set of fake feeds to run some tests on the folder /test/fixtures/feed_***
+
+ * feed_panama/: Basic feed with two agencies (metro,mibus), each agency has a route (linea1, alb-mar) and each route has two trips (linea1-i,linea1-r | alb-mar-i, alb-mar-r).
+
+ * full_feed/: A feed with all the files.
 
 
 ## Generating the API documentation
@@ -171,7 +183,7 @@ This generates some html documents in the `doc/` folder.
 
 (C) Juan Manuel Merlos http://www.merlos.org | [@merlos](http://twitter.com/merlos)
 
-Want to contribute? Fork and pull a request :)
+Want to contribute? Fork the project and make pull a request :)
 
 ## License
 This project rocks and uses MIT-LICENSE.

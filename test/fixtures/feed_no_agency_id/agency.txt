@@ -1,0 +1,2 @@
+agency_name,agency_url,agency_timezone,agency_phone,agency_lang,agency_fare_url
+MiBus,http://www.mibus.com.pa,Europe/Madrid,800-9393,es,http://www.tarjetametrobus.com/index.php/tarifas

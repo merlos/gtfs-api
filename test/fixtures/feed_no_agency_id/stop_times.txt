@@ -1,0 +1,9 @@
+trip_id,arrival_time,departure_time,stop_id,stop_sequence,stop_headsign,pickup_type,drop_off_type,shape_dist_traveled,timepoint
+alb-mar-i,00:00:00,00:00:05,albrook,1,Albrook,0,0,0,0
+alb-mar-i,00:05:00,00:05:05,policia-r,2,Policía Nacional,0,0,100,0
+alb-mar-i,00:10:00,00:10:05,abastos-r,3,Abastos,0,0,200,0
+alb-mar-i,00:15:00,00:15:05,maranon,4,Marañón,0,0,300,0
+alb-mar-r,00:00:00,00:00:05,maranon,1,Marañón,0,0,0,0
+alb-mar-r,00:10:00,00:10:05,abastos-r,2,Abastos,0,0,100,0
+alb-mar-r,00:25:00,00:25:05,policia-r,3,Policía Nacional,0,0,200,0
+alb-mar-r,00:30:00,00:30:05,albrook,4,Albrook,0,0,300,0

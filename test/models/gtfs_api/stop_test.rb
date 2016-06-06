@@ -1,15 +1,19 @@
 require 'test_helper'
 
 module GtfsApi
-  class StopTest < ActiveSupport::TestCase  
+  class StopTest < ActiveSupport::TestCase
     # fill a Stop object with valid data
     # no zone and parent_stop is filled
-    def self.fill_valid_model
-      feed = FeedTest.fill_valid_model
+    def self.fill_valid_model (feed = nil)
+      feed = FeedTest.fill_valid_model if feed.nil?
       feed.save!
-   
+      if feed.prefix then
+        io_id = feed.prefix + Time.now.to_f.to_s
+      else
+        io_id = Time.now.to_f.to_s
+      end
       return Stop.new(
-      io_id: Time.now.to_f.to_s,
+      io_id: io_id,
       code: 'stop_code',
       name: 'stop_name',
       desc: 'stop_desc',
@@ -24,11 +28,11 @@ module GtfsApi
       vehicle_type: Stop::VehicleTypes[:tram],
       feed: feed
       )
-    end  
-    
+    end
+
     def self.valid_gtfs_feed_row
       return {
-        stop_id: "stop_" + Time.now.to_f.to_s,
+        stop_id:  Time.now.to_f.to_s,
         stop_code: 'stop_code',
         stop_name: 'stop_name',
         stop_desc: 'stop_desc',
@@ -42,63 +46,63 @@ module GtfsApi
         wheelchair_boarding: '0',
         #Gtfs Extension
         vehicle_type: '100'
-        
+
       }
     end
-    
-    def setup 
+
+    def setup
       @model = StopTest.fill_valid_model
     end
-    
+
     test "valid stop is valid" do
       assert @model.valid?
     end
-    
+
     test "stop io_id presence is mandatory" do
       @model.io_id = nil
       assert @model.invalid?
     end
-    
+
     test "stop name presence" do
       @model.name = nil
       assert @model.invalid?
     end
-    
+
     test "stop lat presence is required" do
       @model.lat = nil
       assert @model.invalid?
     end
-    
+
     test "stop lon presence is required" do
       @model.lon = nil
       assert @model.invalid?
     end
-    
+
     test "lat range is between 90 and -90" do
       @model.lat = 89.99
       assert @model.valid?
       @model.lat = -89.99
-      assert @model.valid? 
+      assert @model.valid?
       @model.lat = 90.1
       assert @model.invalid?
       s2 = StopTest.fill_valid_model
       s2.lat = -90.1
       assert s2.invalid?
     end
-    
+
     test "lon range is between 180 y -180" do
       @model.lon = 179.99
       assert @model.valid?
       @model.lon = -179.99
-      assert @model.valid? 
+      assert @model.valid?
       @model.lon = 180.1
       assert @model.invalid?
       s2 = StopTest.fill_valid_model
       s2.lon = -180.1
       assert s2.invalid?
     end
-    
-    test "url format" do 
+
+    test "url format" do
       @model.url = "http://www.lalala.com"
       assert @model.valid?
       @model.url = "https://www.lalala.com"
@@ -109,22 +113,22 @@ module GtfsApi
       model2.url = "/home/merlos/caracoles"
       assert model2.invalid?
     end
-    
+
     test "location_type upper limit is 2" do
       @model.location_type = 3
-      assert @model.invalid?    
+      assert @model.invalid?
     end
-    
+
     test "wheelchair_boarding has to be integer" do
       @model.wheelchair_boarding = 1.1
       assert @model.invalid?
     end
-    
+
     test "wheelchair_boarding has to be positive" do
       @model.wheelchair_boarding = -1
       assert @model.invalid?
     end
-    
+
     test "wheelchair_boarding has to be 0 or 1" do
       @model.wheelchair_boarding = 0
       assert @model.valid?
@@ -133,31 +137,31 @@ module GtfsApi
       @model.wheelchair_boarding = 2
       assert @model.invalid?
     end
-   
-    
+
+
     # Vehicle type
     test "vehicle_type out of upper limit is invalid" do
       @model.vehicle_type = 1703 # valid range is [0..1703]
       assert @model.invalid?
     end
-    
+
     test "vehicle_type has to be positive" do
       @model.vehicle_type = -1
       assert @model.invalid?
     end
-  
+
     test "vehicle_type has to be in VehicleTypes constant" do
        @model.vehicle_type = 1250
        assert @model.invalid?
        assert (@model.errors.added? :vehicle_type, :invalid)
     end
-    
+
     test "url is optional" do
       @model.url = nil
       assert @model.valid?
     end
-    
-    # ASSOCIATION 
+
+    # ASSOCIATION
     test 'fares_as_origin association works' do
       @model.zone_id = 'superzone'
       @model.save!
@@ -167,7 +171,7 @@ module GtfsApi
       assert_equal @model.fares_as_origin.size, 1
       assert_equal @model.fares_as_origin.first.origin_id, @model.zone_id
     end
-      
+
     test 'fares_as_destination association works' do
       @model.zone_id = 'superzone'
       @model.save!
@@ -177,7 +181,7 @@ module GtfsApi
       assert_equal @model.fares_as_destination.size, 1
       assert_equal @model.fares_as_destination.first.destination_id, @model.zone_id
     end
-    
+
     test 'fares_is_contained association works' do
       @model.zone_id = 'superzone'
       @model.save!
@@ -187,13 +191,14 @@ module GtfsApi
       assert_equal @model.fares_is_contained.size, 1
       assert_equal @model.fares_is_contained.first.contains_id, @model.zone_id
     end
-    
-    
+
+
     #TODO test parent_station
-    
-    
-    # GTFSABLE tests
-    
+
+    #
+    # GTFSABLE IMPORT/EXPORT
+    #
+
     test "stop row can be imported into a Stop model" do
        model_class = Stop
        test_class = StopTest
@@ -213,7 +218,7 @@ module GtfsApi
        end
        #------
      end
-   
+
      test "a Stop model can be exported into a gtfs row" do
        model_class = Stop
        test_class = StopTest
@@ -229,14 +234,14 @@ module GtfsApi
          assert_equal model.send(model_attr), feed_value, "Testing " + model_attr.to_s + " vs " + feed_col.to_s
        end
      end
-     
+
      test "a stop row that belongs to a station can be imported into a gtfs row" do
-       
+
      end
-    
-    
+
+
      test "a Stop model that belongs to a station can be exported" do
-       
+
      end
   end # class
 end # module

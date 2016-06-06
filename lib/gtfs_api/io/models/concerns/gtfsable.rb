@@ -5,7 +5,7 @@
 #
 # TODO add docummentation of this Concern as it is important to understand the code
 #
-# 
+#
 module GtfsApi
   module Io
     module Models
@@ -16,40 +16,40 @@ module GtfsApi
           # this variable is true if new_from_gtfs() is called
           # You can use it within model callbacks
           #
-          @from_gtfs_called
-          
+          #@from_gtfs_called
+
           def from_gtfs_called
             @from_gtfs_called ||= false
           end
-          
-          def from_gtfs_called=(val) 
+
+          def from_gtfs_called=(val)
             @from_gtfs_called= val == true ? true : false
           end
-          
+
           #
           # returns a hash with the cols of the row of the corresponding file.
           # It assigns to each key (column of the file) the value of the mapped
-          #  attribute. 
+          #  attribute.
           #
           # To see how to map each column to an attribute @see set_gtfs_col
           #
           # It calls the hook after_to_gtfs_feed (gtfs_feed_row) which allows the
-          # model to override the default assignation if necessary 
+          # model to override the default assignation if necessary
           #
           # returns empty hash if there is no mapping
           def to_gtfs
             gtfs_feed_row = {}
             return gtfs_feed_row if self.class.gtfs_cols.nil?
             #rehash to gtfs feed
-            self.class.gtfs_cols.each do |model_attr,feed_col| 
+            self.class.gtfs_cols.each do |model_attr,feed_col|
               #call send because virt. attr can only be accessed like that
-              col_value = self.send(model_attr) 
+              col_value = self.send(model_attr)
               col_value = col_value.to_gtfs if (col_value.is_a?(Date) || col_value.is_a?(Time))
               gtfs_feed_row[feed_col] = col_value
             end
             self.after_to_gtfs(gtfs_feed_row)
           end
-    
+
           # Hook. overwrite if required
           # it receives an standard mapping of the model attributes to gtfs feed columns
           # this method should be overridden if the default value of an attribute needs
@@ -59,7 +59,7 @@ module GtfsApi
           def after_to_gtfs (gtfs_feed_row)
             return gtfs_feed_row
           end
-          
+
           #
           # Hook. This method is called after *_from_gtfs is called
           #
@@ -72,12 +72,12 @@ module GtfsApi
           # Times are always kept in UTC
           #
           # @param attribute_sym[Symbol] attribute that will be parsed
-          # @param val[String] the time string in gtfs format, ex: 25:33:33 or Time objet 
+          # @param val[String] the time string in gtfs format, ex: 25:33:33 or Time objet
           #
           #
           # @TODO Think: if is it better to store it as an integer or timestamp?
-          # 
-          def gtfs_time_setter(attribute_sym, val) 
+          #
+          def gtfs_time_setter(attribute_sym, val)
             if val.is_a? String
               t = Time.new_from_gtfs(val)
               if t.nil?
@@ -90,17 +90,17 @@ module GtfsApi
             end
             write_attribute(attribute_sym, val)
           end
-                    
-          
+
+
           module ClassMethods
-          
+
             #
             # attribute that holds the feed association
             #
             @@gtfs_feed_attr = :feed
-      
+
             # Hash with the relations between gtfs_api => gtfs_feed column names ordered by classes
-            # 
+            #
             # @example
             #   { "class1 => {
             #        :gtfs_api_col_name1 => :gtfs_feed_name
@@ -109,17 +109,60 @@ module GtfsApi
             #     }
             #   }
             @@gtfs_cols = {}
-      
+
             # a hash with the relation between the gtfs_api class name and gtfs_feed file name
             # @example
-            # { ["GtfsApi::Agency"] => :agency }
+            # { "GtfsApi::Agency" => :agency }
             @@gtfs_files = {}
-      
+
             #
-            # Defines a map between GtfsApi model column name and the GTFS column spcecification. 
+            # Default attributes to which the feed.prefix will be added.
+            # Default value is returned when set_feed_prefix_to_attr is not set,
+            # Default value returned is [:io_id]
+            #
+            @@default_feed_prefix_attr = [:io_id]
+
+            # An hash with the gtfs_attr array that require to add feed prefix if the feed has a prefix.
+            # { "GtfsApi::Agency" => [:service_id]}
+            #
+            @@feed_prefix_attr = {}
+
+            #
+            # Feeds can have a prefix to avoid io_id clash when loading multiple feeds in the
+            # same database.
+            # This prefix is added to all the io_ids if set in Feed class.
+            #
+            # This function returns the attribute in which the feed prefix will be appened.
+            # The model can set this attr with set_feed_prefix_to_attr
+            # By default it returns default_feed_prefix_attr (io_id)
+            #
+            def feed_prefix_attr
+              if @@feed_prefix_attr[self].nil?
+                @@default_feed_prefix_attr
+              else
+                @@feed_prefix_attr[self]
+              end
+            end
+
+            #
+            # returns the gtfs_feed column symbol for the feed_prefix_attr.
+            # Example: GtfsAgency
+            # feed_prefix_attr is :io_id
+            # :io_id is the gtfs_col :agency_id
+            # For agency this method would return :agency_id
+            #
+            def gtfs_cols_for_feed_prefix_attr
+              r = {}
+              self.feed_prefix_attr.each do |attr|
+                r[attr] = self.gtfs_col_for_attr(attr)
+              end
+              r
+            end
+            #
+            # Defines a map between GtfsApi model column name and the GTFS column spcecification.
             # Used for import and export
             #
-            # @param model_name[Symbol] name of attr in the model 
+            # @param model_name[Symbol] name of attr in the model
             # @param gtfs_feed_col[Symbol] name of the column in the GTFS feed specification. (optional)
             #
             # If model_name and gtfs_feed_col are equal you can skipt setting gtfs_feed_col
@@ -127,85 +170,99 @@ module GtfsApi
             # @example
             #   class GtfsApi::Agency < ActiveRecord::Base
             #    include GtfsApi::Concerns::Models::Concerns::Gtfsable
-            #     set_gtfs_col :name            # expected GTFS feed file column: name 
+            #     set_gtfs_col :name            # expected GTFS feed file column: name
             #     set_gtfs_col :example, :test  # expected GTFS feed file column: test
             #   end
             def set_gtfs_col (model_attr, gtfs_feed_col = nil )
               gtfs_feed_col = model_attr if gtfs_feed_col.nil?
-              @@gtfs_cols[self] = {} if @@gtfs_cols[self].nil? 
-              @@gtfs_cols[self][model_attr] = gtfs_feed_col 
+              @@gtfs_cols[self] = {} if @@gtfs_cols[self].nil?
+              @@gtfs_cols[self][model_attr] = gtfs_feed_col
             end
-      
+
             # returns[Symbol] gtfs column for the model attribute
             def gtfs_col_for_attr(model_attr)
               @@gtfs_cols[self][model_attr]
             end
-      
+
             #returns[Symbol] model attribute for the gtfs_col
             def attr_for_gtfs_col(gtfs_col)
               self.gtfs_attr[gtfs_col]
             end
-      
+
+            #
+            # Use this method for to set the list of attributes that need to include the feed.prefix
+            # during import.
+            # @see default_feed_prefix_attr default value.
+            # Example:
+            #  class GtfsApi::Agency < ActiveRecord::Base
+            #    include GtfsApi::Concerns::Models::Concerns::Gtfsable
+            #     add_feed_prefix_to_attr [:io_id]
+            #     ...
+            # @param model_attr_arr[Array] array with the attribute symbols to which the prefix is added
+            #
+            def add_feed_prefix_to_attr (model_attr_arr)
+              @@feed_prefix_attr[self] = model_attr_arr
+            end
             #
             # sets the gtfs feed file name (without extension) linked to this class
             # Default value set is the plural of the containing class. Example Agency => :agencies
             #
-            # @param gtfs_feed_file_sym[Symbol] name of the file 
+            # @param gtfs_feed_file_sym[Symbol] name of the file
             # @example
             #  class GtfsApi::Agency < ActiveRecord::Base
             #    include GtfsApi::Concerns::Models::Concerns::Gtfsable
-            #     set_gtfs_file :agency   
+            #     set_gtfs_file :agency
             #     .
             #
             def set_gtfs_file (gtfs_feed_file_sym)
               @@gtfs_files[self] = gtfs_feed_file_sym
             end
-      
+
             # Map of GtfsApi columns as keys and Gtfs feed column as values
             # :gtfs_api_col => :gtfs_feed_col
             def gtfs_cols
-              @@gtfs_cols[self] 
+              @@gtfs_cols[self]
             end
-      
+
             #
             # @return[Symbol] the gtfs file name symbol linked to this class
-            # 
+            #
             # if set_gtfs_file was not called, it returns the underscore class name
             # pluralized
             # Example: For the class GtfsApi::Agency it would return :agencies
-      
+
             def gtfs_file
               @@gtfs_files[self] ||= self.to_s.split("::").last.underscore.pluralize.to_sym
             end
-      
+
             #
             # @returns[String] the gtfs file name string linked to this class
-            # 
+            #
             # if set_gtfs_file was not calle => returns the underscore class name pluralized
             # Ex: For the class GtfsApi::Agency it would return agencies.txt
             #
             def gtfs_filename
               return self.gtfs_file.to_s + '.txt'
             end
-            
+
             #
-            # @return [array] list of associations between classes and filenames  
+            # @return [array] list of associations between classes and filenames
             #
             def gtfs_files
               return @@gtfs_files
             end
-            
-          
+
+
             # map of gtfs_feed_col => gtfs_api_col
             def gtfs_attr
               @@gtfs_cols[self].invert unless @@gtfs_cols[self].nil?
             end
-      
+
             # cols for all classes
             def gtfs_cols_raw
               @@gtfs_cols
             end
-      
+
             #
             # This method rehashes a row from gtfs feed specs
             #
@@ -223,17 +280,17 @@ module GtfsApi
                 model_attr_values[self.attr_for_gtfs_col(csv_col)] =  val if self.gtfs_cols.values.include? (csv_col)
               end
               return model_attr_values
-            end 
-            
-            
+            end
+
+
             # To create a new gtfsable object. It will assign to each gtfs_col defined
             # for this class to the model attributes.
             #
-            # 
-            # One way to keep track of the gtfs objects that belong to a feed is by 
+            #
+            # One way to keep track of the gtfs objects that belong to a feed is by
             # having a belongs_to reference to another model.
             #
-            # 
+            #
             # Example:
             #
             #   class Agency < ActiveRecord::Base
@@ -252,38 +309,49 @@ module GtfsApi
             #   feed = Feed.find(1)
             #   csv_row = {agency_id: 'agency_id'}
             #   a = Agency.new_from_gtfs(csv_row, feed)
-            #   puts a.agency_id 
+            #   puts a.agency_id
             #   # => agency_id
             #   puts a.feed_id
             #
             # @param csv_row row with gtfs_cols of the feed
             # @param feed feed object that will be asigned.
-            # 
+            #
             # It will set the variable @from_gtfs_called to true in the object instance.
-            # Useful to use with active record callbacks, for example, if you need to do 
+            # Useful to use with active record callbacks, for example, if you need to do
             # something before saving only if it an imported object
-            # in the model http://api.rubyonrails.org/classes/ActiveRecord/Callbacks.html 
+            # in the model http://api.rubyonrails.org/classes/ActiveRecord/Callbacks.html
             #
             def new_from_gtfs(gtfs_feed_row, feed = nil)
               model_attr_hash = self.rehash_from_gtfs(gtfs_feed_row)
-              obj = self.new(model_attr_hash) 
+              obj = self.new(model_attr_hash)
               obj.from_gtfs_called = true
-              obj.send( "#{@@gtfs_feed_attr}=", feed)  if feed != nil
+              if feed != nil
+                obj.send( "#{@@gtfs_feed_attr}=", feed)
+                #set the prefix if the
+                #puts feed.inspect
+                #puts ''
+                #puts 'feed prefix: ' + feed.prefix if feed.prefix.present?
+                #puts '** feed_prefix_attr: ' + self.feed_prefix_attr.to_s
+                #puts '** ' + obj.class.to_s
+                #puts @@feed_prefix_attr
+                self.feed_prefix_attr.each do |attr|
+                  obj.send("#{attr}=", feed.prefix + obj[attr].to_s) if feed.prefix.present?
+                end
+              end
               obj.after_from_gtfs(model_attr_hash)
               return obj
-            end 
-            
-            
-            def self.extended(base) 
+            end
+
+
+            def self.extended(base)
               #force set the default file
               @@gtfs_files[self] = self.to_s.split("::").last.underscore.pluralize.to_sym
             end
-           
-            
-          end #ClassMethods  
+
+
+          end #ClassMethods
         end
       end
     end
   end
 end
-

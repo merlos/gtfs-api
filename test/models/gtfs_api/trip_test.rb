@@ -12,30 +12,30 @@ module GtfsApi
     def self.fill_valid_model
       agency = GtfsApi::AgencyTest.fill_valid_model
       agency.save!
-          
+
       feed = FeedTest.fill_valid_model
       feed.save!
-      
+
       route = RouteTest.fill_valid_model
       route.save!
-      
+
       shape1 = ShapeTest.fill_valid_model
       shape1.save!
-      shape2 = ShapeTest.fill_valid_model 
+      shape2 = ShapeTest.fill_valid_model
       shape2.io_id = shape1.io_id #two points with the same id
-      shape2.save! 
-      
+      shape2.save!
+
       service = ServiceTest.fill_valid_model
       service.save!
-      
+
       cal = CalendarTest.fill_valid_model
       cal.service = service
       cal.save!
-      
+
       cal_date = CalendarDateTest.fill_valid_model
       cal_date.service = service
       cal_date.save!
-      
+
       return Trip.new(
        io_id: 'trip' + Time.new.to_f.to_s,
        route: route,
@@ -48,7 +48,7 @@ module GtfsApi
        wheelchair_accesible: Trip::YES,
        feed: feed);
     end
-    
+
     def self.valid_gtfs_feed_row
       t = TripTest.fill_valid_model
       {
@@ -64,15 +64,15 @@ module GtfsApi
         bikes_allowed: '0',
       }
     end
-    
-    def setup 
+
+    def setup
       @model = TripTest.fill_valid_model
     end
-    
+
     test 'valid trip' do
       assert @model.valid?
     end
-    
+
     test 'trip io_id uniqueness' do
       @model.io_id = 'pepe'
       assert @model.valid?
@@ -80,44 +80,44 @@ module GtfsApi
       t2 = TripTest.fill_valid_model
       t2.io_id = 'pepe'
       assert t2.invalid?
-      assert_raises ( ActiveRecord::RecordInvalid) {t2.save!}    
+      assert_raises ( ActiveRecord::RecordInvalid) {t2.save!}
     end
-    
+
     test 'route presence is required' do
       @model.route = nil
       assert @model.invalid?
     end
-    
+
     test 'service presence is required' do
       @model.service = nil
       assert @model.invalid?
     end
-    
+
     test 'direction is optional' do
       @model.direction = nil
       assert @model.valid?
     end
-    
+
     test 'direction valid range' do
       @model.direction = Trip::Direction[:outbound_travel]
       assert @model.valid?, @model.errors.to_a.to_s
       @model.direction = Trip::INBOUND_TRAVEL
       assert @model.valid?
     end
-    
+
     test 'direction invalid ranges' do
-      @model.direction = -1 
+      @model.direction = -1
       assert @model.invalid?
       t2 = TripTest.fill_valid_model
       t2.direction = 2
       assert @model.invalid?
     end
-    
+
     test 'wheelchair_accesible is optional' do
       @model.wheelchair_accesible = nil
       assert @model.valid?
     end
-    
+
     test 'wheelchair_accesible valid range' do
       @model.wheelchair_accesible = Trip::NO_INFO
       assert @model.valid?
@@ -126,7 +126,7 @@ module GtfsApi
       @model.wheelchair_accesible = Trip::NO
       assert @model.valid?
     end
-    
+
     test 'wheelchair_accesible invalid range' do
        @model.wheelchair_accesible = -1
        assert @model.invalid?
@@ -134,12 +134,12 @@ module GtfsApi
        @model.wheelchair_accesible = 3
        assert @model.invalid?
     end
-    
+
     test 'bikes_allowed is optional' do
       @model.bikes_allowed = nil
       assert @model.valid?
     end
-    
+
     test 'bikes_allowed valid range' do
       @model.bikes_allowed = Trip::NO_INFO
       assert @model.valid?
@@ -148,7 +148,7 @@ module GtfsApi
       @model.bikes_allowed = Trip::NO
       assert @model.valid?
     end
-    
+
     test 'bikes_allowed invalid range' do
       @model.wheelchair_accesible = -1
       assert @model.invalid?
@@ -156,26 +156,26 @@ module GtfsApi
       @model.wheelchair_accesible = 3
       assert @model.invalid?
     end
-    
-    
+
+
     test 'that validates shape_id exists if set' do
       @model.shape_id = "lalalala" #a shape_id that does not exist
       assert @model.invalid?
     end
-        
+
     #TEST ASSOCIAIONS
-    
+
     test 'shapes association returns shapes' do
       sh1 = Shape.where(io_id: @model.shape_id)
       #puts "sh1:" + sh1.count.to_s
       #puts "shapes: " + t.shapes.length.to_s
       assert_equal @model.shapes.size, sh1.count
       @model.shapes.each do |shape|
-        assert_equal sh1.first.io_id, shape.io_id 
+        assert_equal sh1.first.io_id, shape.io_id
         #puts shape.io_id
       end
     end
-    
+
     test 'calendar association returns calendars' do
       cal1 = Calendar.where(service_id: @model.service_id)
       assert_equal @model.calendars.size, cal1.count
@@ -183,28 +183,28 @@ module GtfsApi
         assert_equal @model.service_id, cal.service_id
       end
     end
-    
+
     test 'calendar_dates association is correctly defined' do
       cal1 = CalendarDate.where(service_id: @model.service_id)
       assert_equal @model.calendar_dates.size, cal1.count
       @model.calendar_dates.each do |cal|
         assert_equal @model.service_id, cal.service_id
-      end 
+      end
     end
-        
-    
+
+
     # VIRTUAL ATTRIBUTES
-    
+
     test 'that validates route has to exist' do
       @model.route_io_id = "fake route"
       assert @model.invalid?
     end
-    
+
     test 'that validates service exists' do
       @model.service_io_id = "lololololo" #a service that does not exist
       assert @model.invalid?
     end
-    
+
     test 'virtual attribute route_io_id sets the route object' do
       r = RouteTest.fill_valid_model
       assert r.valid?
@@ -212,20 +212,24 @@ module GtfsApi
       @model.route = nil
       assert_equal @model.route, nil #if the trip has no route set
       assert_equal @model.route_io_id, nil # trip.route_io_id is therefore nil
-      @model.route_io_id = r.io_id # by assigning the route_io_id we assign the route as well      
+      @model.route_io_id = r.io_id # by assigning the route_io_id we assign the route as well
       assert_equal r.io_id, @model.route.io_id #check it out
       assert @model.valid?
       @model.save!
       assert_equal r.io_id, @model.route.io_id #check now I can access route
     end
-    
+
     test 'virtual attribute service_io_id sets the service object' do
       service = ServiceTest.fill_valid_model
       service.save!
-      @model.service_io_id = service.io_id 
+      @model.service_io_id = service.io_id
       assert_equal service.io_id, @model.service.io_id
-    end 
-    
+    end
+
+    #
+    # GTFSABLE IMPORT/EXPORT
+    #
+
     test 'trip row can be imported into a Trip model' do
        model_class = Trip
        test_class = TripTest
@@ -237,7 +241,7 @@ module GtfsApi
        feed.save!
        model = model_class.new_from_gtfs(feed_row, feed)
        assert model.valid?, model.errors.to_a.to_s
-      
+
        model_class.gtfs_cols.each do |model_attr, feed_col|
          next if exceptions.include? (model_attr)
          model_value = model.send(model_attr)
@@ -247,7 +251,24 @@ module GtfsApi
        end
        #------
      end
-  
+
+     test 'feed prefix is added to a trip on import' do
+       model_class = Trip
+       test_class = TripTest
+       feed_row = test_class.valid_gtfs_feed_row
+       feed = FeedTest.fill_valid_model 'prefix'
+       feed.save!
+       model = model_class.new_from_gtfs(feed_row, feed)
+       assert model.valid?, model.errors.to_a.to_s
+       # check feed_prefix_attr has the io_id with the value
+       prefixed_cols = model_class.gtfs_cols_for_feed_prefix_attr
+       # model_attr value should be the concatenation of  feed.prefix + the default id
+       prefixed_cols.each do |model_attr, feed_col|
+         assert feed.prefix + feed_row[feed_col], model.send(model_attr)
+       end
+      end
+
+
      test 'a Trip model can be exported into a gtfs row' do
        model_class = Trip
        test_class = TripTest
@@ -263,8 +284,8 @@ module GtfsApi
          feed_value = Time.new_from_gtfs(feed_value) if model.send(model_attr).is_a? Time
          assert_equal model.send(model_attr), feed_value, "Testing " + model_attr.to_s + " vs " + feed_col.to_s
        end
-     end 
-    
-    
+     end
+
+
   end
 end

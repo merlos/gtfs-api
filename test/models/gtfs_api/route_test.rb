@@ -1,15 +1,15 @@
 require 'test_helper'
 
 module GtfsApi
-  
+
   class RouteTest < ActiveSupport::TestCase
-  
-    # it's ok For testing VALIDATORS 
+
+    # it's ok For testing VALIDATORS
     def self.fill_valid_model
       feed = FeedTest.fill_valid_model
       feed.save!
-   
-      Route.new( 
+
+      Route.new(
         io_id: 'route_' + Time.new.to_f.to_s,
         short_name:'short name',
         long_name: 'route_long_name',
@@ -21,7 +21,7 @@ module GtfsApi
         feed: feed
       )
     end
-    
+
     def self.valid_gtfs_feed_row
       a = AgencyTest.fill_valid_model
       a.save!
@@ -37,32 +37,32 @@ module GtfsApi
         route_text_color: 'BACACA'
       }
     end
-    
-    def setup 
+
+    def setup
       @model = RouteTest.fill_valid_model
     end
-    
+
     test "route io_id has to be present" do
       @model.io_id = nil
       assert @model.invalid?
     end
-    
+
     test "is valid when route short name is present but not route long" do
       @model.short_name = nil
       assert @model.valid?
     end
-    
-    test "is valid when route long name is present but not route short name" do  
+
+    test "is valid when route long name is present but not route short name" do
       @model.long_name = nil
       assert @model.valid?
     end
-    
-    test "is invalid when neither long name nor short name are present" do  
+
+    test "is invalid when neither long name nor short name are present" do
       @model.short_name = nil
       @model.long_name = nil
       assert @model.invalid?
     end
-    
+
     test "route_types are defined and valid" do
       @model.route_type = Route::TRAM_TYPE
       assert @model.valid?
@@ -81,83 +81,83 @@ module GtfsApi
       @model.route_type = Route::FUNICULAR_TYPE
       assert @model.valid?
     end
-    
-    test "route_type out of upper limit is invalid" do   
+
+    test "route_type out of upper limit is invalid" do
       @model.route_type = 1703 # valid range is [0..1703]
       assert @model.invalid?
     end
-    
-    test "route_type has to be positive" do   
+
+    test "route_type has to be positive" do
       @model.route_type = -1
       assert @model.invalid?
     end
-  
-    test "route_type has to be in RouteTypes constant" do   
+
+    test "route_type has to be in RouteTypes constant" do
        @model.route_type = 1250
        assert @model.invalid?
        assert (@model.errors.added? :route_type, :invalid)
     end
-    test "url is optional" do  
+    test "url is optional" do
       @model.url = nil
       assert @model.valid?
     end
-    
-    test "http and https are valid url formats" do  
+
+    test "http and https are valid url formats" do
       @model.url = "http://www.foofoofoo.es/blow"
       assert @model.valid?, @model.errors.to_a.to_s
       @model.url = "https://barbarba@model.es/drunk"
       assert @model.valid?, @model.errors.to_a.to_s
     end
-    
-    test "ftp addresses are an invalid url format" do 
+
+    test "ftp addresses are an invalid url format" do
       @model.url = "ftp://www.fetepe.es"
       assert @model.invalid?
     end
-    
-    test 'absolute url is invalid format' do 
+
+    test 'absolute url is invalid format' do
       @model.url = "/rururutatata/cacadevaca"
       assert @model.invalid?
-    end  
-        
-    test "color attribute is optional" do 
+    end
+
+    test "color attribute is optional" do
       @model.color = nil
       assert @model.valid?
     end
-    
+
     test "color length cannot be less than 6" do
       @model.color = "12345"
       assert @model.invalid?
     end
-      
+
     test "color legth cannot be larger than 6" do
       @model.color = "1234567"
       assert @model.invalid?
     end
-    
+
     test "color has to be an hex value" do
       @model.color = "GGGGGG"
       assert @model.invalid?
     end
-    
+
     test "text_color is optional" do
       @model.color = nil
       assert @model.valid?
     end
-    test "text_color length cannot be less than 6" do  
-      @model.color = "12345" 
+    test "text_color length cannot be less than 6" do
+      @model.color = "12345"
       assert @model.invalid?
     end
-    
+
     test "text_color length cannot be greater than 6" do
       @model.color="1234567"
       assert @model.invalid?
     end
-    
-    test "text_color character have to be in hex string" do  
+
+    test "text_color character have to be in hex string" do
       @model.color="GGGGGG"
       assert @model.invalid?
     end
-        
+
     # database stuff
     test "uniqueness of route" do
       @model.io_id = "route_66"
@@ -167,7 +167,7 @@ module GtfsApi
       assert r2.invalid?
       assert_raises ( ActiveRecord::RecordInvalid) {r2.save!}
     end
-    
+
     # check belongs_to agency
     test 'belongs to agency' do
       a = AgencyTest.fill_valid_model
@@ -181,7 +181,7 @@ module GtfsApi
       assert_equal a.io_id, r2.agency.io_id
 
     end
-    
+
     test 'virtual attribute agency_io_id works properly' do
       a = AgencyTest.fill_valid_model
       assert a.valid?
@@ -194,12 +194,11 @@ module GtfsApi
       @model.save!
       assert_equal @model.agency.io_id, a.io_id #check no I can access agency
     end
-    
+
     #
-    # GTFSABLE
+    # GTFSABLE IMPORT/EXPORT
     #
-    # IMPORT EXPORT
-    
+
     test "routes row can be imported into a Route model" do
       model_class = Route
       test_class = RouteTest
@@ -216,7 +215,7 @@ module GtfsApi
       end
       #------
     end
-    
+
     test "a Route model can be exported into a gtfs row" do
       model_class = Route
       test_class = RouteTest
@@ -229,8 +228,8 @@ module GtfsApi
         assert_equal model.send(model_attr), feed_row[feed_col], "Testing " + model_attr.to_s + " vs " + feed_col.to_s
       end
     end
-      
-    
-  
+
+
+
   end #class
 end #module

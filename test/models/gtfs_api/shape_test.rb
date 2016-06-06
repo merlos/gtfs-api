@@ -5,23 +5,23 @@ module GtfsApi
     # test "the truth" do
     #   assert true
     # end
-    
+
     def self.fill_valid_model
       feed = FeedTest.fill_valid_model
       feed.save!
-   
+
       return Shape.new(
       io_id: 'unique',
       pt_lat: '30.1',
       pt_lon: '30.2',
       pt_sequence: 1,
       dist_traveled: 3.3,
-      feed: feed 
+      feed: feed
       )
     end
-    
+
     def self.valid_gtfs_feed_row
-      return { 
+      return {
       shape_id: 'unique',
       shape_pt_lat: '30.1',
       shape_pt_lon: '30.2',
@@ -29,95 +29,96 @@ module GtfsApi
       shape_dist_traveled: '3.3'
       }
     end
-    
-    def setup 
+
+    def setup
       @model = ShapeTest.fill_valid_model
     end
-    
+
     test 'valid shape' do
-      assert @model.valid? 
+      assert @model.valid?
     end
-    
+
     test 'io_id presence required' do
       @model.io_id = nil
       assert @model.invalid?
-    end 
-    
+    end
+
     test 'pt lat presence required' do
       @model.pt_lat = nil
       assert @model.invalid?
     end
-    
+
     test 'pt lon presence required' do
       @model.pt_lon = nil
-      assert @model.invalid? 
+      assert @model.invalid?
     end
-   
+
     test 'pt lat lower range min is -90' do
       @model.pt_lat = -89.9999
       assert @model.valid?
       @model.pt_lat = -90.1
       assert @model.invalid?
     end
-    
+
     test 'pt lat upper range max is 90' do
       @model.pt_lat = 89.99
       assert @model.valid?
       @model.pt_lat = 90.1
       assert @model.invalid?
     end
-    
+
     test "pt lon lower range min is -180" do
       @model.pt_lon = -179.99
       assert @model.valid?
       @model.pt_lon = -180.1
       assert @model.invalid?
     end
-    
+
     test "pt_long upper range max is 180" do
       @model.pt_lon = 179.99
       assert @model.valid?
       @model.pt_lon = 180.1
       assert @model.invalid?
     end
-    
+
     test 'pt sequence presence is required' do
       @model.pt_sequence = nil
       assert @model.invalid?
     end
-    
+
     test "pt sequence has to be positive" do
       @model.pt_sequence = 0
       assert @model.valid?
-      
+
       @model.pt_sequence = -1
       assert @model.invalid?
     end
-  
+
     test 'pt seq has to be an integer' do
       @model.pt_sequence = 1.1
       assert @model.invalid?
     end
-    
+
     test 'dist_traveled is optional' do
       @model.dist_traveled = nil
       assert @model.valid?
     end
-    
+
     test 'dist_traveled has to be positive' do
       @model.dist_traveled = -1.0
       assert @model.invalid?
     end
-    
+
     test 'dist_traveled has to be a number' do
       @model.dist_traveled = "holitas"
       assert @model.invalid?
     end
-     
+
     # ASSOCIATIONS
-    
-    
-    # GTFSABLE tests
+
+    #
+    # GTFSABLE IMPORT/EXPORT
+    #
     
     test "shape row can be imported into a Shape model" do
        model_class = Shape
@@ -138,7 +139,7 @@ module GtfsApi
        end
        #------
      end
-   
+
      test "a Shape model can be exported into a gtfs row" do
        model_class = Shape
        test_class = ShapeTest
@@ -154,6 +155,6 @@ module GtfsApi
          assert_equal model.send(model_attr), feed_value, "Testing " + model_attr.to_s + " vs " + feed_col.to_s
        end
      end
-          
+
   end
 end
