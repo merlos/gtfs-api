@@ -21,7 +21,6 @@
 # THE SOFTWARE.
 
 
-
 require 'test_helper'
 
 module GtfsApi

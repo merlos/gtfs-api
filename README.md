@@ -27,7 +27,7 @@ Note: This project is still on an early stage, so keep in mind that
 if you plan to set it on a production environment.
 
 
-## The why of Fry?
+## The [why of Fry](https://en.wikipedia.org/wiki/The_Why_of_Fry)?
 The author and contributors of this software believe in open source
 as a key of innovation as well as public transportation as a
 democratic path to freedom and development. Please, __abstain to use
@@ -35,7 +35,7 @@ this software if you don't share this belief__.
 
 "An advanced city is not one where even the poor use cars, but
 rather one where even the rich use public transport" - Enrique Peñalosa
-former Mayor of Bogotá
+former Mayor of Bogotá (Colombia)
 [see Ted Talk](https://www.ted.com/talks/enrique_penalosa_why_buses_represent_democracy_in_action)
 
 
@@ -44,7 +44,8 @@ former Mayor of Bogotá
 Add the following line to your `Gemfile`
 
 ```
-gem gtfs_api
+gem 'gtfs-reader', :git=>"https://github.com/merlos/gtfs-reader.git", :branch => 'master'
+gem 'gtfs_api'
 ```
 
 Then run
@@ -97,7 +98,7 @@ If you want to include more than one feed without worrying about the
 name clashing, just add the column `feed_id` with a unique value in each
 `feed_info.txt` file of all your feeds.
 
-GtfsApi importer will add the value of the column `feed_id` as prefix on all the ids of all the files of the feed. For example, in a feed that has feed_id= "CA" and an `agency.txt` has
+__TODO__ GtfsApi importer will add the value of the column `feed_id` as prefix on all the ids of all the files of the feed. For example, in a feed that has feed_id= "CA" and an `agency.txt` has
 `agency_id="CADE"` then the stored value for agency will be `"CA_CADE"`.
 
 Some feeds may not include `agency_id` in `agency.txt`. In those cases `agency_id`
@@ -131,9 +132,10 @@ Not supported yet:
   2.- translations.txt
   3.- route-to-route and trip-to-trip transfers additional values
 
-## Sample Client
-__TODO__
-To test the API, you have available a simple javascript client that is ready to consume GtfsApi.
+## Sample App
+
+- [panatrans-api](https://github.com/merlos/panatrans-api/tree/features/gtfs-to-panatrans) Simple implementation of an API for displaying transportation stops and routes of Panama. This link points to the branch in which this engine is being used (testing).
+- [panatrans-web](https://github.com/merlos/panatrans-web) Web client based on AngularJS and Bootstrap that works with panatrans-api.
 
 ## Notes for developers
 
@@ -198,5 +200,8 @@ Thanks to Sangster for creating the gem [gtfs-reader](https://github.com/sangste
   - [panatrans-dataset](https://github.com/merlos/panatrans-dataset) Dataset that works with panatans-api. This dataset includes a collaborative database of the Panamenian bus system information.
 
 Other projects:
-     - [gtfs_engine](https://github.com/sangster/gtfs_engine) another engine for rails.
-     - [Open Trip Planner](http://www.opentripplanner.org/)
+
+  - [Transit Feeds](http://transitfeeds.com/) A public repository of GTFS feeds
+  - [Transit land ](https://transit.land/) Another public repository of GTFS feeds and API
+  - [gtfs_engine](https://github.com/sangster/gtfs_engine) another engine for rails.
+  - [Open Trip Planner](http://www.opentripplanner.org/)
