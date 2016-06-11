@@ -34,7 +34,7 @@ class CreateGtfsApiStopTimes < ActiveRecord::Migration
       t.decimal :dist_traveled
 
       t.belongs_to :feed, null: false, index: true
-      t.timestamps
+      t.timestamps null: false
     end
     add_index :gtfs_api_stop_times, :trip_id
     add_index :gtfs_api_stop_times, :stop_id

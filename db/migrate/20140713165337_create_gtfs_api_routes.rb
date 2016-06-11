@@ -35,7 +35,7 @@ class CreateGtfsApiRoutes < ActiveRecord::Migration
       t.string :text_color, limit: 8
 
       t.belongs_to :feed, null: false, index: true
-      t.timestamps
+      t.timestamps null: false
     end
     add_index :gtfs_api_routes, :io_id
   end

@@ -40,7 +40,7 @@ class CreateGtfsApiStops < ActiveRecord::Migration
       t.integer :vehicle_type
 
       t.belongs_to :feed, null: false, index: true
-      t.timestamps
+      t.timestamps null: false
     end
     add_index :gtfs_api_stops, :io_id
     add_index :gtfs_api_stops, :zone_id

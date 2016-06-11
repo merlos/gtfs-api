@@ -32,7 +32,7 @@ class CreateGtfsApiFareAttributes < ActiveRecord::Migration
       t.integer :transfer_duration
 
       t.belongs_to :feed, null: false, index: true
-      t.timestamps
+      t.timestamps null: false
     end
     add_index :gtfs_api_fare_attributes, :io_id
     add_index :gtfs_api_fare_attributes, :agency_id

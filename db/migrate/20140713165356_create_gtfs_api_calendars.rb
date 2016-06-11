@@ -35,7 +35,7 @@ class CreateGtfsApiCalendars < ActiveRecord::Migration
       t.date :end_date
 
       t.belongs_to :feed, null: false, index: true
-      t.timestamps
+      t.timestamps null: false
     end
     add_index :gtfs_api_calendars, :service_id
   end

@@ -145,7 +145,190 @@ On model attributes names we got rid of all non informative prefixes of some tab
 
 Because rails ids are in general integers and to keep consistency among imports and exports internally string "whatever_ids" defined in the GTFS spec have been converted into "io_id" on each model and the primary key is the rails id. Also, keeping an integer id it may help on performance for large
 
-To make it easy update and delete feeds from different feeds, all models that hold GTFS data include a relation to the model Feed. Whenever you import a feed a new feed
+To make it easy update and delete feeds from different feeds, all models that hold GTFS data include a relation to the model Feed. Whenever you import a feed a new feed a reference to the feed is added.
+
+### Model map
+
+Here you have the names of the models that hold the information of the feed as well as the properties defined.
+
+
+```
+model					                      feed
+-----					                      ----
+publisher_name                <=> 	feed_publisher_name
+publisher_url                 <=> 	feed_publisher_url
+lang                          <=> 	feed_lang
+start_date                    <=> 	feed_start_date
+end_date                      <=> 	feed_end_date
+version                       <=> 	feed_version
+io_id                         <=> 	feed_id
+name                          <=> 	name
+--------------------------------------------
+
+GtfsApi::Agency
+model					                      feed
+-----					                      ----
+io_id                         <=> 	agency_id
+name                          <=> 	agency_name
+url                           <=> 	agency_url
+timezone                      <=> 	agency_timezone
+lang                          <=> 	agency_lang
+phone                         <=> 	agency_phone
+fare_url                      <=> 	agency_fare_url
+--------------------------------------------
+
+GtfsApi::Route
+model					                      feed
+-----					                      ----
+io_id                         <=> 	route_id
+short_name                    <=> 	route_short_name
+long_name                     <=> 	route_long_name
+desc                          <=> 	route_desc
+route_type                    <=> 	route_type
+url                           <=> 	route_url
+color                         <=> 	route_color
+text_color                    <=> 	route_text_color
+agency_io_id                  <=> 	agency_id
+--------------------------------------------
+
+GtfsApi::Calendar
+model					                      feed
+-----					                      ----
+service_io_id                 <=> 	service_id
+monday                        <=> 	monday
+tuesday                       <=> 	tuesday
+wednesday                     <=> 	wednesday
+thursday                      <=> 	thursday
+friday                        <=> 	friday
+saturday                      <=> 	saturday
+sunday                        <=> 	sunday
+start_date                    <=> 	start_date
+end_date                      <=> 	end_date
+--------------------------------------------
+
+GtfsApi::CalendarDate
+model					                      feed
+-----					                      ----
+service_io_id                 <=> 	service_id
+date                          <=> 	date
+exception_type                <=> 	exception_type
+--------------------------------------------
+
+GtfsApi::Shape
+model					                      feed
+-----					                      ----
+io_id                         <=> 	shape_id
+pt_lat                        <=> 	shape_pt_lat
+pt_lon                        <=> 	shape_pt_lon
+pt_sequence                   <=> 	shape_pt_sequence
+dist_traveled                 <=> 	shape_dist_traveled
+--------------------------------------------
+
+GtfsApi::Trip
+model					                      feed
+-----					                      ----
+route_io_id                   <=> 	route_id
+service_io_id                 <=> 	service_id
+io_id                         <=> 	trip_id
+headsign                      <=> 	trip_headsign
+short_name                    <=> 	trip_short_name
+direction                     <=> 	direction_id
+block_id                      <=> 	block_id
+shape_id                      <=> 	shape_id
+wheelchair_accesible          <=> 	wheelchair_accesible
+bikes_allowed                 <=> 	bikes_allowed
+--------------------------------------------
+
+GtfsApi::Stop
+model					                      feed
+-----					                      ----
+io_id                         <=> 	stop_id
+code                          <=> 	stop_code
+name                          <=> 	stop_name
+desc                          <=> 	stop_desc
+lat                           <=> 	stop_lat
+lon                           <=> 	stop_lon
+zone_id                       <=> 	zone_id
+url                           <=> 	stop_url
+location_type                 <=> 	location_type
+parent_station_id             <=> 	parent_station
+timezone                      <=> 	stop_timezone
+wheelchair_boarding           <=> 	wheelchair_boarding
+vehicle_type                  <=> 	vehicle_type
+--------------------------------------------
+
+GtfsApi::StopTime
+model					                      feed
+-----					                      ----
+trip_io_id                    <=> 	trip_id
+arrival_time                  <=> 	arrival_time
+departure_time                <=> 	departure_time
+stop_io_id                    <=> 	stop_id
+stop_sequence                 <=> 	stop_sequence
+stop_headsign                 <=> 	stop_headsign
+pickup_type                   <=> 	pickup_type
+drop_off_type                 <=> 	drop_off_type
+dist_traveled                 <=> 	shape_dist_traveled
+--------------------------------------------
+
+GtfsApi::Frequency
+model					                      feed
+-----					                      ----
+trip_io_id                    <=> 	trip_id
+start_time                    <=> 	start_time
+end_time                      <=> 	end_time
+headway_secs                  <=> 	headway_secs
+exact_times                   <=> 	exact_times
+--------------------------------------------
+
+GtfsApi::FareAttribute
+model					                      feed
+-----					                      ----
+io_id                         <=> 	fare_id
+agency_io_id                  <=> 	agency_id
+price                         <=> 	price
+currency_type                 <=> 	currency_type
+payment_method                <=> 	payment_method
+transfers                     <=> 	transfers
+transfer_duration             <=> 	transfer_duration
+--------------------------------------------
+
+GtfsApi::Transfer
+model					                      feed
+-----					                      ----
+from_stop_io_id               <=> 	from_stop_id
+to_stop_io_id                 <=> 	to_stop_id
+transfer_type                 <=> 	transfer_type
+min_transfer_time             <=> 	min_transfer_time
+--------------------------------------------
+
+GtfsApi::FareRule
+model					                      feed
+-----					                      ----
+fare_io_id                    <=> 	fare_id
+route_io_id                   <=> 	route_id
+origin_id                     <=> 	origin_id
+destination_id                <=> 	destination_id
+contains_id                   <=> 	contains_id
+--------------------------------------------
+
+
+Files linked to models
+-----------------------------------
+GtfsApi::FeedInfo                       <=> 	feed_info
+GtfsApi::Agency                         <=> 	agency
+GtfsApi::Route                          <=> 	routes
+GtfsApi::Calendar                       <=> 	calendar
+GtfsApi::CalendarDate                   <=> 	calendar_dates
+GtfsApi::Shape                          <=> 	shapes
+GtfsApi::Trip                           <=> 	trips
+GtfsApi::Stop                           <=> 	stops
+GtfsApi::StopTime                       <=> 	stop_times
+GtfsApi::Frequency                      <=> 	frequencies
+GtfsApi::FareAttribute                  <=> 	fare_attributes
+GtfsApi::Transfer                       <=> 	transfers
+GtfsApi::FareRule                       <=> 	fare_rules
+```
 
 ## Testing
 GtfsApi is relies heavily in tests. It uses the standard test suite that comes with rails. To run the tests:
@@ -163,11 +346,11 @@ RUBYOPT=-W0 rake test
 ### Testing Import/Export
 __TODO__
 
-There is a set of fake feeds to run some tests on the folder /test/fixtures/feed_***
+There is a set of fake feeds to run some tests. These feeds are available on the folder `/test/fixtures/feed/`
 
- * feed_panama/: Basic feed with two agencies (metro,mibus), each agency has a route (linea1, alb-mar) and each route has two trips (linea1-i,linea1-r | alb-mar-i, alb-mar-r).
+ * `feed_panama/`: Basic feed with two agencies (metro,mibus), each agency has a route (linea1, alb-mar) and each route has two trips (linea1-i,linea1-r | alb-mar-i, alb-mar-r).
 
- * full_feed/: A feed with all the files.
+ * `full_feed/`: A feed with all the files.
 
 
 ## Generating the API documentation

@@ -30,7 +30,7 @@ class CreateGtfsApiTransfers < ActiveRecord::Migration
       t.integer :min_transfer_time
 
       t.belongs_to :feed, null: false, index: true
-      t.timestamps
+      t.timestamps null: false
     end
     add_index :gtfs_api_transfers, :from_stop_id
     add_index :gtfs_api_transfers, :to_stop_id

@@ -26,6 +26,8 @@ class CreateGtfsApiServices < ActiveRecord::Migration
     create_table :gtfs_api_services do |t|
       t.string :io_id
       t.belongs_to :feed, null: false, index: true
+
+      t.timestamps null: false
     end
     add_index :gtfs_api_services, :io_id
   end

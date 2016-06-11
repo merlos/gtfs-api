@@ -28,7 +28,7 @@ class CreateGtfsApiCalendarDates < ActiveRecord::Migration
       t.integer :exception_type
 
       t.belongs_to :feed, null: false, index: true
-      t.timestamps
+      t.timestamps null: false
     end
     add_index :gtfs_api_calendar_dates, :service_id
   end

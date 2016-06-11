@@ -30,7 +30,7 @@ class CreateGtfsApiFeeds < ActiveRecord::Migration
       t.string :prefix
       t.integer :version
 
-      t.timestamps
+      t.timestamps null: false
     end
     add_index :gtfs_api_feeds, :io_id
   end

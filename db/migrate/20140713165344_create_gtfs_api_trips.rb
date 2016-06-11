@@ -39,7 +39,7 @@ class CreateGtfsApiTrips < ActiveRecord::Migration
       t.integer :bikes_allowed, default: 0
 
       t.belongs_to :feed, null: false, index: true
-      t.timestamps
+      t.timestamps null: false
     end
     add_index :gtfs_api_trips, :io_id
     add_index :gtfs_api_trips, :block_id
