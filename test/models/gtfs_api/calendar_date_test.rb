@@ -26,10 +26,14 @@ require 'test_helper'
 module GtfsApi
   class CalendarDateTest < ActiveSupport::TestCase
 
-    def self.fill_valid_model
-      feed = FeedTest.fill_valid_model
-      feed.save!
-      service = ServiceTest.fill_valid_model
+    # fills a valid model
+    # @param feed [GtfsApi::Feed]
+    def self.fill_valid_model (feed = nil)
+      if feed.nil?
+        feed = FeedTest.fill_valid_model
+        feed.save!
+      end
+      service = ServiceTest.fill_valid_model feed
       service.save!
       return CalendarDate.new(
         service: service,
@@ -39,6 +43,9 @@ module GtfsApi
         )
     end
 
+    # generates a valid gtfs_feed_row.
+    #
+    # if the test requires a feed use @see valid_gtfs_feed_row_for_feed
     def self.valid_gtfs_feed_row
       service = ServiceTest.fill_valid_model
       service.save!
@@ -48,6 +55,27 @@ module GtfsApi
         exception_type: CalendarDate::SERVICE_ADDED
       }
     end
+
+    # generates a valid gtfs feed row for the feed argument
+    # @param feed [GtfsApi::Feed] A feed.
+    #
+    # This method hall be used to create a row of a feed with prefix.
+    # It creates the relations with the feed_id elements wich have the feed
+
+    def self.valid_gtfs_feed_row_for_feed(feed)
+      service = ServiceTest.fill_valid_model feed
+      service.save!
+      # io_id has the feed prefix, but when importing it does not have it
+      service_id = service.io_id
+      service_id = service_id.gsub(feed.prefix,'') if feed.prefix.present?
+      #puts service_id
+      {
+        service_id: service_id,
+        date: '20140610',
+        exception_type: CalendarDate::SERVICE_ADDED
+      }
+    end
+
 
     def setup
       @model = CalendarDateTest.fill_valid_model
@@ -127,6 +155,12 @@ module GtfsApi
       end
     end
 
+    test "calendar_date file row can be imported when feed has a prefix" do
+      model_class = CalendarDate
+      test_class = CalendarDateTest
+      #--- common part
+      generic_row_import_test_for_feed_with_prefix(model_class, test_class) # defined in test_helper
+    end
 
     test "a CalendarDate model can be exported into a gtfs row" do
       model_class = CalendarDate

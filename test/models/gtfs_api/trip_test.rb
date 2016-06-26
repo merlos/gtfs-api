@@ -30,35 +30,40 @@ module GtfsApi
     # 1 valid shape with two points
     # 2 calendars
     # 1 calendar_date
-    def self.fill_valid_model
-      agency = GtfsApi::AgencyTest.fill_valid_model
+    def self.fill_valid_model(feed = nil)
+
+      if feed.nil? then
+        feed = FeedTest.fill_valid_model
+        feed.save!
+      end
+
+      agency = GtfsApi::AgencyTest.fill_valid_model feed
       agency.save!
 
-      feed = FeedTest.fill_valid_model
-      feed.save!
 
-      route = RouteTest.fill_valid_model
+      route = RouteTest.fill_valid_model feed
       route.save!
 
-      shape1 = ShapeTest.fill_valid_model
+      shape1 = ShapeTest.fill_valid_model feed
       shape1.save!
-      shape2 = ShapeTest.fill_valid_model
+      shape2 = ShapeTest.fill_valid_model feed
       shape2.io_id = shape1.io_id #two points with the same id
       shape2.save!
 
-      service = ServiceTest.fill_valid_model
+      service = ServiceTest.fill_valid_model feed
       service.save!
 
-      cal = CalendarTest.fill_valid_model
+      cal = CalendarTest.fill_valid_model feed
       cal.service = service
       cal.save!
 
-      cal_date = CalendarDateTest.fill_valid_model
+      cal_date = CalendarDateTest.fill_valid_model feed
       cal_date.service = service
       cal_date.save!
 
+      feed_prefix = feed.prefix.present? ? feed.prefix : ''
       return Trip.new(
-       io_id: 'trip' + Time.new.to_f.to_s,
+       io_id: feed_prefix + '_trip_' + Time.new.to_f.to_s,
        route: route,
        service: service,
        headsign: 'headsign',
@@ -84,6 +89,22 @@ module GtfsApi
         wheelchair_accesible: '0',
         bikes_allowed: '0',
       }
+    end
+
+    def self.valid_gtfs_feed_row_for_feed(feed)
+      # this model will have al associations with prefix
+      model = self.fill_valid_model feed
+      # in the row we do not have the feed.prefix, so we get rid of it on all associations
+      trip_id = feed.prefix.present? ? model.io_id.gsub(feed.prefix,'') : model.io_id
+      route_id = feed.prefix.present? ? model.route_io_id.gsub(feed.prefix,'') : model.route_io_id
+      service_id = feed.prefix.present? ? model.service_io_id.gsub(feed.prefix,'') : model.service_io_id
+      shape_id = feed.prefix.present? ? model.shape_id.gsub(feed.prefix,'') : model.shape_id
+      row = self.valid_gtfs_feed_row
+      row[:trip_id] = trip_id
+      row[:route_id] = route_id
+      row[:service_id] = service_id
+      row[:shape_id] = shape_id
+      return row
     end
 
     def setup
@@ -273,6 +294,11 @@ module GtfsApi
        #------
      end
 
+     test "trip row can be imported into a Trip model with a feed with prefix" do
+       model_class = Trip
+       test_class = TripTest
+       generic_row_import_test_for_feed_with_prefix(model_class, test_class) # defined in test_helper
+     end
 
 
      test 'a Trip model can be exported into a gtfs row' do

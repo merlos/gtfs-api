@@ -33,7 +33,6 @@ class CreateGtfsApiStops < ActiveRecord::Migration
       t.string :zone_id, null:true #=> fare rules,
       t.string :url
       t.integer :location_type, default: 0
-      t.string :io_parent_station
       t.belongs_to :parent_station, null:true
       t.string :timezone, limit: 64
       t.integer :wheelchair_boarding

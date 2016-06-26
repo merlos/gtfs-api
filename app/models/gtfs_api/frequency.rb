@@ -29,6 +29,7 @@ module GtfsApi
     set_gtfs_col :end_time
     set_gtfs_col :headway_secs
     set_gtfs_col :exact_times
+    set_gtfs_cols_with_prefix [:trip_id]
 
 
     # VALIDATIONS

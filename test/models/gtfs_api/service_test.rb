@@ -26,11 +26,14 @@ require 'test_helper'
 module GtfsApi
   class ServiceTest < ActiveSupport::TestCase
 
-    def self.fill_valid_model
-      feed = FeedTest.fill_valid_model
-      feed.save!
+    def self.fill_valid_model(feed = nil)
+      if feed.nil?
+        feed = FeedTest.fill_valid_model
+        feed.save!
+      end
+      feed_prefix = feed.prefix.present? ? feed.prefix : ""
       return Service.new( {
-        io_id: "service_" + Time.new.to_f.to_s,
+        io_id: feed_prefix + "service_" + Time.new.to_f.to_s,
         feed: feed
       })
     end

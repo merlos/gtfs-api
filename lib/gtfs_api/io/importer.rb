@@ -67,7 +67,9 @@ module GtfsApi
                   Importer.import_one_row_of(GtfsApi::FeedInfo, row, @feed)
                 }
                 agency {|row|
-                  #todo validate if agency has more than one agency => agencies have the field set
+                  if @feed.prefix != nil then
+                    row[:agency_id] = @feed.prefix + row[:agency_id] if row[:agency_id]
+                  end
                   Importer.import_one_row_of(GtfsApi::Agency,row, @feed)
                   if row[:agency_id].nil?
                     agency_id = GtfsApi::Agency.last.io_id
@@ -81,13 +83,27 @@ module GtfsApi
                   end
                   Importer.import_one_row_of(GtfsApi::Route,row,@feed)
                 }
-                calendar {|row|Importer.import_one_row_of(GtfsApi::Calendar,row, @feed)}
-                calendar_dates{ |row| Importer.import_one_row_of(GtfsApi::CalendarDate,row, @feed)}
-                shapes { |row| Importer.import_one_row_of(GtfsApi::Shape,row, @feed)}
-                trips {|row| Importer.import_one_row_of(GtfsApi::Trip, row, @feed)}
-                stops { |row| Importer.import_one_row_of(GtfsApi::Stop, row, @feed)}
-                stop_times {|row| Importer.import_one_row_of(GtfsApi::StopTime, row, @feed)}
-                frequencies { |row| Importer.import_one_row_of(GtfsApi::Frequency, row, @feed)}
+                calendar {|row|
+                  Importer.import_one_row_of(GtfsApi::Calendar,row, @feed)
+                }
+                calendar_dates{ |row|
+                  Importer.import_one_row_of(GtfsApi::CalendarDate,row, @feed)
+                }
+                shapes { |row|
+                  Importer.import_one_row_of(GtfsApi::Shape,row, @feed)
+                }
+                trips {|row|
+                  Importer.import_one_row_of(GtfsApi::Trip, row, @feed)
+                }
+                stops { |row|
+                  Importer.import_one_row_of(GtfsApi::Stop, row, @feed)
+                }
+                stop_times {|row|
+                  Importer.import_one_row_of(GtfsApi::StopTime, row, @feed)
+                }
+                frequencies { |row|
+                  Importer.import_one_row_of(GtfsApi::Frequency, row, @feed)
+                }
                 fare_attributes { |row|
                   if row[:agency_id].nil?
                     GtfsReader::Log.warn "agency_id not set for Fare Attributes. Assigned #{agency_id}"
@@ -95,8 +111,12 @@ module GtfsApi
                   end
                   Importer.import_one_row_of(GtfsApi::FareAttribute, row, @feed)
                 }
-                transfers { |row| Importer.import_one_row_of(GtfsApi::Transfer, row, @feed)}
-                fare_rules{ |row| Importer.import_one_row_of(GtfsApi::FareRule, row, @feed)}
+                transfers { |row|
+                  Importer.import_one_row_of(GtfsApi::Transfer, row, @feed)
+                }
+                fare_rules{ |row|
+                  Importer.import_one_row_of(GtfsApi::FareRule, row, @feed)
+                }
               end #handlers
             end # sample
           end #sources

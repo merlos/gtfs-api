@@ -27,10 +27,11 @@ module GtfsApi
   class FeedInfoTest < ActiveSupport::TestCase
 
 
-    def self.fill_valid_model
-      feed = FeedTest.fill_valid_model
-      feed.save!
-
+    def self.fill_valid_model(feed = nil)
+      if feed.nil? then
+        feed = FeedTest.fill_valid_model
+        feed.save!
+      end
       FeedInfo.new( {
         publisher_name: "THE publisher",
         publisher_url: "http://gihub.com/merlos/gtfs_api",
@@ -41,16 +42,24 @@ module GtfsApi
         feed: feed
         })
     end
+
+
     def self.valid_gtfs_feed_row
       {
         feed_publisher_name: "Di publiser",
         feed_publisher_url: "http://github.com/merlos/gtfs_api",
-        lang: 'es',
-        start_date: '20140620',
-        end_date: '20150620',
-        version: "V1.0"
+        feed_lang: 'es',
+        feed_start_date: '20140620',
+        feed_end_date: '20400620',
+        feed_version: "V1.0"
       }
     end
+
+
+    def self.valid_gtfs_feed_row_for_feed(feed)
+      self.valid_gtfs_feed_row
+    end
+
 
     def setup
       @model =  FeedInfoTest.fill_valid_model
@@ -58,7 +67,6 @@ module GtfsApi
 
     test 'valid feed info model' do
       assert @model.valid?
-
     end
 
     test 'publisher_name is required' do
@@ -95,7 +103,35 @@ module GtfsApi
     #
     # GTFSABLE IMPORT/EXPORT
     #
+    test "feed_info row can be imported into a FeedInfo model" do
+      model_class = GtfsApi::FeedInfo
+      test_class = GtfsApi::FeedInfoTest
+      exceptions = [:start_date,:end_date] #exceptions, in test
+      generic_row_import_test(model_class, test_class, exceptions) # defined in test_helper
+    end
 
+    test "exceptions start_date and end_date when importing a FeedInfo model" do
+      row = GtfsApi::FeedInfoTest.valid_gtfs_feed_row
+      model = GtfsApi::FeedInfo.new_from_gtfs(row)
+      model.inspect
+      assert_equal row[:feed_start_date], model.start_date.to_gtfs
+      assert_equal row[:feed_end_date], model.end_date.to_gtfs
+    end
+
+    # test import with feed prefix
+    test "feed_info row can be imported into a FeedInfo model and with a feed with prefix" do
+      model_class = GtfsApi::FeedInfo
+      test_class = GtfsApi::FeedInfoTest
+      exceptions = [:start_date,:end_date] #exceptions, in test
+      generic_row_import_test_for_feed_with_prefix(model_class, test_class) # defined in test_helper
+    end
+
+    test "feed_info row can be exported into a row" do
+      model_class = GtfsApi::FeedInfo
+      test_class = GtfsApi::FeedInfoTest
+      exceptions = [:start_date, :end_date]
+      generic_model_export_test(model_class, test_class, exceptions) # defined in test_helper
+    end
 
 
   end

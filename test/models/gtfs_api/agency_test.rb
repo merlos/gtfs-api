@@ -29,11 +29,15 @@ module GtfsApi
     #fixtures :all #Load fixtures.
 
     #call this method to create a valid agency. Change values to invalidate
-    def self.fill_valid_model
-      feed = FeedTest.fill_valid_model
-      feed.save!
+    def self.fill_valid_model(feed = nil)
+      if feed.nil? # create a feed if feed is not set
+        feed = FeedTest.fill_valid_model
+        feed.save!
+      end
+      # feed prefix is usually
+      feed_prefix = feed.prefix.present? ? feed.prefix : ""
       Agency.new(
-        io_id: 'AgencyID' + Time.new.to_f.to_s,
+        io_id: feed_prefix + '_AgencyID_' + Time.new.to_f.to_s,
         name: 'Agency Name',
         url: 'http://www.agency-url.com',
         timezone: 'Madrid/Spain',
@@ -42,6 +46,7 @@ module GtfsApi
         fare_url: 'http://www.agency-fare-url.es',
         feed: feed)
     end
+
 
     # @return[Hash] Fills a hash with the data of an agency. The keys are the names
     #  of the cols of agency.txt file. The id of the agecy is unique.
@@ -63,9 +68,11 @@ module GtfsApi
       @a = AgencyTest.fill_valid_model
     end
 
+
     #
     # validation tests
     #
+
     test "valid_agency" do
        assert @a.valid?, 'A valid agency was claimed to be invalid; ' + @a.errors.to_a.to_s
        ## save
@@ -93,18 +100,20 @@ module GtfsApi
       @al = Agency.last
       #puts @al.inspect
       assert @al.io_id
-
     end
+
 
     test "agency name presence " do
       @a.name = nil
       assert_not @a.valid?, 'agency name shall be present; ' + @a.errors.to_a.to_s
     end
 
+
     test "agency url presence" do
       @a.url = nil
       assert_not @a.valid?, 'agency url shall be present; ' + @a.errors.to_a.to_s
     end
+
 
     test "agency url format" do
       @a.url = "http://www.foofoofoo.es"
@@ -118,19 +127,20 @@ module GtfsApi
       a2 = AgencyTest.fill_valid_model
       a2.url = "/agency/absolute"
       assert @a.invalid?
-
     end
+
 
     test "agency timezone presence" do
       @a.timezone = nil
       assert_not @a.valid?, 'agency_timezone shall be present; ' + @a.errors.to_a.to_s
-
     end
+
 
     test "agency lang empty" do
       @a.lang = nil
       assert @a.valid?, 'agency_lang presence not required' + @a.errors.to_a.to_s
     end
+
 
     test "agency lang length" do
       @a.lang = 'e'
@@ -139,6 +149,7 @@ module GtfsApi
       @a.lang = 'esp'
       assert_not @a.valid?, 'agency_lang > 2' + @a.errors.to_a.to_s
     end
+
 
     test "feed is required" do
       @a.feed = nil
@@ -158,6 +169,7 @@ module GtfsApi
       assert_nothing_raised ( ActiveRecord::RecordInvalid) {a2.save!}
     end
 
+
     test "agency has_many routes" do
       @a.save!
 
@@ -174,6 +186,7 @@ module GtfsApi
       assert 2, @a.routes.count
     end
 
+
     test "agency has many fare_attributes" do
       @a.save!
       # link 2 fare attributes
@@ -186,6 +199,7 @@ module GtfsApi
       assert_equal 2, @a.fare_attributes.count
     end
 
+
     test "agency belongs to feed" do
       f = FeedTest.fill_valid_model
       f.save!
@@ -194,6 +208,7 @@ module GtfsApi
       a2 = Agency.find(@a.id)
       assert_equal f.id, a2.feed.id
     end
+
 
     #
     # GTFSABLE IMPORT/EXPORT
@@ -212,6 +227,17 @@ module GtfsApi
     end
 
 
+    test 'gtfs agency file row can be imported can be imported when feed has a prefix' do
+      prefix = 'feed_prefix'
+      agency_row = AgencyTest.valid_gtfs_feed_row
+      feed = FeedTest.fill_valid_model prefix
+      feed.save!
+      agency = Agency.new_from_gtfs(agency_row, feed)
+      assert agency.valid?, agency.errors.to_a.to_s
+      assert_equal prefix + agency_row[:agency_id], agency.io_id
+    end
+
+
     test "agency model can be exported to gtfs feed row" do
       agency_row = @a.to_gtfs
       Agency.gtfs_cols.each do |model_attr, gtfs_col|
@@ -219,7 +245,6 @@ module GtfsApi
         #puts k_api.to_s + " " + a[k_api]
       end
     end
-
 
   end
 end

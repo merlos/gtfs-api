@@ -117,4 +117,27 @@ namespace :gtfs do
     puts "Exporting with params: #{args}"
   end
 
+
+  #
+  # list feeds
+  #
+  desc "list feeds currently loaded in the gtfs_api database."
+  task :list => :environment do |t, args|
+    GtfsApi::Feed.all.each do |feed|
+      puts "\tid\tprefix\tio_id"
+      puts "\t---------------------------------------------------"
+      puts "\t#{feed.id}\t#{feed.prefix}\t#{feed.id}"
+      puts "\tagencies: "
+      feed.agencies.each do |agency|
+        puts "\t\t(#{agency.io_id})#{agency.name}"
+      end
+    end
+  end
+
+  #
+  #
+  desc "delete feed by id. Run gtfs:list task to get the feed id"
+  task :delete, [:id] => :environment do |t, args|
+  end
+
 end

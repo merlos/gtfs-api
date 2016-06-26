@@ -34,11 +34,14 @@ module GtfsApi
     set_gtfs_col :zone_id, :zone_id
     set_gtfs_col :url, :stop_url
     set_gtfs_col :location_type
-    set_gtfs_col :parent_station_id, :parent_station
+    set_gtfs_col :parent_station_io_id, :parent_station
     set_gtfs_col :timezone, :stop_timezone
     set_gtfs_col :wheelchair_boarding
     #NON normative / GTFS Extension
     set_gtfs_col :vehicle_type
+
+    set_gtfs_cols_with_prefix [:stop_id, :parent_station, :zone_id]
+
 
 
     #VALIDATIONS
@@ -85,7 +88,16 @@ module GtfsApi
     #TODO test
     scope :ordered, -> { order('sequence ASC') }
 
+    # VIRTUAL ATTRIBUTES
+    attr_accessor :parent_station_io_id
 
+    def parent_station_io_id
+      parent_station.present? ? parent_station.io_id : nil
+    end
+
+    def parent_station_io_id=(val)
+      self.parent_station = Stop.find_by(io_id: val)
+    end
 
     # CONSTANTS
     # Values for location_type
@@ -129,7 +141,7 @@ module GtfsApi
     max_lon = lon.to_f + radius_lon
     min_lon = lon.to_f - radius_lon
     #Stop.where("lat > ? AND lat < ? AND lon > ? AND lon < ? ", min_lat, max_lat, min_lon, max_lon)
-    Stop.where(lat: min_lat..max_lat, lon: min_lon..max_lon)
+    GtfsApi::Stop.where(lat: min_lat..max_lat, lon: min_lon..max_lon)
   end
 
   # TODO make test

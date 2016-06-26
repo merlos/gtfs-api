@@ -29,6 +29,7 @@ module GtfsApi
     set_gtfs_col :origin_id
     set_gtfs_col :destination_id
     set_gtfs_col :contains_id
+    set_gtfs_cols_with_prefix [:fare_id, :route_id, :origin_id, :destination_id, :contains_id]
 
 
     validates :fare_id, presence: {message: :blank_or_not_found}

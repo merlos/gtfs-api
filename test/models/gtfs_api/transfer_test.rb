@@ -43,9 +43,9 @@ module GtfsApi
         feed: feed)
     end
 
-    def self.valid_gtfs_feed_row (feed = nil)
-      from = StopTest.fill_valid_model feed
-      to = StopTest.fill_valid_model feed
+    def self.valid_gtfs_feed_row
+      from = StopTest.fill_valid_model
+      to = StopTest.fill_valid_model
       from.save!
       to.save!
       {
@@ -55,6 +55,17 @@ module GtfsApi
         min_transfer_time: "3600"
       }
     end
+
+    def self.valid_gtfs_feed_row_for_feed(feed)
+      model = self.fill_valid_model(feed)
+      row = self.valid_gtfs_feed_row
+      from_stop_id = feed.prefix.present? ? model.from_stop.io_id.gsub(feed.prefix,'') : model.from_stop.io_id
+      to_stop_id = feed.prefix.present? ? model.to_stop.io_id.gsub(feed.prefix,'') : model.to_stop.io_id
+      row[:from_stop_id] = from_stop_id
+      row[:to_stop_id] = to_stop_id
+      return row
+    end
+
 
     def setup
       @model = TransferTest.fill_valid_model
@@ -182,6 +193,13 @@ module GtfsApi
         end
         #------
       end
+
+      test "stop_time row can be imported into a StopTime model with a feed with prefix" do
+        model_class = GtfsApi::Transfer
+        test_class = GtfsApi::TransferTest
+        generic_row_import_test_for_feed_with_prefix(model_class, test_class) # defined in test_helper
+      end
+
 
       test "a Transfer model can be exported into a gtfs row" do
         model_class = Transfer

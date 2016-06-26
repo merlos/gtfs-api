@@ -36,6 +36,7 @@ module GtfsApi
     set_gtfs_col :sunday
     set_gtfs_col :start_date
     set_gtfs_col :end_date
+    set_gtfs_cols_with_prefix [:service_id]
 
 
     # VALIDATIONS

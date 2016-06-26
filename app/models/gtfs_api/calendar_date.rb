@@ -27,6 +27,7 @@ module GtfsApi
     set_gtfs_col :service_io_id, :service_id
     set_gtfs_col :date
     set_gtfs_col :exception_type
+    set_gtfs_cols_with_prefix [:service_id]
 
     #VALIDATIONS
     validates :service,         presence: true

@@ -29,12 +29,15 @@ module GtfsApi
     #   assert true
     # end
 
-    def self.fill_valid_model
-      feed = FeedTest.fill_valid_model
-      feed.save!
+    def self.fill_valid_model(feed = nil)
+      if feed.nil? then
+        feed = FeedTest.fill_valid_model
+        feed.save!
+      end
+      feed_prefix = feed.prefix.present? ? feed.prefix : ''
 
       return Shape.new(
-      io_id: 'unique',
+      io_id: feed_prefix + 'unique',
       pt_lat: '30.1',
       pt_lon: '30.2',
       pt_sequence: 1,
@@ -51,6 +54,10 @@ module GtfsApi
       shape_pt_sequence: '1',
       shape_dist_traveled: '3.3'
       }
+    end
+
+    def self.valid_gtfs_feed_row_for_feed(feed)
+      self.valid_gtfs_feed_row
     end
 
     def setup
@@ -162,6 +169,14 @@ module GtfsApi
        end
        #------
      end
+
+     test "stop file row can be imported when feed has a prefix" do
+       model_class = Shape
+       test_class = ShapeTest
+       exceptions = [] #exceptions, in test
+       generic_row_import_test_for_feed_with_prefix(model_class, test_class)
+     end
+
 
      test "a Shape model can be exported into a gtfs row" do
        model_class = Shape

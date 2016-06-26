@@ -26,12 +26,18 @@ require 'test_helper'
 module GtfsApi
   class FareAttributeTest < ActiveSupport::TestCase
 
-    def self.fill_valid_model
+    # Creates a valid model
+    # @param feed [GtfsApi:Feed] a feed existent on the database
+    def self.fill_valid_model (feed = nil)
+      if feed.nil? then
+        feed = FeedTest.fill_valid_model
+        feed.save!
+      end
+
       unique = Time.now.to_f.to_s
-      a = AgencyTest.fill_valid_model
+      a = AgencyTest.fill_valid_model feed
       a.save!
-      feed = FeedTest.fill_valid_model
-      feed.save!
+
 
       return FareAttribute.new(
         io_id: 'fare_attribute_' + unique,
@@ -45,13 +51,23 @@ module GtfsApi
     end
 
     def self.valid_gtfs_feed_row
-      return {
+      {
         fare_id: Time.now.to_f.to_s,
         price: 11.11,
         currency_type: 'EUR',
         payment_method: FareAttribute::ON_BOARD,
         transfers: FareAttribute::TWICE,
-        transfer_duration: 10}
+        transfer_duration: 10
+      }
+    end
+
+    def self.valid_gtfs_feed_row_for_feed(feed)
+      a = AgencyTest.fill_valid_model feed
+      a.save!
+      row = self.valid_gtfs_feed_row
+      agency_id = feed.prefix.present? ? a.io_id.gsub(feed.prefix,'') : a.io_id
+      row[:agency_id] = agency_id
+      return row
     end
 
     def setup
@@ -207,6 +223,12 @@ module GtfsApi
        assert_equal model.send(model_attr), feed_row[feed_col], "Testing " + model_attr.to_s + " vs " + feed_col.to_s
      end
      #------
+   end
+
+   test "fare_attribute row can be imported into a FareAttribute model with a feed with prefix" do
+     model_class = FareAttribute
+     test_class = FareAttributeTest
+     generic_row_import_test_for_feed_with_prefix(model_class, test_class) # defined in test_helper
    end
 
    test "a FareAttribute model can be exported into a gtfs row" do

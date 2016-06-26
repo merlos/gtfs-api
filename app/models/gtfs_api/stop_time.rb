@@ -33,6 +33,7 @@ module GtfsApi
     set_gtfs_col :pickup_type
     set_gtfs_col :drop_off_type
     set_gtfs_col :dist_traveled, :shape_dist_traveled
+    set_gtfs_cols_with_prefix [:trip_id, :stop_id]
 
     # VALIDATIONS
     validates :trip, presence: {message: :blank_or_not_found}

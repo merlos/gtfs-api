@@ -32,6 +32,7 @@ module GtfsApi
     set_gtfs_col :payment_method
     set_gtfs_col :transfers
     set_gtfs_col :transfer_duration
+    set_gtfs_cols_with_prefix [:fare_id, :agency_id]
 
 
     # VALIDATIONS

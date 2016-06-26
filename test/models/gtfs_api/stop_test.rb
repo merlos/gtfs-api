@@ -27,22 +27,20 @@ module GtfsApi
   class StopTest < ActiveSupport::TestCase
     # fill a Stop object with valid data
     # no zone and parent_stop is filled
-    def self.fill_valid_model (feed = nil)
-      feed = FeedTest.fill_valid_model if feed.nil?
-      feed.save!
-      if feed.prefix then
-        io_id = feed.prefix + Time.now.to_f.to_s
-      else
-        io_id = Time.now.to_f.to_s
+    def self.fill_valid_model(feed = nil)
+      if feed.nil? then
+        feed = FeedTest.fill_valid_model
+        feed.save!
       end
-      return Stop.new(
-      io_id: io_id,
+      feed_prefix = feed.prefix.present? ? feed.prefix : ''
+      Stop.new(
+      io_id: feed_prefix + '_stop_' + Time.now.to_f.to_s,
       code: 'stop_code',
       name: 'stop_name',
       desc: 'stop_desc',
       lat: 1.1,
       lon: 2.2,
-      url: "http://github.com/merlos/",
+      url: 'http://github.com/merlos/',
       location_type: Stop::STOP_TYPE,
       parent_station: nil,
       timezone: 'Madrid/España',
@@ -69,8 +67,21 @@ module GtfsApi
         wheelchair_boarding: '0',
         #Gtfs Extension
         vehicle_type: '100'
-
       }
+    end
+
+
+    def self.valid_gtfs_feed_row_for_feed(feed)
+      parent_station = self.fill_valid_model feed
+      parent_station.location_type = GtfsApi::Stop::LocationTypes[:station]
+      parent_station.save!
+      #puts parent_station.inspect
+      row = self.valid_gtfs_feed_row
+      # src rows do not have the feed prefix
+      row[:stop_id] = feed.prefix.present? ? row[:stop_id].gsub(feed.prefix,'') : row[:stop_id]
+      row[:parent_station] = feed.prefix.present? ? parent_station.io_id.gsub(feed.prefix,'') : parent.station.io_id
+      #puts row
+      return row
     end
 
     def setup
@@ -217,12 +228,23 @@ module GtfsApi
 
 
     #TODO test parent_station
-
+    test 'parent_station association works' do
+      # create the parent station stop
+      parent_station = StopTest.fill_valid_model
+      parent_station.location_type = GtfsApi::Stop::LocationTypes[:station]
+      parent_station.save!
+      # asssignt the stop
+      @model.parent_station = parent_station
+      @model.save!
+      # check that the relation was saved
+      stop = GtfsApi::Stop.find(@model.id)
+      assert_equal stop.parent_station.id, parent_station.id
+    end
     #
     # GTFSABLE IMPORT/EXPORT
     #
 
-    test "stop row can be imported into a Stop model" do
+    test "stop file row can be imported into a Stop model" do
        model_class = Stop
        test_class = StopTest
        exceptions = [] #exceptions, in test
@@ -242,6 +264,13 @@ module GtfsApi
        #------
      end
 
+     test "stop file row can be imported when feed has a prefix" do
+       model_class = Stop
+       test_class = StopTest
+       exceptions = [] #exceptions, in test
+       generic_row_import_test_for_feed_with_prefix(model_class, test_class)
+     end
+
      test "a Stop model can be exported into a gtfs row" do
        model_class = Stop
        test_class = StopTest
@@ -258,8 +287,20 @@ module GtfsApi
        end
      end
 
-     test "a stop row that belongs to a station can be imported into a gtfs row" do
 
+     test "a stop row that belongs to a station can be imported into a gtfs row" do
+       parent_station = GtfsApi::StopTest.fill_valid_model
+       parent_station.location_type = GtfsApi::Stop::LocationTypes[:station]
+       parent_station.save!
+       feed_row = GtfsApi::StopTest.valid_gtfs_feed_row
+       feed_row[:parent_station] = parent_station.io_id
+       #puts feed_row
+       feed = FeedTest.fill_valid_model
+       feed.save!
+       model = Stop.new_from_gtfs(feed_row, feed)
+       #puts model.inspect
+       assert model.valid?, model.errors.to_a.to_s
+       assert_equal parent_station.id, model.parent_station.id
      end
 
 

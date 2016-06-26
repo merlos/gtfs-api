@@ -29,7 +29,7 @@ module GtfsApi
     set_gtfs_col :pt_lon, :shape_pt_lon
     set_gtfs_col :pt_sequence, :shape_pt_sequence
     set_gtfs_col :dist_traveled, :shape_dist_traveled
-
+    set_gtfs_cols_with_prefix [:shape_id]
 
     # VALIDATIONS
     validates :io_id, presence: true

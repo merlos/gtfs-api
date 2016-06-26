@@ -27,19 +27,16 @@ require 'test_helper'
 module GtfsApi
   class StopTimeTest < ActiveSupport::TestCase
 
-    def self.fill_valid_model
+    def self.fill_valid_model (feed = nil)
+      if feed.nil? then
+        feed = FeedTest.fill_valid_model
+        feed.save!
+      end
 
-      ## create a route
-      unique = Time.now.to_f.to_s
-      s = StopTest.fill_valid_model
-      s.io_id = unique
+      s = StopTest.fill_valid_model feed
       s.save!
-      ## create a trip
-      t = TripTest.fill_valid_model
-      t.io_id = unique
+      t = TripTest.fill_valid_model feed
       t.save!
-      feed = FeedTest.fill_valid_model
-      feed.save!
 
       StopTime.new(
         trip: t,
@@ -55,13 +52,9 @@ module GtfsApi
     end
 
     def self.valid_gtfs_feed_row
-      unique = Time.now.to_f.to_s
       s = StopTest.fill_valid_model
-      s.io_id = unique
       s.save!
-      ## create a trip
       t = TripTest.fill_valid_model
-      t.io_id = unique
       t.save!
       {
         trip_id: t.io_id,
@@ -70,10 +63,22 @@ module GtfsApi
         departure_time: '25:33:44',
         stop_sequence: 1,
         stop_headsign: 'headsign',
-        pickup_type: StopTime::PHONE_AGENCY,
+        pickup_type: StopTime::PickupTypes[:no],
         drop_off_type: StopTime::REGULAR,
         shape_dist_traveled: 100.1
       }
+    end
+
+    def self.valid_gtfs_feed_row_for_feed(feed)
+        model = self.fill_valid_model feed
+        row = self.valid_gtfs_feed_row
+        # remove the feed prefix from associations
+        trip_id = feed.prefix.present? ? model.trip.io_id.gsub(feed.prefix,'') : model.trip.io_id
+        stop_id = feed.prefix.present? ? model.stop.io_id.gsub(feed.prefix,'') : model.stop.io_id
+        row[:trip_id] = trip_id
+        row[:stop_id] = stop_id
+        #puts row
+        return row
     end
 
     def setup
@@ -292,6 +297,12 @@ module GtfsApi
          end
          assert_equal model.send(model_attr), feed_row[feed_col], "Testing " + model_attr.to_s + " vs " + feed_col.to_s
        end
+    end
+
+    test "stop_time row can be imported into a StopTime model with a feed with prefix" do
+      model_class = GtfsApi::StopTime
+      test_class = GtfsApi::StopTimeTest
+      generic_row_import_test_for_feed_with_prefix(model_class, test_class) # defined in test_helper
     end
 
 

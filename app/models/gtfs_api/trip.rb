@@ -34,6 +34,7 @@ module GtfsApi
     set_gtfs_col :shape_id
     set_gtfs_col :wheelchair_accesible
     set_gtfs_col :bikes_allowed
+    set_gtfs_cols_with_prefix [:route_id, :service_id, :trip_id, :shape_id]
 
 
     # ASSOCIATIONS

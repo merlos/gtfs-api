@@ -35,6 +35,7 @@ module GtfsApi
     set_gtfs_col :text_color, :route_text_color
     #NO NORMATIVE (extension)
     set_gtfs_col :agency_io_id, :agency_id
+    set_gtfs_cols_with_prefix [:route_id, :agency_id]
 
 
     #VALIDATIONS

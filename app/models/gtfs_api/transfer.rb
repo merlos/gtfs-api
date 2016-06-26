@@ -28,7 +28,7 @@ module GtfsApi
     set_gtfs_col :to_stop_io_id, :to_stop_id
     set_gtfs_col :transfer_type
     set_gtfs_col :min_transfer_time
-
+    set_gtfs_cols_with_prefix [:from_stop_id, :to_stop_id]
 
     # VALIDATIONS
     validates :from_stop, presence: {message: :blank_or_not_found}

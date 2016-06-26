@@ -27,10 +27,12 @@ require 'test_helper'
 module GtfsApi
   class FrequencyTest < ActiveSupport::TestCase
 
-    def self.fill_valid_model
-      trip = TripTest.fill_valid_model
-      feed = FeedTest.fill_valid_model
-      feed.save!
+    def self.fill_valid_model(feed = nil)
+      if feed.nil? then
+        feed = FeedTest.fill_valid_model
+        feed.save!
+      end
+      trip = TripTest.fill_valid_model feed
       return Frequency.new(
       trip: trip,
       start_time: "14:00:21",
@@ -50,6 +52,14 @@ module GtfsApi
        headway_secs: "1000",
        exact_times: "0"
       }
+    end
+
+    def self.valid_gtfs_feed_row_for_feed(feed)
+      trip = TripTest.fill_valid_model feed
+      trip.save!
+      row = self.valid_gtfs_feed_row
+      row[:trip_id] = trip.io_id.gsub(feed.prefix,'') if feed.prefix.present?
+      return row
     end
 
     def setup
@@ -163,6 +173,13 @@ module GtfsApi
         assert_equal feed_row[feed_col], model_value, "Testing " + model_attr.to_s + " vs " + feed_col.to_s
       end
       #------
+    end
+
+    # test import with feed prefix
+    test "frequency row can be imported into a Frequency model and have a feed with prefix" do
+      model_class = GtfsApi::Frequency
+      test_class = GtfsApi::FrequencyTest
+      generic_row_import_test_for_feed_with_prefix(model_class, test_class) # defined in test_helper
     end
 
     test "a Frequency model can be exported into a gtfs row" do

@@ -28,12 +28,14 @@ module GtfsApi
   class RouteTest < ActiveSupport::TestCase
 
     # it's ok For testing VALIDATORS
-    def self.fill_valid_model
-      feed = FeedTest.fill_valid_model
-      feed.save!
-
+    def self.fill_valid_model(feed = nil)
+      if feed.nil? then
+        feed = FeedTest.fill_valid_model
+        feed.save!
+      end
+      feed_prefix = feed.prefix.present? ? feed.prefix : ''
       Route.new(
-        io_id: 'route_' + Time.new.to_f.to_s,
+        io_id: feed_prefix + 'route_' + Time.new.to_f.to_s,
         short_name:'short name',
         long_name: 'route_long_name',
         desc: "route description",
@@ -59,6 +61,17 @@ module GtfsApi
         route_color: 'CACADE',
         route_text_color: 'BACACA'
       }
+    end
+
+
+    def self.valid_gtfs_feed_row_for_feed(feed)
+      a = AgencyTest.fill_valid_model(feed)
+      a.save!
+      #puts a.inspect
+      row = self.valid_gtfs_feed_row
+      row[:agency_id] = feed.prefix.present? ? a.io_id.gsub(feed.prefix,'') : a.io_id
+      #puts row
+      return row
     end
 
     def setup
@@ -237,6 +250,14 @@ module GtfsApi
         assert_equal model.send(model_attr), feed_row[feed_col], "Testing " + model_attr.to_s + " vs " + feed_col.to_s
       end
       #------
+    end
+
+
+    test "stop file row can be imported when feed has a prefix" do
+      model_class = Route
+      test_class = RouteTest
+      exceptions = [] #exceptions, in test
+      generic_row_import_test_for_feed_with_prefix(model_class, test_class)
     end
 
     test "a Route model can be exported into a gtfs row" do

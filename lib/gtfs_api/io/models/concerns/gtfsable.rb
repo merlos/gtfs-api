@@ -112,6 +112,12 @@ module GtfsApi
             write_attribute(attribute_sym, val)
           end
 
+          #TODO
+          # gets attribute without feed prefix
+          # asumes that the model has a feed attribute too.
+          def attr_without_feed_prefix (attr_sym)
+            self[attr_sym].slice feed.prefix if self.gtfs_cols_with_prefix.include? (attr_sym)
+          end
 
           module ClassMethods
 
@@ -131,12 +137,16 @@ module GtfsApi
             #   }
             @@gtfs_cols = {}
 
-            # a hash with the relation between the gtfs_api class name and gtfs_feed file name
+            # A hash with the relation between the gtfs_api class name and gtfs_feed file name
             # @example
             # { "GtfsApi::Agency" => :agency }
             @@gtfs_files = {}
 
-
+            # A hash with an array with the cols that need feed prefix
+            # @example
+            # { "GtfsApi::Agency" => [:agency_id]}
+            #
+            @@gtfs_cols_with_prefix = {}
 
             #
             # Defines a map between GtfsApi model column name and the GTFS column spcecification.
@@ -170,19 +180,20 @@ module GtfsApi
             end
 
             #
-            # Use this method for to set the list of attributes that need to include the feed.prefix
-            # during import.
-            # @see default_feed_prefix_attr default value.
-            # Example:
-            #  class GtfsApi::Agency < ActiveRecord::Base
-            #    include GtfsApi::Concerns::Models::Concerns::Gtfsable
-            #     add_feed_prefix_to_attr [:io_id]
-            #     ...
-            # @param model_attr_arr[Array] array with the attribute symbols to which the prefix is added
+            # sets the columns to which shal be added the feed.prefix if set.
             #
-            def add_feed_prefix_to_attr (model_attr_arr)
-              @@feed_prefix_attr[self] = model_attr_arr
+            def set_gtfs_cols_with_prefix(gtfs_col_arr)
+              @@gtfs_cols_with_prefix[self] = gtfs_col_arr
             end
+
+            # Array of symbols with the gtfs columns that need a prefix
+            # if the feed includes a prefix.
+            # see @set_gtfs_cols_with_prefix
+            # returns[Array] with symbols of the gtfs columns
+            def gtfs_cols_with_prefix
+              @@gtfs_cols_with_prefix[self].nil? ? [] : @@gtfs_cols_with_prefix[self]
+            end
+
             #
             # sets the gtfs feed file name (without extension) linked to this class
             # Default value set is the plural of the containing class. Example Agency => :agencies
@@ -253,11 +264,17 @@ module GtfsApi
             #  # output hash: {io_id: 'M_MAD", :name" => 'Metro Madrid'}
             #
             # @param csv_row[Hash] a row of one of the file feeds
+            # @param feed[Hash/Object] a the feed object that may have the prefix string (feed.prefix)
             # @return [Hash]
-            def rehash_from_gtfs(csv_row)
+            def rehash_from_gtfs(csv_row, feed = nil)
               model_attr_values = {}
+              cols_with_prefix = self.gtfs_cols_with_prefix;
               csv_row.each do |csv_col, val|
-                model_attr_values[self.attr_for_gtfs_col(csv_col)] =  val if self.gtfs_cols.values.include? (csv_col)
+                #if feed is set, and it has a prefix => add the prefix if this column has the prefix.
+                if feed && feed.prefix.present? then
+                  val = feed.prefix + val if cols_with_prefix.include? (csv_col)
+                end
+                  model_attr_values[self.attr_for_gtfs_col(csv_col)] =  val if self.gtfs_cols.values.include? (csv_col)
               end
               return model_attr_values
             end
@@ -302,7 +319,7 @@ module GtfsApi
             # in the model http://api.rubyonrails.org/classes/ActiveRecord/Callbacks.html
             #
             def new_from_gtfs(gtfs_feed_row, feed = nil)
-              model_attr_hash = self.rehash_from_gtfs(gtfs_feed_row)
+              model_attr_hash = self.rehash_from_gtfs(gtfs_feed_row, feed)
               obj = self.new(model_attr_hash)
               obj.from_gtfs_called = true
               if feed != nil

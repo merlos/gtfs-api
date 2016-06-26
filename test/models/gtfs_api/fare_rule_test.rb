@@ -26,30 +26,34 @@ require 'test_helper'
 module GtfsApi
   class FareRuleTest < ActiveSupport::TestCase
 
-    def self.fill_valid_model
+    def self.fill_valid_model(feed = nil)
+
+      if feed.nil?
+        feed = FeedTest.fill_valid_model
+        feed.save!
+      end
       unique = (0...8).map { (65 + rand(26)).chr }.join
-      feed = FeedTest.fill_valid_model
-      feed.save!
-      fa = FareAttributeTest.fill_valid_model
+      unique = feed.prefix.present? ? feed.prefix + unique : unique
+
+      fa = FareAttributeTest.fill_valid_model feed
       fa.io_id = unique
       fa.save!
 
-      r = RouteTest.fill_valid_model
+      r = RouteTest.fill_valid_model feed
       r.io_id = unique
       r.save!
 
-      s_o = StopTest.fill_valid_model
+      s_o = StopTest.fill_valid_model feed
       s_o.zone_id = unique + "origin"
       s_o.save!
 
-      s_d = StopTest.fill_valid_model
+      s_d = StopTest.fill_valid_model feed
       s_d.zone_id = unique + "destination"
       s_d.save!
 
-      s_c = StopTest.fill_valid_model
+      s_c = StopTest.fill_valid_model feed
       s_c.zone_id = unique + "contains"
       s_c.save!
-
 
       return FareRule.new(
         fare: fa,
@@ -63,7 +67,7 @@ module GtfsApi
 
     def self.valid_gtfs_feed_row
       f = FareRuleTest.fill_valid_model
-      return {
+      {
         fare_id: f.fare.io_id,
         route_id: f.route.io_id,
         origin_id: f.origin_id,
@@ -71,6 +75,21 @@ module GtfsApi
         contains_id: f.contains_id
       }
     end
+
+
+    def self.valid_gtfs_feed_row_for_feed(feed)
+      f = FareRuleTest.fill_valid_model (feed)
+      feed_prefix = feed.prefix.present? ? feed.prefix : ""
+      # remove the feed_prefix, row for import does not have it
+      {
+        fare_id: f.fare.io_id.gsub(feed_prefix, ''),
+        route_id: f.route.io_id.gsub(feed_prefix, ''),
+        origin_id: f.origin_id.gsub(feed_prefix,''),
+        destination_id: f.destination_id.gsub(feed_prefix, ''),
+        contains_id: f.contains_id.gsub(feed_prefix,'')
+      }
+    end
+
 
     def setup
       @model = FareRuleTest.fill_valid_model
@@ -218,6 +237,14 @@ module GtfsApi
        end
        #------
      end
+
+     test "fare_rule row can be imported when feed has a prefix" do
+       model_class = GtfsApi::FareRule
+       test_class = GtfsApi::FareRuleTest
+       #--- common part
+       generic_row_import_test_for_feed_with_prefix(model_class, test_class) # defined in test_helper
+     end
+
 
      test "a FareRule model can be exported into a gtfs row" do
        model_class = FareRule

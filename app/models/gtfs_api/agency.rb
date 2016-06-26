@@ -32,6 +32,7 @@ module GtfsApi
     set_gtfs_col :lang, :agency_lang
     set_gtfs_col :phone, :agency_phone
     set_gtfs_col :fare_url, :agency_fare_url
+    set_gtfs_cols_with_prefix [:agency_id]
 
 
     # VALIDATIONS

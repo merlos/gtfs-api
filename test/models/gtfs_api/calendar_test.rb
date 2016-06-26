@@ -30,10 +30,12 @@ module GtfsApi
     # end
     week = ['monday', 'tuesday', 'wednesday','thursday', 'friday', 'saturday', 'sunday']
 
-    def self.fill_valid_model
-      feed = FeedTest.fill_valid_model
-      feed.save!
-      service = ServiceTest.fill_valid_model
+    def self.fill_valid_model (feed = nil)
+      if feed.nil?
+        feed = FeedTest.fill_valid_model
+        feed.save!
+      end
+      service = ServiceTest.fill_valid_model feed
       return Calendar.new(
       service: service,
       monday: 1,
@@ -48,8 +50,8 @@ module GtfsApi
       feed: feed)
     end
 
-    def self.valid_gtfs_feed_row
-      service = ServiceTest.fill_valid_model
+    def self.valid_gtfs_feed_row (feed = nil)
+      service = ServiceTest.fill_valid_model(feed)
       service.save!
       {
         service_id: service.io_id,
@@ -64,6 +66,14 @@ module GtfsApi
         end_date: '20140723'
       }
     end
+
+    def self.valid_gtfs_feed_row_for_feed(feed)
+      row = self.valid_gtfs_feed_row feed
+      #removes the prefix from the row, as the prefix is
+      row[:service_id] = row[:service_id].gsub(feed.prefix,'') if feed.prefix.present?
+      return row
+    end
+
 
     def setup
       @model = CalendarTest.fill_valid_model
@@ -171,6 +181,12 @@ module GtfsApi
         assert_equal feed_row[feed_col], model_value, "Testing " + model_attr.to_s + " vs " + feed_col.to_s
       end
        #------
+    end
+
+    test "calendar file row can be imported when feed has a prefix" do
+      model_class = Calendar
+      test_class = CalendarTest
+      generic_row_import_test_for_feed_with_prefix(model_class, test_class) # defined in test_helper
     end
 
     test "a Calendar model can be exported into a gtfs row" do

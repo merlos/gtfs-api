@@ -26,7 +26,7 @@ require 'test_helper'
 module GtfsApi::Io::Models::Concerns
 
   # SUPPORT CLASSES
-  # These calsses emulate a model more or less..
+  # These classes emulate a model more or less..
   # TODO something more accurate
 
   # empty col assignment
@@ -153,6 +153,7 @@ module GtfsApi::Io::Models::Concerns
 
   class GtfsableTest < ActiveSupport::TestCase
 
+    # Gtfsable with empty mapping
     test "gtfs_cols returns nil when no mapping defined" do
       assert_nil GtfsableTestEmptyMapping.gtfs_cols
     end
@@ -165,7 +166,6 @@ module GtfsApi::Io::Models::Concerns
       assert_empty c.to_gtfs
     end
 
-
     test "gtfs_file returns the pluralized uderscore class name when not set" do
       assert_equal :gtfsable_test_empty_mappings, GtfsableTestEmptyMapping.gtfs_file
     end
@@ -173,6 +173,9 @@ module GtfsApi::Io::Models::Concerns
     test "gtfs_filename returns the pluralized underscore class name adding .txt when not set" do
       assert_equal 'gtfsable_test_empty_mappings.txt', GtfsableTestEmptyMapping.gtfs_filename
     end
+
+
+    # Test with Gtfsable Test Mapping
 
     test "default set_col_map with no second argument are equal" do
       assert_equal :default_map, GtfsableTestMapping.gtfs_cols[:default_map]
