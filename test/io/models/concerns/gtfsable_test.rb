@@ -113,7 +113,6 @@ module GtfsApi::Io::Models::Concerns
       self.after_from_gtfs_attr = "after_from_gtfs_was_called"
     end
 
-
   end
 
   # time and date setters

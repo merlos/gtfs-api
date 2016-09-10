@@ -92,17 +92,25 @@ module GtfsApi
         #strIO = StringIO.new
         #std = $stdout.clone
         #$stdout = strIO
-        #prefix = 'PREFIX_'
-        #zip_file = Rails.root.join('../','fixtures','feed_panama','gtfs_feed.zip').to_s
-        #GtfsApi::Io::Importer.import zip_file, prefix: prefix, verbose: true
+        prefix = 'PREFIX_'
+        zip_file = Rails.root.join('../','fixtures','feeds','panama','gtfs_feed.zip').to_s
+        GtfsApi::Io::Importer.import zip_file, prefix: prefix, verbose: true
         # check everything went ok
         #assert_not $stdout.string.include?('ERROR'), $stdout.string
         #$stdout = std
-        #feed = Feed.find(1)
-        #puts feed.inspect
-        #assert_equal prefix, feed.prefix
+        feed = Feed.find(1)
+        puts feed.inspect
+        assert_equal prefix, feed.prefix
 
-        # TODO check prefix was added
+        #
+        assert feed.agencies.first.io_id.start_with? (prefix)
+        assert feed.routes.first.io_id.start_with? (prefix)
+        assert feed.calendars.first.service_io_id.start_with? (prefix)
+        assert feed.calendar_dates.first.service_io_id.start_with? (prefix)
+        assert feed.shapes.first.io_id.start_with? (prefix)
+        assert feed.trips.first.io_id.start_with? (prefix)
+        assert feed.stops.first.io_id.start_with? (prefix)
+        assert feed.fare_attributes.first.io_id.start_with? (prefix)
 
       end
     end
