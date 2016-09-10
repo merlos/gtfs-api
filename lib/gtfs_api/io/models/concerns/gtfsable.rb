@@ -268,10 +268,10 @@ module GtfsApi
             # @return [Hash]
             def rehash_from_gtfs(csv_row, feed = nil)
               model_attr_values = {}
-              cols_with_prefix = self.gtfs_cols_with_prefix;
+              cols_with_prefix = self.gtfs_cols_with_prefix
               csv_row.each do |csv_col, val|
                 #if feed is set, and it has a prefix => add the prefix if this column has the prefix.
-                if feed && feed.prefix.present? then
+                if (val != nil) && feed && feed.prefix.present? then
                   val = feed.prefix + val if cols_with_prefix.include? (csv_col)
                 end
                   model_attr_values[self.attr_for_gtfs_col(csv_col)] =  val if self.gtfs_cols.values.include? (csv_col)
@@ -322,9 +322,7 @@ module GtfsApi
               model_attr_hash = self.rehash_from_gtfs(gtfs_feed_row, feed)
               obj = self.new(model_attr_hash)
               obj.from_gtfs_called = true
-              if feed != nil
-                obj.send( "#{@@gtfs_feed_attr}=", feed)
-              end
+              obj.send( "#{@@gtfs_feed_attr}=", feed) if feed != nil
               obj.after_from_gtfs(model_attr_hash)
               return obj
             end

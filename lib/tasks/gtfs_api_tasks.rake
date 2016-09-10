@@ -135,8 +135,8 @@ namespace :gtfs do
   end
 
   #
-  #
-  desc "delete feed by id. Run gtfs:list task to get the feed id"
+  # deletes a feed
+  desc "delete feed by id. Run rake gtfs:list to get the feed id"
   task :delete, [:id] => :environment do |t, args|
   end
 

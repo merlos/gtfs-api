@@ -4,6 +4,5 @@ route12,service1,trip1r12,T1-R12,agency 1 route 2 trip 1,,,shp1r12,0,0
 route13,service1,trip1r13,T1-R13,agency 1 route 3 trip 1,,,shp1r13,0,0
 route21,weekdays,trip1r21,T1-R21,agency 2 route 1 trip 1,,,shp1r21,0,0
 route21,weekend,trip2r21,T2-R21-Go,agency 2 route 1 trip 2,0,,shp1r21,0,0
-route21,weekend,trip3r21,T2-R21-Back,agency 2 route 1 trip 2,1,,shp2r21,0,0
 route22,weekdays,trip1r22,T1-R22,agency 2 route 2 trip 1,,,shp1r22,0,0
-route22,weekdays,trip1r23,T1-R23,agency 2 route 3 trip 1,,,shp1r23,0,0
+route22,weekend,trip1r23,T1-R23,agency 2 route 3 trip 1,,,shp1r23,0,0

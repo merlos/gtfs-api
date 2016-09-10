@@ -29,19 +29,19 @@ module GtfsApi
 
 
     # ASSOCIATIONS
-    has_many :agencies
-    has_many :calendar_dates
-    has_many :calendars
-    has_many :fare_attributes
-    has_many :fare_rules
-    has_many :feed_infos
-    has_many :frequencies
-    has_many :routes
-    has_many :shapes
-    has_many :stop_times
-    has_many :stops
-    has_many :transfers
-    has_many :trips
-    has_many :services
+    has_many :agencies, dependent: :destroy
+    has_many :calendar_dates, dependent: :destroy
+    has_many :calendars, dependent: :destroy
+    has_many :fare_attributes, dependent: :destroy
+    has_many :fare_rules, dependent: :destroy
+    has_many :feed_infos, dependent: :destroy
+    has_many :frequencies, dependent: :destroy
+    has_many :routes, dependent: :destroy
+    has_many :shapes, dependent: :destroy
+    has_many :stop_times, dependent: :destroy
+    has_many :stops, dependent: :destroy
+    has_many :transfers, dependent: :destroy
+    has_many :trips, dependent: :destroy
+    has_many :services, dependent: :destroy
   end
 end
