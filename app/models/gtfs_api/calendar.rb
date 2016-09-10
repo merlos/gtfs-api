@@ -66,9 +66,7 @@ module GtfsApi
     def service_io_id
       self.service.present? ? self.service.io_id : nil
     end
-
-
-
+    
     # searches for a service with io_id and assigns it to service
     # Initializes the variable @_service_io_id
     def service_io_id=(val)
