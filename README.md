@@ -153,6 +153,7 @@ Here you have the names of the models that hold the information of the feed as w
 
 
 ```
+GtfsApi::Feed
 model					                      feed
 -----					                      ----
 publisher_name                <=> 	feed_publisher_name
@@ -330,14 +331,30 @@ GtfsApi::Transfer                       <=> 	transfers
 GtfsApi::FareRule                       <=> 	fare_rules
 ```
 
+### I18n in models
+
+Internationalization strings are located in `config/locales/xx.yml`. Currently, only English strings are provided.
+
+```
+# Example of i18m paths for errors in English.
+en:
+  activerecord:
+    errors:
+      models:
+        gtfs_api/route:
+          attributes:
+            short_name:
+              short_and_long_name_blank: "and long name both cannot be blank"
+```
+
 ## Testing
-GtfsApi is relies heavily in tests. It uses the standard test suite that comes with rails. To run the tests:
+GtfsApi relies heavily in tests. It uses the standard test suite that comes with rails. To run the tests:
 
 ```
 rake test
 ```
 
-if you see many useless warnings run:
+If you see many useless warnings run:
 
 ```
 RUBYOPT=-W0 rake test
