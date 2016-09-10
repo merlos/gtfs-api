@@ -20,7 +20,7 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 # THE SOFTWARE.
 
-module GtfsApi
-  class ApplicationController < ActionController::Base
-  end
-end
+#module GtfsApi
+#  class ApplicationController < ActionController::Base
+#  end
+#end

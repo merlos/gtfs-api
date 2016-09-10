@@ -20,8 +20,8 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 # THE SOFTWARE.
 
-module GtfsApi::V1
-  class AgenciesController <  ApiController
+#module GtfsApi::V1
+#  class AgenciesController <  ApiController
 
 # __TODO__ By now, controllers are disabled
 #    def index
@@ -32,5 +32,5 @@ module GtfsApi::V1
 #      @agency = Agency.find(io_id: params[:id])
 #    end
 
-  end
-end
+#  end
+#end
