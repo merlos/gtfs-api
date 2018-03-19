@@ -49,7 +49,7 @@ namespace :gtfs do
   task :import, [:zip_file, :prefix] => :environment do |t, args|
     args.with_defaults(
       zip_file: Rails.root.join('db','gtfs','feed.zip').to_s,
-      prefix: ""
+      prefix: nil
     )
     if args[:prefix] == 'auto'
       args[:prefix] = (0...8).map { (65 + rand(26)).chr }.join

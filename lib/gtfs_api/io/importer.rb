@@ -47,7 +47,7 @@ module GtfsApi
       # @param options[Hash] verbose(bool) and prefix (string)
       #
       def self.import(feed_file, options = {})
-        options = {prefix: '', verbose: false }.merge(options)
+        options = {prefix: nil, verbose: false }.merge(options)
         GtfsReader.config do
           return_hashes true
           verbose options[:verbose]
@@ -59,7 +59,12 @@ module GtfsApi
               feed_definition &GtfsApi::Io::FeedDefinitionBlock
               handlers do
                 @feed = GtfsApi::Feed.new({io_id: feed_file, source_url: feed_file, prefix: options[:prefix]})
-                @feed.save!
+                begin
+                  @feed.save!
+                rescue ActiveRecord::RecordInvalid => ex
+                  puts ex
+                  puts ex.record.errors
+                end
                 feed_info { |row|
                   puts "-**************************"
                   puts @feed
